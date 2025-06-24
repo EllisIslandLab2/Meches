@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Maria's Handmade Crafts</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Square Web Payments SDK -->
+    <script type="text/javascript" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="logo-container">
+                    <img src="logo-placeholder.png" alt="Maria's Crafts Logo" class="logo" id="logo-placeholder">
+                    <h1><a href="index.html">Maria's Handmade Crafts</a></h1>
+                </div>
+                <div class="nav-links">
+                    <a href="checkout.html">Back to Checkout</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="payment-main">
+        <div class="container">
+            <h2>Payment</h2>
+            
+            <div class="payment-container">
+                <!-- Order Summary -->
+                <div class="payment-summary">
+                    <h3>Order Summary</h3>
+                    <div id="order-items"></div>
+                    <div class="payment-totals">
+                        <div class="summary-line">
+                            <span>Subtotal:</span>
+                            <span id="payment-subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Shipping:</span>
+                            <span id="payment-shipping">$0.00</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Tax:</span>
+                            <span id="payment-tax">$0.00</span>
+                        </div>
+                        <div class="summary-line total">
+                            <span>Total:</span>
+                            <span id="payment-total">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="payment-form">
+                    <h3>Payment Information</h3>
+                    
+                    <!-- Customer Information -->
+                    <div class="customer-info">
+                        <h4>Shipping Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address *</label>
+                            <input type="text" id="address" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State *</label>
+                                <input type="text" id="state" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="zipCode">Zip Code *</label>
+                                <input type="text" id="zipCode" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Square Payment Form -->
+                    <div class="square-payment">
+                        <h4>Payment Details</h4>
+                        <div id="square-card-container">
+                            <!-- Square payment form will be inserted here -->
+                        </div>
+                        <div id="payment-status"></div>
+                        <button id="pay-button" class="btn-primary" type="button">
+                            Complete Payment
+                        </button>
+                    </div>
+
+                    <!-- Alternative Payment Note -->
+                    <div class="payment-note">
+                        <p><strong>Note:</strong> This is a demo payment form. In production, you'll need to:</p>
+                        <ol>
+                            <li>Replace the sandbox Square application ID with your production ID</li>
+                            <li>Set up your Square application in the Square Developer Dashboard</li>
+                            <li>Implement server-side payment processing</li>
+                            <li>Add proper error handling and security measures</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Maria's Handmade Crafts. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="payment.js"></script>
+</body>
+</html>
