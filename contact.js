@@ -28,16 +28,16 @@ async function handleGeneralFormSubmit(event) {
     
     const formData = new FormData(event.target);
     const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone') || '',
-        subject: formData.get('subject'),
-        message: formData.get('message'),
-        type: 'General Inquiry',
-        timestamp: new Date().toISOString()
+        'Name': formData.get('name'),
+        'Email': formData.get('email'),
+        'Phone': formData.get('phone') || '',
+        'Subject': formData.get('subject'),
+        'Message': formData.get('message'),
+        'Type': 'General Inquiry',
+        'Timestamp': new Date().toISOString()
     };
     
-    await submitToAirtable(data, 'general-inquiry');
+    await submitToAirtable(data, 'general-contact-form');
     showSuccessModal('Thank you for your message! We\'ll get back to you within 24 hours.');
     event.target.reset();
 }
@@ -47,30 +47,28 @@ async function handleCustomOrderFormSubmit(event) {
     
     const formData = new FormData(event.target);
     const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone') || '',
-        productType: formData.get('productType'),
-        colors: formData.get('colors') || '',
-        materials: formData.get('materials') || '',
-        size: formData.get('size') || '',
-        quantity: parseInt(formData.get('quantity')),
-        budget: formData.get('budget') || '',
-        deadline: formData.get('deadline') || '',
-        description: formData.get('description'),
-        inspiration: formData.get('inspiration') || '',
-        type: 'Custom Order Request',
-        timestamp: new Date().toISOString()
+        'Name': formData.get('name'),
+        'Email': formData.get('email'),
+        'Phone': formData.get('phone') || '',
+        'Product Type': formData.get('productType'),
+        'Colors': formData.get('colors') || '',
+        'Materials': formData.get('materials') || '',
+        'Size': formData.get('size') || '',
+        'Quantity': parseInt(formData.get('quantity')),
+        'Budget': formData.get('budget') || '',
+        'Deadline': formData.get('deadline') || '',
+        'Description': formData.get('description'),
+        'Inspiration': formData.get('inspiration') || '',
+        'Type': 'Custom Order Request',
+        'Timestamp': new Date().toISOString()
     };
     
-    await submitToAirtable(data, 'custom-order');
+    await submitToAirtable(data, 'custom-order-form');
     showSuccessModal('Thank you for your custom order request! We\'ll review your requirements and get back to you with a quote within 2-3 business days.');
     event.target.reset();
 }
 
 async function submitToAirtable(data, formType) {
-    const tableName = formType === 'general-inquiry' ? 'General_Inquiries' : 'Custom_Orders';
-    
     try {
         const response = await fetch('/.netlify/functions/airtable', {
             method: 'POST',
@@ -79,7 +77,7 @@ async function submitToAirtable(data, formType) {
             },
             body: JSON.stringify({
                 action: 'create',
-                tableName: tableName,
+                formType: formType,
                 data: {
                     fields: data
                 }

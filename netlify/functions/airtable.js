@@ -14,10 +14,26 @@ exports.handler = async (event, context) => {
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
   // Parse request body
-  const { action, data, tableName } = JSON.parse(event.body);
+  const { action, data, formType } = JSON.parse(event.body);
   
-  // Use provided table name or fallback to environment variable
-  const AIRTABLE_TABLE_NAME = tableName || process.env.AIRTABLE_TABLE_NAME;
+  // Map form types to environment variables
+  let AIRTABLE_TABLE_NAME;
+  switch (formType) {
+    case 'custom-order-form':
+      AIRTABLE_TABLE_NAME = process.env.CUSTOM_TABLE;
+      break;
+    case 'general-contact-form':
+      AIRTABLE_TABLE_NAME = process.env.INQUIRIES_TABLE;
+      break;
+    case 'customer-info':
+      AIRTABLE_TABLE_NAME = process.env.ORDERS_TABLE;
+      break;
+    default:
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid form type' })
+      };
+  }
 
   try {
     let response;

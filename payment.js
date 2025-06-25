@@ -178,7 +178,7 @@ function validateCustomerInfo() {
 }
 
 async function submitOrderToAirtable(orderConfirmation) {
-    // Prepare order data for Airtable
+    // Prepare order data for Airtable (matching README.md field names)
     const orderData = {
         'Order ID': orderConfirmation.orderId,
         'Customer Name': `${orderConfirmation.customerInfo.firstName} ${orderConfirmation.customerInfo.lastName}`,
@@ -205,7 +205,7 @@ async function submitOrderToAirtable(orderConfirmation) {
             },
             body: JSON.stringify({
                 action: 'create',
-                tableName: 'Orders',
+                formType: 'customer-info',
                 data: {
                     fields: orderData
                 }
