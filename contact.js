@@ -54,7 +54,7 @@ async function handleCustomOrderFormSubmit(event) {
         'Colors': formData.get('colors') || '',
         'Materials': formData.get('materials') || '',
         'Size': formData.get('size') || '',
-        'Quantity': parseInt(formData.get('quantity')),
+        'Quantity': parseInt(formData.get('quantity')) || 1,
         'Budget': formData.get('budget') || '',
         'Deadline': formData.get('deadline') || '',
         'Description': formData.get('description'),

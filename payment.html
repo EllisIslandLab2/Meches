@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - Maria's Handmade Crafts</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Square Web Payments SDK -->
-    <script type="text/javascript" src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
 </head>
 <body>
     <header>
@@ -97,27 +95,55 @@
                         </div>
                     </div>
 
-                    <!-- Square Payment Form -->
+                    <!-- Square Payment Link -->
                     <div class="square-payment">
-                        <h4>Payment Details</h4>
-                        <div id="square-card-container">
-                            <!-- Square payment form will be inserted here -->
+                        <h4>Complete Your Payment</h4>
+                        <p>Click the button below to securely complete your payment with Square.</p>
+                        
+                        <div style="display: flex; flex-direction: column; align-items: center; margin: 20px 0;">
+                            <button id="save-and-pay-button" class="btn-primary" style="margin-bottom: 15px;">
+                                Continue to Payment
+                            </button>
+                            
+                            <div id="square-payment-container" style="display: none;">
+                                <div style="
+                                    overflow: auto;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: flex-end;
+                                    align-items: center;
+                                    width: 259px;
+                                    background: #FFFFFF;
+                                    border: 1px solid rgba(0, 0, 0, 0.1);
+                                    box-shadow: -2px 10px 5px rgba(0, 0, 0, 0);
+                                    border-radius: 10px;
+                                    font-family: SQ Market, SQ Market, Helvetica, Arial, sans-serif;
+                                ">
+                                    <div style="padding: 20px;">
+                                        <a id="embedded-checkout-modal-checkout-button" target="_blank" data-url="https://square.link/u/4enKfFRf?src=embd" href="https://square.link/u/4enKfFRf?src=embed" style="
+                                            display: inline-block;
+                                            font-size: 18px;
+                                            line-height: 48px;
+                                            height: 48px;
+                                            color: #ffffff;
+                                            min-width: 212px;
+                                            background-color: #006aff;
+                                            text-align: center;
+                                            box-shadow: 0 0 0 1px rgba(0,0,0,.1) inset;
+                                            border-radius: 6px;
+                                            text-decoration: none;
+                                        ">Pay Now with Square</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <div id="payment-status"></div>
-                        <button id="pay-button" class="btn-primary" type="button">
-                            Complete Payment
-                        </button>
                     </div>
 
-                    <!-- Alternative Payment Note -->
+                    <!-- Payment Note -->
                     <div class="payment-note">
-                        <p><strong>Note:</strong> This is a demo payment form. In production, you'll need to:</p>
-                        <ol>
-                            <li>Replace the sandbox Square application ID with your production ID</li>
-                            <li>Set up your Square application in the Square Developer Dashboard</li>
-                            <li>Implement server-side payment processing</li>
-                            <li>Add proper error handling and security measures</li>
-                        </ol>
+                        <p><strong>Note:</strong> You will be redirected to Square's secure payment page to complete your transaction. After payment, you'll be redirected back to our confirmation page.</p>
                     </div>
                 </div>
             </div>
@@ -131,5 +157,47 @@
     </footer>
 
     <script src="payment.js"></script>
+    
+    <!-- Square Payment Link Script -->
+    <script>
+        function showCheckoutWindow(e) {
+            e.preventDefault();
+
+            const url = document.getElementById('embedded-checkout-modal-checkout-button').getAttribute('data-url');
+            const title = 'Square Payment Links';
+
+            // Some platforms embed in an iframe, so we want to top window to calculate sizes correctly
+            const topWindow = window.top ? window.top : window;
+
+            // Fixes dual-screen position                                Most browsers          Firefox
+            const dualScreenLeft = topWindow.screenLeft !== undefined ? topWindow.screenLeft : topWindow.screenX;
+            const dualScreenTop = topWindow.screenTop !== undefined ? topWindow.screenTop : topWindow.screenY;
+
+            const width = topWindow.innerWidth ? topWindow.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+            const height = topWindow.innerHeight ? topWindow.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+            const h = height * .75;
+            const w = 500;
+
+            const systemZoom = width / topWindow.screen.availWidth;
+            const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+            const top = (height - h) / 2 / systemZoom + dualScreenTop;
+            const newWindow = window.open(url, title, `scrollbars=yes, width=${w / systemZoom}, height=${h / systemZoom}, top=${top}, left=${left}`);
+
+            if (window.focus) newWindow.focus();
+        }
+
+        // Wait for DOM to load before adding event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            // This overrides the default checkout button click handler to show the embed modal
+            // instead of opening a new tab with the given link url
+            const checkoutButton = document.getElementById('embedded-checkout-modal-checkout-button');
+            if (checkoutButton) {
+                checkoutButton.addEventListener('click', function (e) {
+                    showCheckoutWindow(e);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
