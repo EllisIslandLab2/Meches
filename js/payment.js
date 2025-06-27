@@ -36,6 +36,9 @@ function displayOrderSummary() {
     document.getElementById('payment-shipping').textContent = `$${orderData.shipping.toFixed(2)}`;
     document.getElementById('payment-tax').textContent = `$${orderData.tax.toFixed(2)}`;
     document.getElementById('payment-total').textContent = `$${orderData.total.toFixed(2)}`;
+    
+    // Update payment details display
+    document.getElementById('payment-total-display').textContent = `$${orderData.total.toFixed(2)}`;
 }
 
 function initializePaymentStatus() {
@@ -179,21 +182,21 @@ function validateCustomerInfo() {
 async function submitOrderToAirtable(orderConfirmation) {
     // Prepare order data for Airtable (matching README.md field names)
     const orderData = {
-        'Order ID': orderConfirmation.orderId,
+        'Order ID': String(orderConfirmation.orderId),
         'Customer Name': `${orderConfirmation.customerInfo.firstName} ${orderConfirmation.customerInfo.lastName}`,
-        'Email': orderConfirmation.customerInfo.email,
-        'Phone': orderConfirmation.customerInfo.phone || '',
+        'Email': String(orderConfirmation.customerInfo.email),
+        'Phone': String(orderConfirmation.customerInfo.phone || ''),
         'Address': `${orderConfirmation.customerInfo.address}, ${orderConfirmation.customerInfo.city}, ${orderConfirmation.customerInfo.state} ${orderConfirmation.customerInfo.zipCode}`,
         'Order Items': orderConfirmation.orderData.cart.map(item => 
             `${item.name} (${item.color}) x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`
         ).join('\n'),
-        'Subtotal': orderConfirmation.orderData.subtotal,
-        'Shipping': orderConfirmation.orderData.shipping,
-        'Tax': orderConfirmation.orderData.tax,
-        'Total': orderConfirmation.orderData.total,
-        'Payment Status': orderConfirmation.paymentStatus || 'Pending',
-        'Order Date': orderConfirmation.timestamp,
-        'Payment Token': orderConfirmation.paymentToken ? orderConfirmation.paymentToken.substring(0, 20) + '...' : 'Square Payment Link'
+        'Subtotal': Number(orderConfirmation.orderData.subtotal.toFixed(2)),
+        'Shipping': Number(orderConfirmation.orderData.shipping.toFixed(2)),
+        'Tax': Number(orderConfirmation.orderData.tax.toFixed(2)),
+        'Total': Number(orderConfirmation.orderData.total.toFixed(2)),
+        'Payment Status': String(orderConfirmation.paymentStatus || 'Pending'),
+        'Order Date': new Date(orderConfirmation.timestamp).toLocaleDateString('en-US'),
+        'Payment Token': String(orderConfirmation.paymentToken ? orderConfirmation.paymentToken.substring(0, 20) + '...' : 'Square Payment Link')
     };
     
     try {

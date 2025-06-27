@@ -4,7 +4,7 @@ const products = [
         id: 1,
         name: "Handmade Earrings - Floral with Ribbon",
         price: 18.00,
-        image: "meche-site/floral-earing.jpg",
+        image: "assets/images/floral-earing.jpg",
         category: "earrings",
         colors: ["Red"],
         description: "Beautiful handcrafted floral earrings"
@@ -13,7 +13,7 @@ const products = [
         id: 2,
         name: "Handmade Earrings - Floral",
         price: 15.00,
-        image: "meche-site/floral-earing.jpg",
+        image: "assets/images/floral-earing.jpg",
         category: "necklaces",
         colors: ["White"],
         description: "Vibrant sunset-inspired beaded necklace"
@@ -22,7 +22,7 @@ const products = [
         id: 3,
         name: "Sandal Earings - USA Style",
         price: 15.00,
-        image: "keychain-initial.jpg",
+        image: "assets/images/keychain-initial.jpg",
         category: "keychains",
         colors: ["Black", "Blue", "Red", "Green"],
         description: "Personalized initial keychain"
@@ -55,7 +55,7 @@ function createProductCard(product) {
     
     card.innerHTML = `
         <div class="product-image">
-            <img src="${product.image}" alt="${product.name}" onerror="this.src='product-placeholder.jpg'">
+            <img src="${product.image}" alt="${product.name}" onerror="this.src='assets/images/product-placeholder.jpg'">
         </div>
         <div class="product-info">
             <h3>${product.name}</h3>
@@ -158,7 +158,7 @@ function openCart() {
             const itemElement = document.createElement('div');
             itemElement.className = 'cart-item';
             itemElement.innerHTML = `
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='product-placeholder.jpg'">
+                <img src="${item.image}" alt="${item.name}" onerror="this.src='assets/images/product-placeholder.jpg'">
                 <div class="cart-item-details">
                     <h4>${item.name}</h4>
                     <p>Color: ${item.color}</p>

@@ -29,7 +29,7 @@ function displayCheckoutItems() {
         itemElement.className = 'checkout-item';
         itemElement.innerHTML = `
             <div class="checkout-item-image">
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='product-placeholder.jpg'">
+                <img src="${item.image}" alt="${item.name}" onerror="this.src='assets/images/product-placeholder.jpg'">
             </div>
             <div class="checkout-item-details">
                 <h4>${item.name}</h4>
@@ -90,7 +90,6 @@ function removeItem(index) {
 function updateCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
     calculateTotals();
-    displayCheckoutItems();
 }
 
 function calculateTotals() {
@@ -110,10 +109,10 @@ function setupEventListeners() {
     const updateCartBtn = document.getElementById('update-cart-btn');
     const proceedPaymentBtn = document.getElementById('proceed-payment-btn');
     
-    updateCartBtn.addEventListener('click', function() {
-        updateCart();
-        showMessage('Cart updated successfully!');
-    });
+//    updateCartBtn.addEventListener('click', function() {
+//        updateCart();
+//        showMessage('Cart updated successfully!');
+//    });
     
     proceedPaymentBtn.addEventListener('click', function() {
         // Store final cart and totals for payment page
