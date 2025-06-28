@@ -1,5 +1,6 @@
 // Checkout functionality
 let cart = [];
+let appliedPromo = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     loadCartFromStorage();
@@ -96,23 +97,51 @@ function calculateTotals() {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = cart.length > 0 ? 5.00 : 0;
     const taxRate = 0.08; // 8% tax
-    const tax = subtotal * taxRate;
-    const total = subtotal + shipping + tax;
+    
+    // Calculate discount
+    let discount = 0;
+    if (appliedPromo && appliedPromo.type === 'teacher') {
+        discount = subtotal * 0.10; // 10% discount
+    }
+    
+    const discountedSubtotal = subtotal - discount;
+    const tax = discountedSubtotal * taxRate;
+    const total = discountedSubtotal + shipping + tax;
     
     document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
     document.getElementById('shipping').textContent = `$${shipping.toFixed(2)}`;
     document.getElementById('tax').textContent = `$${tax.toFixed(2)}`;
+    
+    // Show/hide discount line
+    const discountLine = document.getElementById('discount-line');
+    if (discount > 0) {
+        document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
+        discountLine.style.display = 'block';
+    } else {
+        discountLine.style.display = 'none';
+    }
+    
     document.getElementById('total').textContent = `$${total.toFixed(2)}`;
 }
 
 function setupEventListeners() {
     const updateCartBtn = document.getElementById('update-cart-btn');
     const proceedPaymentBtn = document.getElementById('proceed-payment-btn');
+    const applyPromoBtn = document.getElementById('apply-promo-btn');
+    const promoCodeInput = document.getElementById('promo-code');
     
 //    updateCartBtn.addEventListener('click', function() {
 //        updateCart();
 //        showMessage('Cart updated successfully!');
 //    });
+    
+    // Promo code functionality
+    applyPromoBtn.addEventListener('click', applyPromoCode);
+    promoCodeInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyPromoCode();
+        }
+    });
     
     proceedPaymentBtn.addEventListener('click', function() {
         // Store final cart and totals for payment page
@@ -121,12 +150,59 @@ function setupEventListeners() {
             subtotal: parseFloat(document.getElementById('subtotal').textContent.replace('$', '')),
             shipping: parseFloat(document.getElementById('shipping').textContent.replace('$', '')),
             tax: parseFloat(document.getElementById('tax').textContent.replace('$', '')),
-            total: parseFloat(document.getElementById('total').textContent.replace('$', ''))
+            total: parseFloat(document.getElementById('total').textContent.replace('$', '')),
+            appliedPromo: appliedPromo
         };
         
         localStorage.setItem('orderData', JSON.stringify(orderData));
         window.location.href = 'payment.html';
     });
+}
+
+function applyPromoCode() {
+    const promoCodeInput = document.getElementById('promo-code');
+    const promoMessage = document.getElementById('promo-message');
+    const promoCode = promoCodeInput.value.trim().toUpperCase();
+    
+    // Clear previous messages
+    promoMessage.textContent = '';
+    promoMessage.className = 'promo-message';
+    
+    if (!promoCode) {
+        showPromoMessage('Please enter a promo code.', 'error');
+        return;
+    }
+    
+    // Valid teacher promo codes
+    const validTeacherCodes = ['TEACHER10', 'EDUCATOR10', 'TEACHER'];
+    
+    if (validTeacherCodes.includes(promoCode)) {
+        if (appliedPromo && appliedPromo.code === promoCode) {
+            showPromoMessage('This promo code is already applied.', 'info');
+            return;
+        }
+        
+        appliedPromo = {
+            code: promoCode,
+            type: 'teacher',
+            discount: 0.10,
+            description: 'Teacher Discount (10%)'
+        };
+        
+        calculateTotals();
+        showPromoMessage('Teacher discount applied! 10% off your order.', 'success');
+        promoCodeInput.disabled = true;
+        document.getElementById('apply-promo-btn').textContent = 'Applied';
+        document.getElementById('apply-promo-btn').disabled = true;
+    } else {
+        showPromoMessage('Invalid promo code. Please check and try again.', 'error');
+    }
+}
+
+function showPromoMessage(message, type) {
+    const promoMessage = document.getElementById('promo-message');
+    promoMessage.textContent = message;
+    promoMessage.className = `promo-message ${type}`;
 }
 
 function showMessage(message) {

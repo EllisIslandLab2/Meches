@@ -32,6 +32,16 @@
                     <div id="checkout-cart-items">
                         <!-- Cart items will be loaded here -->
                     </div>
+                    
+                    <!-- Promo Code Section -->
+                    <div class="promo-code-section">
+                        <h4>Promo Code</h4>
+                        <div class="promo-code-input">
+                            <input type="text" id="promo-code" placeholder="Enter promo code" maxlength="20">
+                            <button id="apply-promo-btn" class="btn-secondary">Apply</button>
+                        </div>
+                        <div id="promo-message" class="promo-message"></div>
+                    </div>
                 </div>
 
                 <!-- Order Summary -->
@@ -48,6 +58,10 @@
                     <div class="summary-line">
                         <span>Tax:</span>
                         <span id="tax">$0.00</span>
+                    </div>
+                    <div class="summary-line discount-line" id="discount-line" style="display: none;">
+                        <span>Discount:</span>
+                        <span id="discount">-$0.00</span>
                     </div>
                     <div class="summary-line total">
                         <span>Total:</span>
