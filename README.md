@@ -1,4 +1,4 @@
-# Maria's Handmade Crafts - Ecommerce Website
+# Meche's Handmade Crafts - Ecommerce Website
 
 A beautiful, responsive ecommerce website for selling handmade crafts including earrings, necklaces, keychains, and laser-cut wooden designs.
 
@@ -32,7 +32,7 @@ A beautiful, responsive ecommerce website for selling handmade crafts including 
 ## File Structure
 
 ```
-maria-crafts-shop/
+Meche-crafts-shop/
 ├── index.html              # Main homepage
 ├── checkout.html           # Shopping cart and checkout
 ├── payment.html            # Payment processing page
@@ -159,4 +159,4 @@ For issues with:
 
 ## License
 
-This project is provided as-is for Maria's craft business. Modify and use as needed for your business requirements.
+This project is provided as-is for Meche's craft business. Modify and use as needed for your business requirements.

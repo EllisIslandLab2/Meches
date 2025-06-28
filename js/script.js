@@ -23,7 +23,7 @@ const products = [
     {
         id: 2,
         name: "Handmade Earrings - Drip Style",
-        price: 9.99,
+        price: 13.99,
         category: "earrings",
         description: "Beautiful drip-style earrings in multiple colors",
         variants: {

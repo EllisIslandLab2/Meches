@@ -99,62 +99,6 @@ async function submitToAirtable(data, formType) {
 }
 
 
-async function simulateEmailNotification(data, formType) {
-    // In a real application, you might use a service like EmailJS, SendGrid, or Mailgun
-    // to send email notifications to Maria when forms are submitted
-    
-    const emailData = {
-        to: 'maria@mariacrafts.com',
-        subject: `New ${formType === 'general-inquiry' ? 'General Inquiry' : 'Custom Order Request'} from ${data.name}`,
-        message: formatEmailMessage(data, formType)
-    };
-    
-    console.log('Email notification sent:', emailData);
-}
-
-function formatEmailMessage(data, formType) {
-    if (formType === 'general-inquiry') {
-        return `
-New General Inquiry:
-
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone}
-Subject: ${data.subject}
-
-Message:
-${data.message}
-
-Submitted: ${new Date(data.timestamp).toLocaleString()}
-        `;
-    } else {
-        return `
-New Custom Order Request:
-
-Customer Information:
-Name: ${data.name}
-Email: ${data.email}
-Phone: ${data.phone}
-
-Order Details:
-Product Type: ${data.productType}
-Quantity: ${data.quantity}
-Colors: ${data.colors}
-Materials: ${data.materials}
-Size: ${data.size}
-Budget: ${data.budget}
-Deadline: ${data.deadline}
-
-Description:
-${data.description}
-
-Inspiration:
-${data.inspiration}
-
-Submitted: ${new Date(data.timestamp).toLocaleString()}
-        `;
-    }
-}
 
 function showSuccessModal(message) {
     const modal = document.getElementById('success-modal');
