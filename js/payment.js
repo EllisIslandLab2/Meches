@@ -32,14 +32,49 @@ function displayOrderSummary() {
         orderItemsContainer.appendChild(itemElement);
     });
     
+    // Recalculate totals with discount if needed
+    recalculateOrderTotals();
+    
     // Display totals
     document.getElementById('payment-subtotal').textContent = `$${orderData.subtotal.toFixed(2)}`;
     document.getElementById('payment-shipping').textContent = `$${orderData.shipping.toFixed(2)}`;
     document.getElementById('payment-tax').textContent = `$${orderData.tax.toFixed(2)}`;
+    
+    // Show/hide discount line
+    const discountLine = document.getElementById('payment-discount-line');
+    if (orderData.appliedPromo && orderData.appliedPromo.type === 'teacher') {
+        const discount = orderData.subtotal * orderData.appliedPromo.discount;
+        document.getElementById('payment-discount').textContent = `-$${discount.toFixed(2)}`;
+        discountLine.style.display = 'block';
+    } else {
+        discountLine.style.display = 'none';
+    }
+    
     document.getElementById('payment-total').textContent = `$${orderData.total.toFixed(2)}`;
     
     // Update payment details display
     document.getElementById('payment-total-display').textContent = `$${orderData.total.toFixed(2)}`;
+}
+
+function recalculateOrderTotals() {
+    // Recalculate subtotal from cart items
+    const subtotal = orderData.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    orderData.subtotal = subtotal;
+    
+    // Calculate discount if promo is applied
+    let discount = 0;
+    if (orderData.appliedPromo && orderData.appliedPromo.type === 'teacher') {
+        discount = subtotal * orderData.appliedPromo.discount;
+    }
+    
+    // Calculate tax on discounted subtotal
+    const discountedSubtotal = subtotal - discount;
+    const taxRate = 0.08; // 8% tax
+    const tax = discountedSubtotal * taxRate;
+    orderData.tax = tax;
+    
+    // Calculate final total
+    orderData.total = discountedSubtotal + orderData.shipping + tax;
 }
 
 function initializePaymentStatus() {
@@ -138,7 +173,7 @@ function handleDeliveryMethodChange() {
         // Update order totals with shipping
         if (orderData) {
             orderData.shipping = 5.00;
-            orderData.total = orderData.subtotal + orderData.shipping + orderData.tax;
+            recalculateOrderTotals();
             updateOrderDisplay();
         }
     } else {
@@ -162,7 +197,7 @@ function handleDeliveryMethodChange() {
         // Update order totals without shipping
         if (orderData) {
             orderData.shipping = 0.00;
-            orderData.total = orderData.subtotal + orderData.shipping + orderData.tax;
+            recalculateOrderTotals();
             updateOrderDisplay();
         }
     }
@@ -203,6 +238,18 @@ function resetPaymentState() {
 
 function updateOrderDisplay() {
     document.getElementById('payment-shipping').textContent = `$${orderData.shipping.toFixed(2)}`;
+    document.getElementById('payment-tax').textContent = `$${orderData.tax.toFixed(2)}`;
+    
+    // Show/hide discount line
+    const discountLine = document.getElementById('payment-discount-line');
+    if (orderData.appliedPromo && orderData.appliedPromo.type === 'teacher') {
+        const discount = orderData.subtotal * orderData.appliedPromo.discount;
+        document.getElementById('payment-discount').textContent = `-$${discount.toFixed(2)}`;
+        discountLine.style.display = 'block';
+    } else {
+        discountLine.style.display = 'none';
+    }
+    
     document.getElementById('payment-total').textContent = `$${orderData.total.toFixed(2)}`;
     document.getElementById('payment-total-display').textContent = `$${orderData.total.toFixed(2)}`;
     
@@ -319,10 +366,15 @@ async function submitOrderToAirtable(orderConfirmation) {
         ? 'In-Person Pickup' 
         : `${orderConfirmation.customerInfo.address}, ${orderConfirmation.customerInfo.city}, ${orderConfirmation.customerInfo.state} ${orderConfirmation.customerInfo.zipCode}`;
     
-    // Include delivery method in order items for tracking
-    const orderItemsText = orderConfirmation.orderData.cart.map(item => 
+    // Include delivery method and promo code in order items for tracking
+    let orderItemsText = orderConfirmation.orderData.cart.map(item => 
         `${item.name} (${item.variant || item.color}) x${item.quantity} - $${(item.price * item.quantity).toFixed(2)}`
     ).join('\n') + `\n\nDelivery: ${orderConfirmation.customerInfo.deliveryMethod}`;
+    
+    // Add promo code information if applied
+    if (orderConfirmation.orderData.appliedPromo) {
+        orderItemsText += `\nPromo Code: ${orderConfirmation.orderData.appliedPromo.code} (${orderConfirmation.orderData.appliedPromo.description})`;
+    }
     
     const orderData = {
         'Order ID': String(orderConfirmation.orderId),
@@ -334,6 +386,7 @@ async function submitOrderToAirtable(orderConfirmation) {
         'Subtotal': Number(orderConfirmation.orderData.subtotal.toFixed(2)),
         'Shipping': Number(orderConfirmation.orderData.shipping.toFixed(2)),
         'Tax': Number(orderConfirmation.orderData.tax.toFixed(2)),
+        'Discount': orderConfirmation.orderData.appliedPromo ? Number((orderConfirmation.orderData.subtotal * orderConfirmation.orderData.appliedPromo.discount).toFixed(2)) : 0,
         'Total': Number(orderConfirmation.orderData.total.toFixed(2)),
         'Payment Status': String(orderConfirmation.paymentStatus || 'Pending'),
         'Order Date': new Date(orderConfirmation.timestamp).toLocaleDateString('en-US'),
