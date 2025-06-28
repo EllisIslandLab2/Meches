@@ -205,6 +205,12 @@ function updateOrderDisplay() {
     document.getElementById('payment-shipping').textContent = `$${orderData.shipping.toFixed(2)}`;
     document.getElementById('payment-total').textContent = `$${orderData.total.toFixed(2)}`;
     document.getElementById('payment-total-display').textContent = `$${orderData.total.toFixed(2)}`;
+    
+    // Update the prominent Square amount display
+    const squareAmountDisplay = document.getElementById('square-amount-display');
+    if (squareAmountDisplay) {
+        squareAmountDisplay.textContent = `$${orderData.total.toFixed(2)}`;
+    }
 }
 
 function checkPaymentCompletion() {

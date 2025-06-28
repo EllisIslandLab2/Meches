@@ -5,6 +5,51 @@
     box-sizing: border-box;
 }
 
+/* Square Payment Amount Highlight */
+.payment-amount-highlight {
+    background: #fff3cd;
+    border: 3px solid #856404;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.payment-amount-highlight h3 {
+    color: #856404;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.amount-to-enter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.amount-large {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.payment-instruction {
+    color: #856404;
+    font-size: 0.95em;
+    line-height: 1.6;
+    margin-top: 15px;
+}
+
+.square-payment-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
 body {
     font-family: 'Georgia', 'Times New Roman', serif;
     line-height: 1.6;

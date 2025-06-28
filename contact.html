@@ -18,6 +18,9 @@
                     <a href="index.html">Home</a>
                     <a href="index.html#products">Products</a>
                     <a href="contact.html" class="active">Contact</a>
+                    <button id="cart-btn" class="cart-btn">
+                        Cart (<span id="cart-count">0</span>)
+                    </button>
                 </div>
             </div>
         </nav>
@@ -35,17 +38,14 @@
                     <div class="contact-methods">
                         <div class="contact-method">
                             <h4>Email</h4>
-                            <p>maria@mariacrafts.com</p>
-                        </div>
-                        <div class="contact-method">
-                            <h4>Phone</h4>
-                            <p>(555) 123-4567</p>
+                            <p>Please use General Inquiry form, and you will receive a message from "marimer93@gmail.com" - Make sure to check your spam!</p>
                         </div>
                         <div class="contact-method">
                             <h4>Business Hours</h4>
                             <p>Monday - Friday: 9am - 6pm<br>
                                Saturday: 10am - 4pm<br>
-                               Sunday: Closed</p>
+                               Sunday: Closed<br>
+                               Leave us a message in the General Inquiry form, and I'll get back to you within these hours ASAP!</p>
                         </div>
                     </div>
                     
@@ -177,6 +177,22 @@
         </div>
     </main>
 
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Shopping Cart</h2>
+            <div id="cart-items"></div>
+            <div class="cart-total">
+                <h3>Total: $<span id="cart-total">0.00</span></h3>
+            </div>
+            <div class="cart-actions">
+                <button id="checkout-btn" class="btn-primary">Checkout</button>
+                <button id="continue-shopping" class="btn-secondary">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="success-modal" class="modal">
         <div class="modal-content">
@@ -193,6 +209,7 @@
         </div>
     </footer>
 
+    <script src="js/cart-shared.js"></script>
     <script src="js/contact.js"></script>
 </body>
 </html>
