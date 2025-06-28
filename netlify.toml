@@ -8,8 +8,8 @@
   # Use the default port for local development
   port = 8888
   # Enable function debugging
-  functions = ".netlify/functions"
+  functions = "netlify/functions"
 
 [functions]
   # Directory for serverless functions
-  directory = ".netlify/functions"
+  directory = "netlify/functions"

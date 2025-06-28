@@ -33,7 +33,7 @@ function displayCheckoutItems() {
             </div>
             <div class="checkout-item-details">
                 <h4>${item.name}</h4>
-                <p>Color: ${item.color}</p>
+                <p>${item.variantType || 'Style'}: ${item.variant || item.color}</p>
                 <p>Price: $${item.price.toFixed(2)}</p>
             </div>
             <div class="checkout-item-quantity">
