@@ -174,7 +174,7 @@ function applyPromoCode() {
     }
     
     // Valid teacher promo codes
-    const validTeacherCodes = ['TEACHER10', 'EDUCATOR10', 'TEACHER'];
+    const validTeacherCodes = ['TEACHER10', 'EDUCATOR10', 'TEACHER', 'LIBERTY10'];
     
     if (validTeacherCodes.includes(promoCode)) {
         if (appliedPromo && appliedPromo.code === promoCode) {
@@ -190,7 +190,7 @@ function applyPromoCode() {
         };
         
         calculateTotals();
-        showPromoMessage('Teacher discount applied! 10% off your order.', 'success');
+        showPromoMessage('Discount applied! 10% off your order.', 'success');
         promoCodeInput.disabled = true;
         document.getElementById('apply-promo-btn').textContent = 'Applied';
         document.getElementById('apply-promo-btn').disabled = true;
