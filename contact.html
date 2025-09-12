@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact & Custom Orders - Meche's Creations for Handmade Crafts</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="logo-container">
+                    <img src="assets/images/logo.jpg" alt="Meche's Crafts Logo" class="logo" id="logo-placeholder">
+                    <h1><a href="index.html">Handmade Crafts</a></h1>
+                </div>
+                <div class="nav-links">
+                    <a href="index.html">Home</a>
+                    <a href="index.html#products">Products</a>
+                    <a href="contact.html" class="active">Contact</a>
+                    <button id="cart-btn" class="cart-btn">
+                        Cart (<span id="cart-count">0</span>)
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="contact-main">
+        <div class="container">
+            <h2>Contact & Custom Orders</h2>
+            <p class="contact-intro">Have a special request or want to customize any of our products? We'd love to work with you to create something unique!</p>
+            
+            <div class="contact-container">
+                <!-- Contact Information -->
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <h4>Email</h4>
+                            <p>Please use either the General Inquiry or Custom Order form, and you will receive a reply back from "mechescreations0@gmail.com" - Make sure to check your spam/junk!</p>
+                        </div>
+                        <div class="contact-method">
+                            <h4>Business Hours</h4>
+                            <p>Monday - Friday: 9am - 6pm<br>
+                               Saturday: 10am - 4pm<br>
+                               Sunday: Closed<br>
+                               Leave us a message in either the General Inquiry or Custom Order form, and I'll get back to you within 24 hours!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-options">
+                        <h4>Customization Options Available:</h4>
+                        <ul>
+                            <li>Custom colors and materials</li>
+                            <li>Personalized engravings</li>
+                            <li>Size modifications</li>
+                            <li>Bulk orders for events</li>
+                            <li>Corporate gifts</li>
+                            <li>Custom designs from your ideas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Contact Forms -->
+                <div class="contact-forms">
+                    <!-- General Contact Form -->
+                    <div class="form-section">
+                        <h3>General Inquiry</h3>
+                        <form id="general-contact-form" class="contact-form">
+                            <div class="form-group">
+                                <label for="general-name">Name *</label>
+                                <input type="text" id="general-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="general-email">Email *</label>
+                                <input type="email" id="general-email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="general-phone">Phone</label>
+                                <input type="tel" id="general-phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="general-subject">Subject *</label>
+                                <select id="general-subject" name="subject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="product-inquiry">Product Inquiry</option>
+                                    <option value="order-status">Order Status</option>
+                                    <option value="shipping">Shipping Question</option>
+                                    <option value="return">Return/Exchange</option>
+                                    <option value="wholesale">Wholesale Inquiry</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="general-message">Message *</label>
+                                <textarea id="general-message" name="message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Send Message</button>
+                        </form>
+                    </div>
+
+                    <!-- Custom Order Form -->
+                    <div class="form-section">
+                        <h3>Custom Order Request</h3>
+                        <form id="custom-order-form" class="contact-form">
+                            <div class="form-group">
+                                <label for="custom-name">Name *</label>
+                                <input type="text" id="custom-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-email">Email *</label>
+                                <input type="email" id="custom-email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-phone">Phone</label>
+                                <input type="tel" id="custom-phone" name="phone">
+                            </div>
+                            <div class="form-group">
+                                <label for="product-type">Product Type *</label>
+                                <select id="product-type" name="productType" required>
+                                    <option value="">Select product type</option>
+                                    <option value="earrings">Earrings</option>
+                                    <option value="necklace">Necklace</option>
+                                    <option value="bracelet">Bracelet</option>
+                                    <option value="keychain">Keychain</option>
+                                    <option value="wooden-art">Laser-Cut Wooden Art</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-colors">Preferred Colors</label>
+                                <input type="text" id="custom-colors" name="colors" placeholder="e.g., Gold, Silver, Blue">
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-materials">Preferred Materials</label>
+                                <input type="text" id="custom-materials" name="materials" placeholder="e.g., Sterling Silver, Wood, Acrylic">
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-size">Size Requirements</label>
+                                <input type="text" id="custom-size" name="size" placeholder="e.g., 2 inches, Small, Large">
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-quantity">Quantity *</label>
+                                <input type="number" id="custom-quantity" name="quantity" min="1" value="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-budget">Budget Range</label>
+                                <select id="custom-budget" name="budget">
+                                    <option value="">Select budget range</option>
+                                    <option value="under-25">Under $25</option>
+                                    <option value="25-50">$25 - $50</option>
+                                    <option value="50-100">$50 - $100</option>
+                                    <option value="100-200">$100 - $200</option>
+                                    <option value="over-200">Over $200</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-deadline">Needed By (Date)</label>
+                                <input type="date" id="custom-deadline" name="deadline">
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-description">Detailed Description *</label>
+                                <textarea id="custom-description" name="description" rows="6" 
+                                    placeholder="Please describe your custom order in detail. Include any inspiration images, specific requirements, or special requests." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-inspiration">Inspiration/Reference</label>
+                                <textarea id="custom-inspiration" name="inspiration" rows="3" 
+                                    placeholder="Any links to inspiration images or references that might help us understand your vision."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Submit Custom Order Request</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Shopping Cart</h2>
+            <div id="cart-items"></div>
+            <div class="cart-total">
+                <h3>Total: $<span id="cart-total">0.00</span></h3>
+            </div>
+            <div class="cart-actions">
+                <button id="checkout-btn" class="btn-primary">Checkout</button>
+                <button id="continue-shopping" class="btn-secondary">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Message Sent Successfully!</h2>
+            <p id="success-message">Thank you for your message. We'll get back to you within 24 hours.</p>
+            <button id="close-success" class="btn-primary">Close</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Meche's Handmade Crafts. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/cart-shared.js"></script>
+    <script src="js/contact.js"></script>
+</body>
+</html>
