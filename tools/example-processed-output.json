@@ -1,0 +1,46 @@
+[
+  {
+    "id": 5,
+    "name": "Handmade Earrings - Rainbow Collection",
+    "price": 12.99,
+    "category": "earrings",
+    "description": "Colorful rainbow-themed earrings",
+    "variants": {
+      "redrainbow": {
+        "name": "Red Rainbow",
+        "image": "/assets/images/earrings-rainbow-red.JPG"
+      },
+      "bluerainbow": {
+        "name": "Blue Rainbow",
+        "image": "/assets/images/earrings-rainbow-blue.JPG"
+      },
+      "greenrainbow": {
+        "name": "Green Rainbow",
+        "image": "/assets/images/earrings-rainbow-green.JPG"
+      }
+    },
+    "defaultVariant": "red",
+    "selectorType": "color",
+    "selectorLabel": "Color"
+  },
+  {
+    "id": 6,
+    "name": "Handmade Earrings - Nature Style",
+    "price": 14.99,
+    "category": "earrings",
+    "description": "Earth-inspired natural earrings",
+    "variants": {
+      "leaf": {
+        "name": "Leaf",
+        "image": "/assets/images/earrings-leaf-green.JPG"
+      },
+      "tree": {
+        "name": "Tree",
+        "image": "/assets/images/earrings-tree-brown.JPG"
+      }
+    },
+    "defaultVariant": "leaf",
+    "selectorType": "type",
+    "selectorLabel": "Style"
+  }
+]

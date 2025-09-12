@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #fefefe;
+  --foreground: #333333;
+}
+
+body {
+  color: var(--foreground);
+  line-height: 1.6;
+  font-family: Georgia, 'Times New Roman', serif;
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
+}
+
+/* Variation 1: Gentle Drift Left with randomization */
+@keyframes fall1 {
+  0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  30% { transform: translateY(30vh) translateX(calc(-25px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(90deg * var(--rotation-speed))) rotateX(calc(45deg * var(--rotation-speed))) rotateY(calc(20deg * var(--zigzag-intensity))); }
+  60% { transform: translateY(60vh) translateX(calc(-45px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(180deg * var(--rotation-speed))) rotateX(calc(90deg * var(--rotation-speed))) rotateY(calc(-25deg * var(--zigzag-intensity))); }
+  85% { transform: translateY(85vh) translateX(calc(-65px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(270deg * var(--rotation-speed))) rotateX(calc(135deg * var(--rotation-speed))) rotateY(calc(15deg * var(--zigzag-intensity))); }
+  98% { transform: translateY(98vh) translateX(calc(-80px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(350deg * var(--rotation-speed))) rotateX(calc(170deg * var(--rotation-speed))) rotateY(calc(-10deg * var(--zigzag-intensity))); opacity: 0.9; }
+  100% { transform: translateY(calc(100vh + 100px)) translateX(calc(-90px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(360deg * var(--rotation-speed))) rotateX(calc(180deg * var(--rotation-speed))) rotateY(0deg); opacity: 0; }
+}
+
+/* Variation 2: Left Drift with Small Zigzag and randomization */
+@keyframes fall2 {
+  0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  25% { transform: translateY(25vh) translateX(calc(-15px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(80deg * var(--rotation-speed))) rotateX(calc(60deg * var(--rotation-speed))) rotateY(calc(-20deg * var(--zigzag-intensity))); }
+  55% { transform: translateY(55vh) translateX(calc(-35px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(160deg * var(--rotation-speed))) rotateX(calc(120deg * var(--rotation-speed))) rotateY(calc(25deg * var(--zigzag-intensity))); }
+  80% { transform: translateY(80vh) translateX(calc(-55px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(240deg * var(--rotation-speed))) rotateX(calc(180deg * var(--rotation-speed))) rotateY(calc(-15deg * var(--zigzag-intensity))); }
+  98% { transform: translateY(98vh) translateX(calc(-75px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(310deg * var(--rotation-speed))) rotateX(calc(230deg * var(--rotation-speed))) rotateY(calc(10deg * var(--zigzag-intensity))); opacity: 0.9; }
+  100% { transform: translateY(calc(100vh + 100px)) translateX(calc(-85px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(320deg * var(--rotation-speed))) rotateX(calc(240deg * var(--rotation-speed))) rotateY(0deg); opacity: 0; }
+}
+
+/* Variation 3: Left Drift S-Curve with randomization */
+@keyframes fall3 {
+  0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  20% { transform: translateY(20vh) translateX(calc(-8px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(60deg * var(--rotation-speed))) rotateX(calc(40deg * var(--rotation-speed))) rotateY(calc(25deg * var(--zigzag-intensity))); }
+  45% { transform: translateY(45vh) translateX(calc(-25px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(140deg * var(--rotation-speed))) rotateX(calc(100deg * var(--rotation-speed))) rotateY(calc(-30deg * var(--zigzag-intensity))); }
+  70% { transform: translateY(70vh) translateX(calc(-40px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(220deg * var(--rotation-speed))) rotateX(calc(160deg * var(--rotation-speed))) rotateY(calc(20deg * var(--zigzag-intensity))); }
+  90% { transform: translateY(90vh) translateX(calc(-60px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(300deg * var(--rotation-speed))) rotateX(calc(220deg * var(--rotation-speed))) rotateY(calc(-15deg * var(--zigzag-intensity))); }
+  98% { transform: translateY(98vh) translateX(calc(-75px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(370deg * var(--rotation-speed))) rotateX(calc(270deg * var(--rotation-speed))) rotateY(calc(8deg * var(--zigzag-intensity))); opacity: 0.9; }
+  100% { transform: translateY(calc(100vh + 100px)) translateX(calc(-85px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(380deg * var(--rotation-speed))) rotateX(calc(280deg * var(--rotation-speed))) rotateY(0deg); opacity: 0; }
+}
+
+/* Variation 4: Left Drift Minimal with randomization */
+@keyframes fall4 {
+  0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  40% { transform: translateY(40vh) translateX(calc(-20px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(120deg * var(--rotation-speed))) rotateX(calc(80deg * var(--rotation-speed))) rotateY(calc(-15deg * var(--zigzag-intensity))); }
+  75% { transform: translateY(75vh) translateX(calc(-45px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(240deg * var(--rotation-speed))) rotateX(calc(160deg * var(--rotation-speed))) rotateY(calc(18deg * var(--zigzag-intensity))); }
+  98% { transform: translateY(98vh) translateX(calc(-65px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(350deg * var(--rotation-speed))) rotateX(calc(230deg * var(--rotation-speed))) rotateY(calc(-8deg * var(--zigzag-intensity))); opacity: 0.9; }
+  100% { transform: translateY(calc(100vh + 100px)) translateX(calc(-75px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(360deg * var(--rotation-speed))) rotateX(calc(240deg * var(--rotation-speed))) rotateY(0deg); opacity: 0; }
+}
+
+/* Variation 5: Left Drift Wobble with randomization */
+@keyframes fall5 {
+  0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  18% { transform: translateY(18vh) translateX(calc(-5px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(50deg * var(--rotation-speed))) rotateX(calc(30deg * var(--rotation-speed))) rotateY(calc(15deg * var(--zigzag-intensity))); }
+  35% { transform: translateY(35vh) translateX(calc(-20px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(110deg * var(--rotation-speed))) rotateX(calc(70deg * var(--rotation-speed))) rotateY(calc(-22deg * var(--zigzag-intensity))); }
+  52% { transform: translateY(52vh) translateX(calc(-35px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(170deg * var(--rotation-speed))) rotateX(calc(110deg * var(--rotation-speed))) rotateY(calc(12deg * var(--zigzag-intensity))); }
+  68% { transform: translateY(68vh) translateX(calc(-50px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(230deg * var(--rotation-speed))) rotateX(calc(150deg * var(--rotation-speed))) rotateY(calc(-18deg * var(--zigzag-intensity))); }
+  85% { transform: translateY(85vh) translateX(calc(-65px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(290deg * var(--rotation-speed))) rotateX(calc(190deg * var(--rotation-speed))) rotateY(calc(20deg * var(--zigzag-intensity))); }
+  98% { transform: translateY(98vh) translateX(calc(-80px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(340deg * var(--rotation-speed))) rotateX(calc(220deg * var(--rotation-speed))) rotateY(calc(-5deg * var(--zigzag-intensity))); opacity: 0.9; }
+  100% { transform: translateY(calc(100vh + 100px)) translateX(calc(-90px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(350deg * var(--rotation-speed))) rotateX(calc(230deg * var(--rotation-speed))) rotateY(0deg); opacity: 0; }
+}
+
+/* Variation 6: Left Drift Straight with randomization */
+@keyframes fall6 {
+  0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  50% { transform: translateY(50vh) translateX(calc(-30px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(180deg * var(--rotation-speed))) rotateX(calc(90deg * var(--rotation-speed))) rotateY(calc(-12deg * var(--zigzag-intensity))); }
+  98% { transform: translateY(98vh) translateX(calc(-60px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(350deg * var(--rotation-speed))) rotateX(calc(170deg * var(--rotation-speed))) rotateY(calc(6deg * var(--zigzag-intensity))); opacity: 0.9; }
+  100% { transform: translateY(calc(100vh + 100px)) translateX(calc(-70px * var(--zigzag-intensity) + var(--drift-variation))) rotate(calc(360deg * var(--rotation-speed))) rotateX(calc(180deg * var(--rotation-speed))) rotateY(0deg); opacity: 0; }
+}
+
+@keyframes drift {
+  0% {
+    transform: translateX(-50px);
+  }
+  100% {
+    transform: translateX(100vw);
+  }
+}
+
+/* Existing animations */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.3s ease;
+}
+
+/* Ensure proper z-index stacking */
+.dynamic-bg {
+  z-index: -10;
+}

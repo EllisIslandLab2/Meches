@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.mechescreations.com/sitemap.xml
+
+# Optimize crawl budget
+Crawl-delay: 1
