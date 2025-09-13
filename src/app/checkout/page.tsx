@@ -28,7 +28,7 @@ export default function CheckoutPage() {
         <h1 className="text-3xl font-bold text-amber-800 mb-8">Shopping Cart</h1>
         
         {cart.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center">
+          <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 text-center border-2 border-amber-700">
             <h2 className="text-xl text-gray-600 mb-4">Your cart is empty</h2>
             <Link
               href="/"
@@ -41,7 +41,7 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg border-2 border-amber-700">
                 <h2 className="text-xl font-semibold mb-6">Items in Your Cart</h2>
                 <div className="space-y-4">
                   {cart.map((item) => (
@@ -94,7 +94,7 @@ export default function CheckoutPage() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl p-6 shadow-lg sticky top-24">
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg sticky top-24 border-2 border-amber-700">
                 <h3 className="text-xl font-semibold mb-6">Order Summary</h3>
                 
                 <div className="space-y-3 mb-6">

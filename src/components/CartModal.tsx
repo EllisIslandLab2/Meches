@@ -16,7 +16,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white/98 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto relative border-2 border-amber-700">
+      <div className="bg-gradient-to-br from-amber-50/98 to-yellow-50/98 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto relative border-2 border-amber-700">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-2xl font-bold text-amber-700 hover:text-amber-900"

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import CartModal from './CartModal';
+import SeasonDropdown from './SeasonDropdown';
 
 export default function Header() {
   const { getTotalItems } = useCart();
@@ -36,9 +37,7 @@ export default function Header() {
               <Link href="/" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
                 Home
               </Link>
-              <Link href="/#products" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
-                Products
-              </Link>
+              <SeasonDropdown />
               <Link href="/contact" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
                 Contact
               </Link>

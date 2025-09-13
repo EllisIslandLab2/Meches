@@ -57,39 +57,15 @@ const TimeBasedText: React.FC<TimeBasedTextProps> = ({
   const { timeOfDay } = useTimeOfDay();
 
   const getTextColor = () => {
-    switch (timeOfDay) {
-      case 'night':
-        // Light colors for dark night background
-        return variant === 'heading' 
-          ? 'text-amber-100' 
-          : 'text-amber-200';
-      case 'evening':
-        // Medium colors for sunset background
-        return variant === 'heading' 
-          ? 'text-amber-900' 
-          : 'text-amber-800';
-      case 'morning':
-      case 'day':
-      default:
-        // Dark colors for light day background
-        return variant === 'heading' 
-          ? 'text-amber-900' 
-          : 'text-amber-800';
-    }
+    // Always use dark colors for readability on light backgrounds
+    return variant === 'heading' 
+      ? 'text-amber-900' 
+      : 'text-amber-800';
   };
 
   const getDropShadow = () => {
-    switch (timeOfDay) {
-      case 'night':
-        // Light text needs dark shadow
-        return 'drop-shadow-lg';
-      case 'evening':
-        return 'drop-shadow-sm';
-      case 'morning':
-      case 'day':
-      default:
-        return 'drop-shadow-sm';
-    }
+    // Always use consistent shadow for dark text
+    return 'drop-shadow-sm';
   };
 
   const dynamicClasses = `${getTextColor()} ${getDropShadow()} transition-colors duration-[3000ms] ease-in-out`;

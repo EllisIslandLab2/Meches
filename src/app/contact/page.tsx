@@ -157,7 +157,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Information */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
+            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg border-2 border-amber-700">
               <h2 className="text-xl font-semibold text-amber-800 mb-6">Get in Touch</h2>
               
               <div className="space-y-4 mb-6">
@@ -203,7 +203,7 @@ export default function ContactPage() {
           <div className="lg:col-span-2">
             <div className="space-y-8">
               {/* General Contact Form */}
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg border-2 border-amber-700">
                 <h3 className="text-xl font-semibold text-amber-800 mb-6">General Inquiry</h3>
                 <form onSubmit={handleGeneralContactSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -249,7 +249,7 @@ export default function ContactPage() {
               </div>
 
               {/* Custom Order Form */}
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg border-2 border-amber-700">
                 <h3 className="text-xl font-semibold text-amber-800 mb-6">Custom Order Request</h3>
                 <form onSubmit={handleCustomOrderSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

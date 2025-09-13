@@ -1,6 +1,6 @@
 export interface CartItem {
-  id: number;
-  productId: number;
+  id: string; // Changed to string for Airtable record IDs
+  productId: string; // Changed to string for Airtable record IDs
   name: string;
   price: number;
   variant: string;
@@ -12,8 +12,8 @@ export interface CartItem {
 export interface CartContextType {
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, 'id'>) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeFromCart: (id: string) => void; // Changed to string
+  updateQuantity: (id: string, quantity: number) => void; // Changed to string
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;

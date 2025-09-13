@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
+import { SeasonProvider } from "@/contexts/SeasonContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import DynamicBackground from "@/components/DynamicBackground";
+import DevSeasonControl from "@/components/DevSeasonControl";
 
 export const metadata: Metadata = {
   title: "Meche's Handmade Crafts - Unique Handcrafted Jewelry & Wooden Designs",
@@ -80,15 +82,18 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className="font-serif min-h-screen flex flex-col">
-        <DynamicBackground footerHeight={80} className="dynamic-bg">
-          <CartProvider>
-            <Header />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </CartProvider>
-        </DynamicBackground>
+        <SeasonProvider>
+          <DynamicBackground footerHeight={80} className="dynamic-bg">
+            <CartProvider>
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </CartProvider>
+            <DevSeasonControl />
+          </DynamicBackground>
+        </SeasonProvider>
       </body>
     </html>
   );

@@ -1,24 +1,62 @@
 [
   {
-    "id": 5,
     "name": "Handmade Earrings - Rainbow Collection",
     "price": 12.99,
-    "category": "earrings",
+    "image": "/assets/images/earrings-rainbow-red.JPG",
+    "category": "Rainbow Earrings",
     "description": "Colorful rainbow-themed earrings",
-    "variants": "Red Rainbow, /assets/images/earrings-rainbow-red.JPG; Blue Rainbow, /assets/images/earrings-rainbow-blue.JPG; Green Rainbow, /assets/images/earrings-rainbow-green.JPG",
-    "defaultVariant": "red",
-    "selectorType": "color",
-    "selectorLabel": "Color"
+    "variant_name": "Red Rainbow",
+    "is_default_variant": true,
+    "display": true,
+    "selector_type": "color",
+    "selector_label": "Color"
   },
   {
-    "id": 6,
+    "name": "Handmade Earrings - Rainbow Collection",
+    "price": 12.99,
+    "image": "/assets/images/earrings-rainbow-blue.JPG",
+    "category": "Rainbow Earrings",
+    "description": "Colorful rainbow-themed earrings",
+    "variant_name": "Blue Rainbow",
+    "is_default_variant": false,
+    "display": true,
+    "selector_type": "color",
+    "selector_label": "Color"
+  },
+  {
+    "name": "Handmade Earrings - Rainbow Collection",
+    "price": 12.99,
+    "image": "/assets/images/earrings-rainbow-green.JPG",
+    "category": "Rainbow Earrings",
+    "description": "Colorful rainbow-themed earrings",
+    "variant_name": "Green Rainbow",
+    "is_default_variant": false,
+    "display": true,
+    "selector_type": "color",
+    "selector_label": "Color"
+  },
+  {
     "name": "Handmade Earrings - Nature Style",
     "price": 14.99,
-    "category": "earrings",
+    "image": "/assets/images/earrings-leaf-green.JPG",
+    "category": "Nature Earrings",
     "description": "Earth-inspired natural earrings",
-    "variants": "Leaf, /assets/images/earrings-leaf-green.JPG; Tree, /assets/images/earrings-tree-brown.JPG",
-    "defaultVariant": "leaf",
-    "selectorType": "type",
-    "selectorLabel": "Style"
+    "variant_name": "Leaf",
+    "is_default_variant": true,
+    "display": true,
+    "selector_type": "type",
+    "selector_label": "Style"
+  },
+  {
+    "name": "Handmade Earrings - Nature Style",
+    "price": 14.99,
+    "image": "/assets/images/earrings-tree-brown.JPG",
+    "category": "Nature Earrings",
+    "description": "Earth-inspired natural earrings",
+    "variant_name": "Tree",
+    "is_default_variant": false,
+    "display": true,
+    "selector_type": "type",
+    "selector_label": "Style"
   }
 ]

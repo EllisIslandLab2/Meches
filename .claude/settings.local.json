@@ -2,9 +2,27 @@
   "permissions": {
     "allow": [
       "Bash(cp:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm run build:*)",
+      "Bash(claude mcp:*)",
+      "Bash(claude -p \"/mcp\")",
+      "mcp__airtable__list_bases",
+      "mcp__airtable__list_tables",
+      "mcp__airtable__list_records",
+      "Bash(pkill:*)",
+      "Bash(true)",
+      "mcp__airtable__create_field",
+      "mcp__airtable__update_field",
+      "mcp__airtable__create_record",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "/home/marimer"
+    ]
   }
 }

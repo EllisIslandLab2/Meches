@@ -17,27 +17,27 @@ const GlassCard: React.FC<GlassCardProps> = ({
     switch (intensity) {
       case 'light':
         return {
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
+          background: 'linear-gradient(135deg, rgba(255, 251, 235, 0.3), rgba(254, 252, 191, 0.2))',
           backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)'
+          border: '1px solid rgba(217, 119, 6, 0.2)'
         };
       case 'medium':
         return {
-          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+          background: 'linear-gradient(135deg, rgba(255, 251, 235, 0.5), rgba(254, 252, 191, 0.4))',
           backdropFilter: 'blur(15px)',
-          border: '1px solid rgba(255, 255, 255, 0.3)'
+          border: '1px solid rgba(217, 119, 6, 0.3)'
         };
       case 'strong':
         return {
-          backgroundColor: 'rgba(255, 255, 255, 0.35)',
+          background: 'linear-gradient(135deg, rgba(255, 251, 235, 0.7), rgba(254, 252, 191, 0.6))',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.4)'
+          border: '1px solid rgba(217, 119, 6, 0.4)'
         };
       default:
         return {
-          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+          background: 'linear-gradient(135deg, rgba(255, 251, 235, 0.5), rgba(254, 252, 191, 0.4))',
           backdropFilter: 'blur(15px)',
-          border: '1px solid rgba(255, 255, 255, 0.3)'
+          border: '1px solid rgba(217, 119, 6, 0.3)'
         };
     }
   };

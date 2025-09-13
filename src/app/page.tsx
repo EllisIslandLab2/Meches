@@ -1,10 +1,29 @@
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/products';
+import { sampleProducts, groupProductsByCategory, fetchProductsFromAirtableServer } from '@/data/products';
 import Link from 'next/link';
 import TimeBasedText from '@/components/TimeBasedText';
 import GlassCard from '@/components/GlassCard';
+import ProductsClient from '@/components/ProductsClient';
+import type { Product } from '@/data/products';
 
-export default function Home() {
+// ISR: Revalidate every 5 minutes
+export const revalidate = 300;
+
+// Server-side data fetching with ISR
+async function getProducts(): Promise<Product[]> {
+  try {
+    const products = await fetchProductsFromAirtableServer();
+    console.log(`Fetched ${products.length} products from Airtable at build/revalidate time`);
+    return products;
+  } catch (error) {
+    console.error('Failed to fetch products during build/revalidate, using sample data:', error);
+    return sampleProducts;
+  }
+}
+
+export default async function Home() {
+  // Pre-fetch products at build time / ISR time
+  const products = await getProducts();
   return (
     <div>
       {/* Hero Section */}
@@ -32,23 +51,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Products Section */}
-      <section id="products" className="py-16">
-        <div className="max-w-6xl mx-auto px-5">
-          <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="light">
-            <h2 className="text-3xl font-bold text-center">
-              <TimeBasedText variant="heading">
-                Our Products
-              </TimeBasedText>
-            </h2>
-          </GlassCard>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Products Section with Client-side Season Filtering */}
+      <ProductsClient initialProducts={products} />
     </div>
   );
 }

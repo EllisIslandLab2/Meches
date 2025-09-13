@@ -1,52 +1,23 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useSeason } from '@/contexts/SeasonContext';
 
-// Custom hooks for time and season detection
-const useTimeOfDay = () => {
-  const [timeData, setTimeData] = useState({
-    hour: new Date().getHours(),
-    timeOfDay: 'day',
-    progress: 0
-  });
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const hour = now.getHours();
-      
-      let timeOfDay = 'day';
-      let progress = 0;
-      
-      if (hour >= 6 && hour < 12) {
-        timeOfDay = 'morning';
-        progress = (hour - 6) / 6;
-      } else if (hour >= 12 && hour < 18) {
-        timeOfDay = 'day';
-        progress = (hour - 12) / 6;
-      } else if (hour >= 18 && hour < 21) {
-        timeOfDay = 'evening';
-        progress = (hour - 18) / 3;
-      } else {
-        timeOfDay = 'night';
-        progress = hour < 6 ? (hour + 6) / 12 : (hour - 18) / 12;
-      }
-      
-      setTimeData({ hour, timeOfDay, progress });
-    };
-
-    updateTime();
-    const interval = setInterval(updateTime, 60000); // Update every minute
-    return () => clearInterval(interval);
-  }, []);
-
-  return timeData;
-};
-
-const useSeason = () => {
+// Development season hook for backward compatibility with DevSeasonControl
+const useDevSeason = () => {
   const [season, setSeason] = useState('spring');
 
   useEffect(() => {
+    // Check for development season override in localStorage or URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const devSeason = urlParams.get('season') || localStorage.getItem('devSeason');
+    
+    if (devSeason && ['spring', 'summer', 'fall', 'winter'].includes(devSeason)) {
+      setSeason(devSeason);
+      return;
+    }
+    
+    // Default behavior: use actual date
     const now = new Date();
     const month = now.getMonth() + 1;
     
@@ -68,15 +39,27 @@ interface ParticleProps {
 
 const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
   const particleRef = useRef<HTMLDivElement>(null);
-  const [initialPosition] = useState({
-    left: Math.random() * 100,
-    duration: Math.random() * 1500 + 4000, // 4-5.5 seconds (tighter range)
-    size: Math.random() * 0.6 + 1.8,
-    animationVariation: Math.floor(Math.random() * 6) + 1, // 1, 2, 3, 4, 5, or 6
-    // Add more randomization for unique movements
-    rotationSpeed: Math.random() * 2 + 0.5, // 0.5x to 2.5x rotation speed
-    zigzagIntensity: Math.random() * 0.8 + 0.6, // 0.6x to 1.4x zigzag intensity
-    driftVariation: Math.random() * 20 - 10 // -10px to +10px extra drift variation
+  const [initialPosition] = useState(() => {
+    const isSnow = type === 'snow';
+    return {
+      left: Math.random() * 100,
+      duration: Math.random() * 1500 + 4000, // 4-5.5 seconds (tighter range)
+      // Different size ranges for snow vs leaves
+      size: isSnow 
+        ? Math.random() * 0.8 + 0.3  // Snow: 0.3-1.1rem (smaller, more varied)
+        : Math.random() * 0.6 + 1.8, // Leaves: 1.8-2.4rem (original)
+      animationVariation: Math.floor(Math.random() * 6) + 1, // 1, 2, 3, 4, 5, or 6
+      // Add more randomization for unique movements
+      rotationSpeed: Math.random() * 2 + 0.5, // 0.5x to 2.5x rotation speed
+      zigzagIntensity: Math.random() * 0.8 + 0.6, // 0.6x to 1.4x zigzag intensity
+      driftVariation: Math.random() * 20 - 10, // -10px to +10px extra drift variation
+      // Snow-specific properties
+      opacity: isSnow ? Math.random() * 0.4 + 0.6 : 0.9, // Snow: 0.6-1.0, Leaves: 0.9
+      blurAmount: isSnow ? Math.random() * 1 + 0.5 : 0, // Snow: 0.5-1.5px blur, Leaves: no blur
+      // Glint animation properties
+      glintDuration: isSnow ? Math.random() * 2 + 1.5 : 0, // 1.5-3.5 seconds
+      glintDelay: isSnow ? Math.random() * 3 : 0 // 0-3 second delay
+    };
   });
 
   useEffect(() => {
@@ -103,7 +86,7 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
   const getParticleContent = () => {
     switch (type) {
       case 'snow':
-        return '❄';
+        return '●'; // Simple white circle for snow
       case 'leaf':
         // Use only maple leaf 🍁 - we'll color it with CSS
         return '🍁';
@@ -130,20 +113,41 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
 
   const leafColorStyle = getLeafColor();
 
+  // Snow-specific styling
+  const getSnowStyle = () => {
+    if (type !== 'snow') return {};
+    
+    return {
+      color: '#ffffff',
+      textShadow: `0 0 ${initialPosition.blurAmount * 2}px rgba(255, 255, 255, 0.8), 0 0 ${initialPosition.blurAmount * 4}px rgba(255, 255, 255, 0.6)`,
+      filter: `blur(${initialPosition.blurAmount}px)`,
+      opacity: initialPosition.opacity,
+      // CSS custom properties for animation
+      '--blur-amount': `${initialPosition.blurAmount}px`,
+      '--glint-duration': `${initialPosition.glintDuration}s`,
+      '--glint-delay': `${initialPosition.glintDelay}s`
+    } as React.CSSProperties;
+  };
+
+  const snowStyle = getSnowStyle();
+
   return (
     <div
       ref={particleRef}
-      className="absolute opacity-90 pointer-events-none select-none"
+      className={`absolute pointer-events-none select-none ${type === 'snow' ? 'opacity-100 snowflake-glint' : 'opacity-90'}`}
       style={{
         left: `${initialPosition.left}%`, // Use stable initial position
         top: '-20px',
         fontSize: `${initialPosition.size}rem`, // Use stable size
-        textShadow: '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000',
+        textShadow: type === 'snow' 
+          ? snowStyle.textShadow 
+          : '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000',
         transform: 'translateZ(0)',
         backfaceVisibility: 'visible', // Show both sides!
         perspective: '1000px', // Smooth 3D transforms
         transformStyle: 'preserve-3d', // Enable 3D transforms
-        ...leafColorStyle, // Apply the color filter
+        ...leafColorStyle, // Apply the color filter for leaves
+        ...snowStyle, // Apply snow styling
         ...style
       }}
     >
@@ -168,124 +172,42 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   children,
   transitionDuration = 3000 
 }) => {
-  const { timeOfDay, progress, hour } = useTimeOfDay();
-  const season = useSeason();
+  const { selectedSeason } = useSeason();
+  const season = selectedSeason;
   const [particles, setParticles] = useState<Array<{id: number, type: string}>>([]);
   const [isTransitioning, setIsTransitioning] = useState(true);
-  const [isClient, setIsClient] = useState(false);
-  const [stars, setStars] = useState<Array<{id: number, left: number, top: number, delay: number, duration: number}>>([]);
+  const [sunlightEffects, setSunlightEffects] = useState<Array<{
+    id: number, 
+    type: 'ray' | 'sparkle' | 'sweep',
+    style: React.CSSProperties
+  }>>([]);
   const particleIdRef = useRef(0);
 
-  // Ensure client-side rendering for consistent calculations
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
-  // Generate stable stars for nighttime
-  useEffect(() => {
-    if (timeOfDay === 'night' && isClient) {
-      const newStars = Array.from({ length: 50 }, (_, i) => ({
-        id: i,
-        left: Math.random() * 100,
-        top: Math.random() * 60,
-        delay: Math.random() * 3,
-        duration: 2 + Math.random() * 2
-      }));
-      setStars(newStars);
-    } else {
-      setStars([]);
-    }
-  }, [timeOfDay, isClient]);
-
-  // Background color calculation
+  // Background color calculation - neutral background with seasonal variations
   const getBackgroundStyle = () => {
-    const isNight = timeOfDay === 'night';
-    const isEvening = timeOfDay === 'evening';
-    
-    if (isNight) {
+    if (season === 'winter') {
+      // Darker background with blue tint for winter to make snow more visible
       return {
-        background: 'linear-gradient(to bottom, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+        background: 'linear-gradient(to bottom, #e8eaf0 0%, #d4d8e1 50%, #c0c6d2 100%)'
       };
-    } else if (isEvening) {
+    } else if (season === 'summer') {
+      // Similar grey/blue background for summer to make light beams pop
       return {
-        background: 'linear-gradient(to bottom, #ff7b54 0%, #ff9a8b 30%, #ffd3a5 100%)'
-      };
-    } else if (timeOfDay === 'morning') {
-      return {
-        background: 'linear-gradient(to bottom, #ffeaa7 0%, #fab1a0 50%, #e17055 100%)'
-      };
-    } else {
-      return {
-        background: 'linear-gradient(to bottom, #74b9ff 0%, #0984e3 50%, #74b9ff 100%)'
+        background: 'linear-gradient(to bottom, #e6e8ee 0%, #d2d6df 50%, #bec4d0 100%)'
       };
     }
-  };
-
-  // Calculate sun and moon positions based on current hour (client-side only)
-  const getSunMoonPosition = (currentHour: number) => {
-    if (!isClient) {
-      // Return default positions for SSR to avoid hydration mismatch
-      return {
-        sun: { opacity: 0, transform: 'translate(-200px, 80px)' },
-        moon: { opacity: 0, transform: 'translate(-200px, 80px)' }
-      };
-    }
-
-    // Calculate sun position (6 AM to 6 PM cycle)
-    let sunProgress = 0;
-    if (currentHour >= 6 && currentHour <= 18) {
-      sunProgress = (currentHour - 6) / 12; // 0 to 1 over 12 hours
-    } else {
-      sunProgress = currentHour < 6 ? -0.2 : 1.2; // Off screen
-    }
     
-    // Calculate moon position (6 PM to 6 AM cycle) 
-    let moonProgress = 0;
-    if (currentHour >= 18 || currentHour <= 6) {
-      if (currentHour >= 18) {
-        moonProgress = (currentHour - 18) / 12; // 6 PM to midnight
-      } else {
-        moonProgress = 0.5 + (currentHour / 12); // midnight to 6 AM
-      }
-    } else {
-      moonProgress = currentHour < 12 ? -0.2 : 1.2; // Off screen
-    }
-    
-    // Arc calculation: horizontal movement + vertical arc
-    const getArcPosition = (progress: number) => {
-      const screenWidth = window.innerWidth || 1200;
-      const arcHeight = 100; // Height of the arc
-      
-      // Horizontal: right to left (100% to -100px)
-      const x = Math.round(screenWidth * (1 - progress) - 100);
-      
-      // Vertical: parabolic arc (highest at middle)
-      const y = Math.round(80 + arcHeight * Math.sin(progress * Math.PI));
-      
-      return { x, y };
-    };
-    
-    const sunPos = getArcPosition(sunProgress);
-    const moonPos = getArcPosition(moonProgress);
-    
+    // Default neutral background for other seasons
     return {
-      sun: {
-        opacity: sunProgress >= 0 && sunProgress <= 1 ? 1 : 0,
-        transform: `translate(${sunPos.x}px, ${sunPos.y}px)`
-      },
-      moon: {
-        opacity: moonProgress >= 0 && moonProgress <= 1 ? 1 : 0,
-        transform: `translate(${moonPos.x}px, ${moonPos.y}px)`
-      }
+      background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)'
     };
   };
 
-  const { sun, moon } = getSunMoonPosition(hour);
 
   // Particle generation
   const createParticle = useCallback(() => {
-    const isNight = timeOfDay === 'night';
-    const shouldCreate = Math.random() < (isNight ? 0.6 : 0.8); // More particles at night, even more during day
+    const shouldCreate = Math.random() < 0.95; // Higher chance for more particles
     
     if (!shouldCreate) return;
 
@@ -297,12 +219,126 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
     if (newParticle.type) {
       setParticles(prev => [...prev, newParticle]);
     }
-  }, [season, timeOfDay]);
+  }, [season]);
 
   // Remove particle - no accumulation
-  const removeParticle = useCallback((particleId: number, type: string) => {
+  const removeParticle = useCallback((particleId: number) => {
     setParticles(prev => prev.filter(p => p.id !== particleId));
   }, []);
+
+  // Generate laser beam effects for summer
+  useEffect(() => {
+    if (season === 'summer' && !isTransitioning) {
+      const generateLaserBeams = () => {
+        const effects = [];
+        
+        // Define a common origin point just inside top-right corner (hidden by header)
+        const originX = 100; // Shifted 10 units further to the right
+        const originY = -25; // Higher up - 30 units above previous position
+        
+        // Generate mystical sunbeams (3-4 beams) from single off-screen origin
+        const beamCount = Math.floor(Math.random() * 2) + 3;
+        const beamPaths = []; // Store beam paths for sparkle positioning
+        
+        for (let i = 0; i < beamCount; i++) {
+          // Closer to vertical but still slightly angled
+          const angle = 15 + (i * 5); // 15°, 20°, 25°, 30° - close to vertical but still angled
+          
+          // Calculate where this beam travels across screen for sparkle positioning
+          const beamPath = {
+            startX: originX,
+            startY: originY,
+            angle: angle,
+            id: i
+          };
+          beamPaths.push(beamPath);
+          
+          effects.push({
+            id: i,
+            type: 'ray' as const,
+            style: {
+              position: 'absolute',
+              top: `${originY}%`,
+              right: `${100 - originX}%`, // Position inside screen at top-right
+              width: '120px', // Wider for softer appearance
+              height: '250vh', // Extra long to ensure full coverage
+              background: `linear-gradient(to bottom, 
+                transparent 0%,
+                rgba(255, 255, 255, 0.4) 5%,
+                rgba(255, 255, 255, 0.5) 15%,
+                rgba(255, 255, 255, 0.4) 30%,
+                rgba(255, 255, 255, 0.35) 50%,
+                rgba(255, 255, 255, 0.3) 70%,
+                rgba(255, 255, 255, 0.2) 85%,
+                rgba(255, 255, 255, 0.1) 95%,
+                transparent 100%)`,
+              transformOrigin: 'top center',
+              transform: `rotate(${angle}deg) translateX(${i * 25}px)`,
+              // Correct widening: narrow at origin (top), wide at end (bottom)
+              clipPath: `polygon(48% 0%, 52% 0%, 25% 100%, 75% 100%)`,
+              '--beam-rotation': `rotate(${angle}deg)`, // Store rotation for animations
+              '--emerge-duration': `${Math.random() * 4 + 8}s`, // 8-12 second cycles (much faster)
+              '--shift-duration': `${Math.random() * 6 + 12}s`, // Still slow but not crazy slow
+              '--emerge-delay': `${Math.random() * 6}s`, // Shorter delays so you see them sooner
+              '--shift-delay': `${Math.random() * 4}s`,
+              filter: 'blur(1px)', // Slight blur for softer effect
+              boxShadow: `
+                0 0 15px rgba(255, 255, 255, 0.2),
+                0 0 30px rgba(255, 255, 255, 0.12),
+                0 0 45px rgba(255, 255, 255, 0.08)
+              `,
+              zIndex: 2,
+              opacity: 0.7, // Reduced opacity for subtlety
+            } as React.CSSProperties
+          });
+        }
+        
+        // Generate sparkles positioned specifically around beam paths
+        const sparkleCount = Math.floor(Math.random() * 12) + 8;
+        for (let i = 0; i < sparkleCount; i++) {
+          // Pick a random beam to associate this sparkle with
+          const beamIndex = Math.floor(Math.random() * beamPaths.length);
+          const beam = beamPaths[beamIndex];
+          
+          // Calculate sparkle position along the beam path
+          const distanceAlongBeam = Math.random(); // 0-1 along beam length
+          const sideOffset = (Math.random() - 0.5) * 60; // ±30px from beam center
+          
+          // Convert beam path to screen coordinates (approximate)
+          const beamScreenX = 85 - (distanceAlongBeam * 60); // Approximate beam crossing
+          const beamScreenY = 10 + (distanceAlongBeam * 70); // Approximate beam descent
+          
+          effects.push({
+            id: i + 1000, // Offset sparkle IDs to avoid conflicts
+            type: 'sparkle' as const,
+            style: {
+              position: 'absolute',
+              left: `${beamScreenX + (sideOffset * 0.3)}%`,
+              top: `${beamScreenY}%`,
+              width: '3px',
+              height: '3px',
+              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 30%, transparent 70%)',
+              borderRadius: '50%',
+              '--sparkle-duration': `${Math.random() * 3 + 2}s`, // 2-5 second sparkles
+              '--sparkle-delay': `${Math.random() * 15}s`, // Long delays for mystical effect
+              filter: 'blur(0.3px)',
+              boxShadow: '0 0 4px rgba(255, 255, 255, 0.6), 0 0 8px rgba(255, 255, 255, 0.3)',
+            } as React.CSSProperties
+          });
+        }
+        
+        setSunlightEffects(effects);
+      };
+      
+      generateLaserBeams();
+      
+      // Regenerate effects periodically for variation
+      const interval = setInterval(generateLaserBeams, 15000); // Every 15 seconds
+      return () => clearInterval(interval);
+    } else {
+      setSunlightEffects([]);
+    }
+  }, [season, isTransitioning]);
 
   // Initial transition
   useEffect(() => {
@@ -312,10 +348,13 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
     return () => clearTimeout(timer);
   }, [transitionDuration]);
 
-  // Particle generation interval - single leaves/snowflakes
+  // Particle generation interval - different frequencies for snow vs leaves
   useEffect(() => {
     if ((season === 'winter' || season === 'fall') && !isTransitioning) {
-      const interval = setInterval(createParticle, 2500); // Better balance: 2.5 seconds
+      // Much more frequent snow (9x original), normal frequency for leaves
+      const interval = season === 'winter' 
+        ? setInterval(createParticle, 280) // 9x original frequency for snow (~0.28 seconds)
+        : setInterval(createParticle, 833); // 3x original frequency for leaves (~0.83 seconds)
       return () => clearInterval(interval);
     }
   }, [season, isTransitioning, createParticle]);
@@ -327,73 +366,16 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         className={`fixed inset-0 -z-10 transition-all duration-[3000ms] ease-in-out ${className}`}
         style={getBackgroundStyle()}
       >
-        {/* Stable stars for night time */}
-        {stars.length > 0 && (
-          <div className="absolute inset-0">
-            {stars.map((star) => (
+
+        {/* Summer laser beam effects */}
+        {season === 'summer' && sunlightEffects.length > 0 && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {sunlightEffects.map((effect) => (
               <div
-                key={star.id}
-                className="absolute w-1 h-1 bg-white rounded-full opacity-90 animate-pulse shadow-sm"
-                style={{
-                  left: `${star.left}%`,
-                  top: `${star.top}%`,
-                  animationDelay: `${star.delay}s`,
-                  animationDuration: `${star.duration}s`,
-                  boxShadow: '0 0 2px #fff, 0 0 4px #fff',
-                  filter: 'none',
-                  willChange: 'opacity',
-                  backfaceVisibility: 'hidden'
-                }}
+                key={effect.id}
+                className={`${effect.type === 'ray' ? 'laser-beam' : 'beam-sparkle'}`}
+                style={effect.style}
               />
-            ))}
-          </div>
-        )}
-
-        {/* Sun */}
-        <div
-          className="absolute text-7xl transition-all duration-[3000ms] ease-in-out select-none"
-          style={{
-            opacity: sun.opacity,
-            transform: sun.transform,
-            textShadow: '3px 3px 0 #ff6b35, -3px -3px 0 #ff6b35, 3px -3px 0 #ff6b35, -3px 3px 0 #ff6b35',
-            filter: 'none'
-          }}
-        >
-          ☀️
-        </div>
-
-        {/* Moon */}
-        <div
-          className="absolute text-6xl transition-all duration-[3000ms] ease-in-out select-none"
-          style={{
-            opacity: moon.opacity,
-            transform: moon.transform,
-            textShadow: '2px 2px 0 #1a1a2e, -2px -2px 0 #1a1a2e, 2px -2px 0 #1a1a2e, -2px 2px 0 #1a1a2e',
-            filter: 'none'
-          }}
-        >
-          🌙
-        </div>
-
-        {/* Clouds for summer */}
-        {season === 'summer' && (
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute text-5xl opacity-80 select-none"
-                style={{
-                  left: `${20 + i * 30}%`,
-                  top: `${20 + i * 10}%`,
-                  animation: `drift 20s linear infinite`,
-                  animationDelay: `${i * 5}s`,
-                  textShadow: '2px 2px 0 #74b9ff, -2px -2px 0 #74b9ff, 2px -2px 0 #74b9ff, -2px 2px 0 #74b9ff',
-                  filter: 'none',
-                  WebkitTransform: 'translateZ(0)'
-                }}
-              >
-                ☁️
-              </div>
             ))}
           </div>
         )}
@@ -403,7 +385,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
           <Particle
             key={particle.id}
             type={particle.type}
-            onComplete={() => removeParticle(particle.id, particle.type)}
+            onComplete={() => removeParticle(particle.id)}
           />
         ))}
       </div>

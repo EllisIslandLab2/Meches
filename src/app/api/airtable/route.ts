@@ -28,6 +28,9 @@ export async function POST(request: NextRequest) {
       case 'customer-info':
         AIRTABLE_TABLE_NAME = process.env.ORDERS_TABLE;
         break;
+      case 'products':
+        AIRTABLE_TABLE_NAME = process.env.PRODUCTS_TABLE;
+        break;
       default:
         return NextResponse.json(
           { error: 'Invalid form type' },

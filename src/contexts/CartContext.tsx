@@ -5,8 +5,8 @@ import { CartItem, CartContextType } from '@/types/cart';
 
 type CartAction = 
   | { type: 'ADD_TO_CART'; payload: Omit<CartItem, 'id'> }
-  | { type: 'REMOVE_FROM_CART'; payload: number }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
+  | { type: 'REMOVE_FROM_CART'; payload: string }
+  | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'LOAD_CART'; payload: CartItem[] };
 
@@ -15,7 +15,7 @@ const cartReducer = (state: CartItem[], action: CartAction): CartItem[] => {
     case 'ADD_TO_CART':
       const newItem = {
         ...action.payload,
-        id: Date.now()
+        id: Date.now().toString() // Convert to string
       };
       return [...state, newItem];
     
@@ -75,11 +75,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'ADD_TO_CART', payload: item });
   };
 
-  const removeFromCart = (id: number) => {
+  const removeFromCart = (id: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: id });
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
   };
 
