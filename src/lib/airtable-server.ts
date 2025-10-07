@@ -48,19 +48,26 @@ export async function fetchProductsFromAirtableDirect() {
 
 // Transform Airtable record to our Product interface
 export function transformAirtableRecord(record: any) {
+  // Ensure image paths start with '/' for Next.js Image component
+  let imagePath = record.fields.image || '';
+  if (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+    imagePath = '/' + imagePath;
+  }
+  
   return {
     id: record.id,
     name: record.fields.name || '',
     price: record.fields.price || 0,
-    image: record.fields.image || '',
+    image: imagePath,
     category: record.fields.category || '',
     description: record.fields.description || '',
     variant_name: record.fields.variant_name || '',
     is_default_variant: record.fields.is_default_variant || false,
     display: record.fields.display !== false,
-    selector_type: record.fields.selector_type || 'color',
     selector_label: record.fields.selector_label || 'Color',
-    season: record.fields.season_new || record.fields.season || undefined,
+    seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : 
+            Array.isArray(record.fields.season_new) ? record.fields.season_new :
+            record.fields.season ? [record.fields.season] : [],
     created_time: record.createdTime,
     updated_time: record.fields.last_modified_time
   };

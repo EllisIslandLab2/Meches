@@ -41,21 +41,27 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
   const particleRef = useRef<HTMLDivElement>(null);
   const [initialPosition] = useState(() => {
     const isSnow = type === 'snow';
+    const isBee = type === 'bee';
     return {
       left: Math.random() * 100,
-      duration: Math.random() * 1500 + 4000, // 4-5.5 seconds (tighter range)
-      // Different size ranges for snow vs leaves
+      // Different durations for different types
+      duration: isBee 
+        ? Math.random() * 3000 + 8000 // Bees: 8-11 seconds (enough time to cross screen)
+        : Math.random() * 1500 + 4000, // Others: 4-5.5 seconds
+      // Different size ranges for different types
       size: isSnow 
         ? Math.random() * 0.8 + 0.3  // Snow: 0.3-1.1rem (smaller, more varied)
-        : Math.random() * 0.6 + 1.8, // Leaves: 1.8-2.4rem (original)
+        : isBee
+        ? Math.random() * 0.4 + 1.2  // Bees: 1.2-1.6rem (medium size)
+        : Math.random() * 0.6 + 1.8, // Leaves/Seeds: 1.8-2.4rem (original)
       animationVariation: Math.floor(Math.random() * 6) + 1, // 1, 2, 3, 4, 5, or 6
       // Add more randomization for unique movements
       rotationSpeed: Math.random() * 2 + 0.5, // 0.5x to 2.5x rotation speed
       zigzagIntensity: Math.random() * 0.8 + 0.6, // 0.6x to 1.4x zigzag intensity
       driftVariation: Math.random() * 20 - 10, // -10px to +10px extra drift variation
       // Snow-specific properties
-      opacity: isSnow ? Math.random() * 0.4 + 0.6 : 0.9, // Snow: 0.6-1.0, Leaves: 0.9
-      blurAmount: isSnow ? Math.random() * 1 + 0.5 : 0, // Snow: 0.5-1.5px blur, Leaves: no blur
+      opacity: isSnow ? Math.random() * 0.4 + 0.6 : 0.9, // Snow: 0.6-1.0, Others: 0.9
+      blurAmount: isSnow ? Math.random() * 1 + 0.5 : 0, // Snow: 0.5-1.5px blur, Others: no blur
       // Glint animation properties
       glintDuration: isSnow ? Math.random() * 2 + 1.5 : 0, // 1.5-3.5 seconds
       glintDelay: isSnow ? Math.random() * 3 : 0 // 0-3 second delay
@@ -74,7 +80,15 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
     element.style.setProperty('--zigzag-intensity', initialPosition.zigzagIntensity.toString());
     element.style.setProperty('--drift-variation', `${initialPosition.driftVariation}px`);
     
-    element.style.animation = `fall${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
+    // Use special bee flight animations for bees
+    if (type === 'bee') {
+      // Randomly choose direction and flight pattern
+      const direction = Math.random() < 0.5 ? 'left-to-right' : 'right-to-left';
+      const flightPattern = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+      element.style.animation = `bee-${direction}-${flightPattern} ${initialPosition.duration}ms ease-in-out forwards`;
+    } else {
+      element.style.animation = `fall${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
+    }
     
     const timer = setTimeout(() => {
       onComplete();
@@ -90,6 +104,12 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
       case 'leaf':
         // Use only maple leaf 🍁 - we'll color it with CSS
         return '🍁';
+      case 'seed':
+        // Dandelion seeds for spring
+        return '✿';
+      case 'bee':
+        // Bees for summer
+        return '🐝';
       default:
         return '•';
     }
@@ -113,6 +133,32 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
 
   const leafColorStyle = getLeafColor();
 
+  // Spring seed styling
+  const getSeedStyle = () => {
+    if (type !== 'seed') return {};
+    
+    return {
+      color: '#ffffff',
+      textShadow: `
+        0 0 2px rgba(255, 255, 255, 0.8),
+        0 0 4px rgba(255, 255, 255, 0.6),
+        0 0 6px rgba(240, 248, 255, 0.4)
+      `,
+      filter: 'blur(0.5px)',
+      opacity: Math.random() * 0.3 + 0.7, // 0.7-1.0 opacity
+    } as React.CSSProperties;
+  };
+
+  // Bee styling for summer
+  const getBeeStyle = () => {
+    if (type !== 'bee') return {};
+    
+    return {
+      opacity: 0.85,
+      filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))',
+    } as React.CSSProperties;
+  };
+
   // Snow-specific styling
   const getSnowStyle = () => {
     if (type !== 'snow') return {};
@@ -130,24 +176,40 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
   };
 
   const snowStyle = getSnowStyle();
+  const seedStyle = getSeedStyle();
+  const beeStyle = getBeeStyle();
 
   return (
     <div
       ref={particleRef}
-      className={`absolute pointer-events-none select-none ${type === 'snow' ? 'opacity-100 snowflake-glint' : 'opacity-90'}`}
+      className={`absolute pointer-events-none select-none ${
+        type === 'snow' ? 'opacity-100 snowflake-glint' : 
+        type === 'seed' ? 'opacity-90' : 
+        type === 'bee' ? 'opacity-85' : 'opacity-90'
+      }`}
       style={{
-        left: `${initialPosition.left}%`, // Use stable initial position
-        top: '-20px',
+        // Let CSS animations handle bee positioning completely, others start from top
+        ...(type !== 'bee' && { 
+          left: `${initialPosition.left}%`,
+          top: '-20px'
+        }),
         fontSize: `${initialPosition.size}rem`, // Use stable size
         textShadow: type === 'snow' 
           ? snowStyle.textShadow 
+          : type === 'seed'
+          ? seedStyle.textShadow
+          : type === 'bee'
+          ? '1px 1px 2px rgba(0,0,0,0.3)'
           : '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000',
-        transform: 'translateZ(0)',
+        // Don't interfere with CSS animations for bees
+        transform: type === 'bee' ? 'none' : 'translateZ(0)',
         backfaceVisibility: 'visible', // Show both sides!
-        perspective: '1000px', // Smooth 3D transforms
-        transformStyle: 'preserve-3d', // Enable 3D transforms
+        perspective: type === 'bee' ? 'none' : '1000px', // Smooth 3D transforms
+        transformStyle: type === 'bee' ? 'flat' : 'preserve-3d', // Enable 3D transforms
         ...leafColorStyle, // Apply the color filter for leaves
         ...snowStyle, // Apply snow styling
+        ...seedStyle, // Apply seed styling
+        ...beeStyle, // Apply bee styling
         ...style
       }}
     >
@@ -191,14 +253,9 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
       return {
         background: 'linear-gradient(to bottom, #e8eaf0 0%, #d4d8e1 50%, #c0c6d2 100%)'
       };
-    } else if (season === 'summer') {
-      // Similar grey/blue background for summer to make light beams pop
-      return {
-        background: 'linear-gradient(to bottom, #e6e8ee 0%, #d2d6df 50%, #bec4d0 100%)'
-      };
     }
     
-    // Default neutral background for other seasons
+    // Default neutral background for all other seasons (spring, summer, fall)
     return {
       background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)'
     };
@@ -213,11 +270,24 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
 
     const newParticle = {
       id: particleIdRef.current++,
-      type: season === 'winter' ? 'snow' : season === 'fall' ? 'leaf' : ''
+      type: season === 'winter' ? 'snow' : 
+            season === 'fall' ? 'leaf' : 
+            season === 'spring' ? 'seed' : 
+            season === 'summer' ? 'bee' : ''
     };
 
     if (newParticle.type) {
-      setParticles(prev => [...prev, newParticle]);
+      setParticles(prev => {
+        const currentParticles = prev;
+        // Limit bees to max 3 on screen at once to prevent disappearing
+        if (newParticle.type === 'bee') {
+          const currentBees = currentParticles.filter(p => p.type === 'bee');
+          if (currentBees.length >= 3) {
+            return currentParticles; // Don't add more bees
+          }
+        }
+        return [...currentParticles, newParticle];
+      });
     }
   }, [season]);
 
@@ -348,13 +418,19 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
     return () => clearTimeout(timer);
   }, [transitionDuration]);
 
-  // Particle generation interval - different frequencies for snow vs leaves
+  // Particle generation interval - different frequencies for different seasons
   useEffect(() => {
-    if ((season === 'winter' || season === 'fall') && !isTransitioning) {
-      // Much more frequent snow (9x original), normal frequency for leaves
+    if ((season === 'winter' || season === 'fall' || season === 'spring' || season === 'summer') && !isTransitioning) {
+      // Different frequencies for each season
       const interval = season === 'winter' 
-        ? setInterval(createParticle, 280) // 9x original frequency for snow (~0.28 seconds)
-        : setInterval(createParticle, 833); // 3x original frequency for leaves (~0.83 seconds)
+        ? setInterval(createParticle, 280) // Fast snow (~0.28 seconds)
+        : season === 'fall' 
+        ? setInterval(createParticle, 833) // Medium leaves (~0.83 seconds)
+        : season === 'spring'
+        ? setInterval(createParticle, 1500) // Gentle seeds (~1.5 seconds)
+        : season === 'summer'
+        ? setInterval(createParticle, 6000) // Rare bees (~6 seconds)
+        : setInterval(createParticle, 1000); // Default
       return () => clearInterval(interval);
     }
   }, [season, isTransitioning, createParticle]);

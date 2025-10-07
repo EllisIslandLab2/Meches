@@ -9,9 +9,8 @@ export interface Product {
   variant_name: string; // Individual variant identifier (e.g., "Cowgirl", "Star")
   is_default_variant: boolean; // Default variant for the category
   display: boolean; // Show/hide product
-  selector_type: string; // "color", "type", etc.
-  selector_label: string; // "Color", "Type", etc.
-  season?: string; // Primary season when this product is most relevant
+  selector_label: string; // "Color", "Type", etc. (consolidated from selector_type and selector_label)
+  seasons: string[]; // Array of seasons/holidays when this product is relevant
   created_time?: string; // Airtable timestamp
   updated_time?: string; // Airtable timestamp
 }
@@ -24,8 +23,7 @@ export interface ProductGroup {
   description: string;
   variants: Product[];
   defaultVariant: Product;
-  selectorType: string;
-  selectorLabel: string;
+  selectorLabel: string; // Consolidated selector label
 }
 
 // Static fallback data in new structure (for development/testing)
@@ -41,9 +39,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Cowgirl",
     is_default_variant: true,
     display: true,
-    selector_type: "type",
     selector_label: "Type",
-    season: "summer"
+    seasons: ["summer"]
   },
   {
     id: "rec2",
@@ -55,9 +52,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Star",
     is_default_variant: false,
     display: true,
-    selector_type: "type",
     selector_label: "Type",
-    season: "summer"
+    seasons: ["summer"]
   },
   // Drip Style Earrings Category
   {
@@ -70,9 +66,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Brown",
     is_default_variant: true,
     display: true,
-    selector_type: "color",
     selector_label: "Color",
-    season: "fall"
+    seasons: ["fall"]
   },
   {
     id: "rec4",
@@ -84,9 +79,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Teal",
     is_default_variant: false,
     display: true,
-    selector_type: "color",
     selector_label: "Color",
-    season: "fall"
+    seasons: ["fall"]
   },
   // Floral Style Earrings Category
   {
@@ -99,9 +93,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Red",
     is_default_variant: true,
     display: true,
-    selector_type: "color",
     selector_label: "Color",
-    season: "spring"
+    seasons: ["spring"]
   },
   {
     id: "rec6",
@@ -113,9 +106,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Blue",
     is_default_variant: false,
     display: true,
-    selector_type: "color",
     selector_label: "Color",
-    season: "spring"
+    seasons: ["spring"]
   },
   // Decorative Style Earrings Category
   {
@@ -128,9 +120,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Bow",
     is_default_variant: true,
     display: true,
-    selector_type: "type",
     selector_label: "Type",
-    season: "winter"
+    seasons: ["winter"]
   },
   {
     id: "rec8",
@@ -142,9 +133,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Flower",
     is_default_variant: false,
     display: true,
-    selector_type: "type",
     selector_label: "Type",
-    season: "winter"
+    seasons: ["winter"]
   },
   // Add some "all season" products - using existing image for now
   {
@@ -157,9 +147,8 @@ export const sampleProducts: Product[] = [
     variant_name: "Gold",
     is_default_variant: true,
     display: true,
-    selector_type: "color",
     selector_label: "Color",
-    season: "all"
+    seasons: ["all"]
   }
 ];
 
@@ -168,12 +157,17 @@ export function groupProductsByCategory(products: Product[], selectedSeason?: st
   const filtered = products
     .filter(product => product.display) // Only include products marked for display
     .filter(product => {
-      // If "all" is selected, show all products
+      // Products with no seasons are inactive and shouldn't display
+      if (!product.seasons || product.seasons.length === 0) return false;
+      
+      // If "all" is selected, show all products (that have at least one season)
       if (selectedSeason === 'all') return true;
-      // If no season is selected or product has no season, show all products
-      if (!selectedSeason || !product.season) return true;
-      // Otherwise, show products that match the selected season
-      return product.season === selectedSeason;
+      
+      // If no season is selected, show products with "all" season or all products
+      if (!selectedSeason) return product.seasons.includes('all') || true;
+      
+      // Otherwise, show products that include the selected season or have "all" season
+      return product.seasons.includes(selectedSeason) || product.seasons.includes('all');
     });
 
   const grouped = filtered.reduce((acc, product) => {
@@ -193,7 +187,6 @@ export function groupProductsByCategory(products: Product[], selectedSeason?: st
       description: variants[0].description,
       variants,
       defaultVariant,
-      selectorType: variants[0].selector_type,
       selectorLabel: variants[0].selector_label
     };
   });
@@ -263,22 +256,31 @@ export async function fetchProductsFromAirtable(): Promise<Product[]> {
     const result = await response.json();
     
     // Transform Airtable records to our Product interface
-    const products: Product[] = result.records.map((record: any) => ({
-      id: record.id,
-      name: record.fields.name || '',
-      price: record.fields.price || 0,
-      image: record.fields.image || '',
-      category: record.fields.category || '',
-      description: record.fields.description || '',
-      variant_name: record.fields.variant_name || '',
-      is_default_variant: record.fields.is_default_variant || false,
-      display: record.fields.display !== false, // Default to true if not set
-      selector_type: record.fields.selector_type || 'color',
-      selector_label: record.fields.selector_label || 'Color',
-      season: record.fields.season_new || record.fields.season || undefined,
-      created_time: record.createdTime,
-      updated_time: record.fields.last_modified_time
-    }));
+    const products: Product[] = result.records.map((record: any) => {
+      // Ensure image paths start with '/' for Next.js Image component
+      let imagePath = record.fields.image || '';
+      if (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+        imagePath = '/' + imagePath;
+      }
+      
+      return {
+        id: record.id,
+        name: record.fields.name || '',
+        price: record.fields.price || 0,
+        image: imagePath,
+        category: record.fields.category || '',
+        description: record.fields.description || '',
+        variant_name: record.fields.variant_name || '',
+        is_default_variant: record.fields.is_default_variant || false,
+        display: record.fields.display !== false, // Default to true if not set
+        selector_label: record.fields.selector_label || 'Color',
+        seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : 
+                Array.isArray(record.fields.season_new) ? record.fields.season_new :
+                record.fields.season ? [record.fields.season] : [],
+        created_time: record.createdTime,
+        updated_time: record.fields.last_modified_time
+      };
+    });
 
     return products;
   } catch (error) {
