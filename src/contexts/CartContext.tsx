@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { nanoid } from 'nanoid';
 import { CartItem, CartContextType } from '@/types/cart';
 
 type CartAction = 
@@ -15,7 +16,7 @@ const cartReducer = (state: CartItem[], action: CartAction): CartItem[] => {
     case 'ADD_TO_CART':
       const newItem = {
         ...action.payload,
-        id: Date.now().toString() // Convert to string
+        id: nanoid() // Generate unique ID
       };
       return [...state, newItem];
     

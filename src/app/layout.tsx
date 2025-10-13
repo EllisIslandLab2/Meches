@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import DynamicBackground from "@/components/DynamicBackground";
 import DevSeasonControl from "@/components/DevSeasonControl";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export const metadata: Metadata = {
   title: "Meche's Handmade Crafts - Unique Handcrafted Jewelry & Wooden Designs",
@@ -82,18 +83,20 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className="font-serif min-h-screen flex flex-col">
-        <SeasonProvider>
-          <DynamicBackground footerHeight={80} className="dynamic-bg">
-            <CartProvider>
-              <Header />
-              <main className="flex-grow">
-                {children}
-              </main>
-              <Footer />
-            </CartProvider>
-            <DevSeasonControl />
-          </DynamicBackground>
-        </SeasonProvider>
+        <ErrorBoundary>
+          <SeasonProvider>
+            <DynamicBackground footerHeight={80} className="dynamic-bg">
+              <CartProvider>
+                <Header />
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <Footer />
+              </CartProvider>
+              <DevSeasonControl />
+            </DynamicBackground>
+          </SeasonProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

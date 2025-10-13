@@ -5,9 +5,25 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
 
+// Square SDK types
+interface SquareCard {
+  attach(elementId: string): Promise<void>;
+  tokenize(): Promise<{
+    status: string;
+    token?: string;
+    errors?: Array<{ message: string }>;
+  }>;
+}
+
+interface SquarePayments {
+  card(): Promise<SquareCard>;
+}
+
 declare global {
   interface Window {
-    Square?: any;
+    Square?: {
+      payments(applicationId: string, locationId: string): SquarePayments;
+    };
   }
 }
 
@@ -26,9 +42,9 @@ export default function PaymentPage() {
   const { cart, getTotalPrice, clearCart } = useCart();
   const router = useRouter();
   const [isSquareLoaded, setIsSquareLoaded] = useState(false);
-  const [card, setCard] = useState<any>(null);
+  const [card, setCard] = useState<SquareCard | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentForm, setPaymentForm] = useState<any>(null);
+  const [paymentForm, setPaymentForm] = useState<SquarePayments | null>(null);
 
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     firstName: '',
@@ -42,8 +58,12 @@ export default function PaymentPage() {
   });
 
   const subtotal = getTotalPrice();
-  const shipping = subtotal > 50 ? 0 : 5.99;
-  const tax = subtotal * 0.08;
+  const taxRate = parseFloat(process.env.NEXT_PUBLIC_TAX_RATE || '0.08');
+  const freeShippingThreshold = parseFloat(process.env.NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD || '50');
+  const shippingCost = parseFloat(process.env.NEXT_PUBLIC_SHIPPING_COST || '5.99');
+
+  const shipping = subtotal >= freeShippingThreshold ? 0 : shippingCost;
+  const tax = subtotal * taxRate;
   const total = subtotal + shipping + tax;
 
   useEffect(() => {
@@ -58,11 +78,17 @@ export default function PaymentPage() {
       return;
     }
 
+    const appId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID;
+    const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
+
+    if (!appId || !locationId) {
+      console.error('Square credentials not configured. Please set NEXT_PUBLIC_SQUARE_APPLICATION_ID and NEXT_PUBLIC_SQUARE_LOCATION_ID in your environment variables.');
+      alert('Payment system is not configured. Please contact the store owner.');
+      return;
+    }
+
     try {
-      const payments = window.Square.payments(
-        process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID || 'sandbox-sq0idb-your-app-id',
-        process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID || 'your-location-id'
-      );
+      const payments = window.Square.payments(appId, locationId);
 
       const card = await payments.card();
       await card.attach('#square-card-container');
@@ -187,7 +213,11 @@ export default function PaymentPage() {
   return (
     <>
       <Script
-        src="https://sandbox.web.squarecdn.com/v1/square.js"
+        src={
+          process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT === 'production'
+            ? "https://web.squarecdn.com/v1/square.js"
+            : "https://sandbox.web.squarecdn.com/v1/square.js"
+        }
         onLoad={handleSquareLoad}
         strategy="lazyOnload"
       />

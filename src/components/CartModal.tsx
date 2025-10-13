@@ -15,16 +15,22 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cart-modal-title"
+    >
       <div className="bg-gradient-to-br from-amber-50/98 to-yellow-50/98 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto relative border-2 border-amber-700">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-2xl font-bold text-amber-700 hover:text-amber-900"
+          aria-label="Close cart"
         >
           ×
         </button>
         
-        <h2 className="text-2xl font-bold text-amber-900 mb-6">Shopping Cart</h2>
+        <h2 id="cart-modal-title" className="text-2xl font-bold text-amber-900 mb-6">Shopping Cart</h2>
         
         {cart.length === 0 ? (
           <div className="text-center py-8 text-amber-700">
@@ -52,6 +58,7 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                     <button
                       onClick={() => removeFromCart(item.id)}
                       className="text-red-600 text-sm hover:text-red-800 border border-red-600 rounded px-2 py-1 mt-1"
+                      aria-label={`Remove ${item.name} from cart`}
                     >
                       Remove
                     </button>

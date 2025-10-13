@@ -2,25 +2,55 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type Season = 'all' | 'spring' | 'summer' | 'fall' | 'winter';
+export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Columbus' | 'Easter' | 'Independence' | 'all';
 
 interface SeasonContextType {
-  selectedSeason: Season;
-  setSelectedSeason: (season: Season) => void;
-  actualSeason: Season;
+  selectedSeasons: SeasonHoliday[];
+  toggleSeason: (season: SeasonHoliday) => void;
+  autoDetectedSeasons: SeasonHoliday[];
 }
 
 const SeasonContext = createContext<SeasonContextType | undefined>(undefined);
 
-// Get the actual season based on current date
-const getActualSeason = (): Season => {
+// Get the actual season and upcoming holidays based on current date
+const getAutoDetectedSeasons = (): SeasonHoliday[] => {
   const now = new Date();
-  const month = now.getMonth() + 1;
-  
-  if (month >= 3 && month <= 5) return 'spring';
-  else if (month >= 6 && month <= 8) return 'summer';
-  else if (month >= 9 && month <= 11) return 'fall';
-  else return 'winter';
+  const month = now.getMonth() + 1; // 1-12
+  const day = now.getDate();
+
+  const detected: SeasonHoliday[] = [];
+
+  // Add current season
+  if (month >= 3 && month <= 5) detected.push('spring');
+  else if (month >= 6 && month <= 8) detected.push('summer');
+  else if (month >= 9 && month <= 11) detected.push('fall');
+  else detected.push('winter');
+
+  // Add holidays that are within 30 days (before or after)
+  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
+
+  // Christmas (Dec 25) - day ~359
+  const christmasDay = 359;
+  if (Math.abs(dayOfYear - christmasDay) <= 30 || dayOfYear <= 15) detected.push('Christmas');
+
+  // Halloween (Oct 31) - day ~304
+  const halloweenDay = 304;
+  if (Math.abs(dayOfYear - halloweenDay) <= 30) detected.push('Halloween');
+
+  // Thanksgiving (4th Thursday of November, ~day 327-333)
+  if (month === 11 || (month === 10 && day > 15)) detected.push('Thanksgiving');
+
+  // Columbus Day (2nd Monday of October, ~day 283-289)
+  if (month === 10 && day >= 1 && day <= 20) detected.push('Columbus');
+
+  // Easter (varies, roughly March 22 - April 25, ~day 81-115)
+  if ((month === 3 && day >= 22) || (month === 4 && day <= 25)) detected.push('Easter');
+
+  // Independence Day (July 4) - day ~185
+  const independenceDay = 185;
+  if (Math.abs(dayOfYear - independenceDay) <= 30) detected.push('Independence');
+
+  return detected;
 };
 
 interface SeasonProviderProps {
@@ -28,13 +58,35 @@ interface SeasonProviderProps {
 }
 
 export const SeasonProvider: React.FC<SeasonProviderProps> = ({ children }) => {
-  const actualSeason = getActualSeason();
-  const [selectedSeason, setSelectedSeason] = useState<Season>('all');
+  const autoDetectedSeasons = getAutoDetectedSeasons();
+  const [selectedSeasons, setSelectedSeasons] = useState<SeasonHoliday[]>(autoDetectedSeasons);
+
+  const toggleSeason = (season: SeasonHoliday) => {
+    setSelectedSeasons(prev => {
+      if (season === 'all') {
+        // If 'all' is selected, clear all other selections
+        return ['all'];
+      } else {
+        // Remove 'all' if present
+        const withoutAll = prev.filter(s => s !== 'all');
+
+        if (withoutAll.includes(season)) {
+          // Remove the season
+          const filtered = withoutAll.filter(s => s !== season);
+          // If nothing left, default to 'all'
+          return filtered.length > 0 ? filtered : ['all'];
+        } else {
+          // Add the season
+          return [...withoutAll, season];
+        }
+      }
+    });
+  };
 
   const value = {
-    selectedSeason,
-    setSelectedSeason,
-    actualSeason
+    selectedSeasons,
+    toggleSeason,
+    autoDetectedSeasons
   };
 
   return (

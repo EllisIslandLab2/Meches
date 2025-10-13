@@ -9,16 +9,15 @@ interface AirtableConfig {
 
 const config: AirtableConfig = {
   apiKey: process.env.AIRTABLE_API_KEY || '',
-  baseId: 'appxmdzOF0au72Z7d', // Your existing base ID
-  tableName: 'Products' // Your existing table name
+  baseId: process.env.AIRTABLE_BASE_ID || '',
+  tableName: process.env.PRODUCTS_TABLE || 'Products'
 };
 
 export async function fetchProductsFromAirtableDirect() {
   // Enable this when ready to use real Airtable data
   const USE_REAL_AIRTABLE = process.env.USE_REAL_AIRTABLE === 'true';
-  
+
   if (!USE_REAL_AIRTABLE || !config.apiKey) {
-    console.log('Using sample data for ISR (set USE_REAL_AIRTABLE=true to use real data)');
     return null; // Return null to use fallback data
   }
 
@@ -37,8 +36,6 @@ export async function fetchProductsFromAirtableDirect() {
     }
 
     const data = await response.json();
-    console.log(`Successfully fetched ${data.records?.length || 0} products from Airtable`);
-    
     return data.records || [];
   } catch (error) {
     console.error('Direct Airtable fetch failed:', error);
@@ -65,9 +62,7 @@ export function transformAirtableRecord(record: any) {
     is_default_variant: record.fields.is_default_variant || false,
     display: record.fields.display !== false,
     selector_label: record.fields.selector_label || 'Color',
-    seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : 
-            Array.isArray(record.fields.season_new) ? record.fields.season_new :
-            record.fields.season ? [record.fields.season] : [],
+    seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : [],
     created_time: record.createdTime,
     updated_time: record.fields.last_modified_time
   };

@@ -152,22 +152,24 @@ export const sampleProducts: Product[] = [
   }
 ];
 
-// Function to group products by category for display
-export function groupProductsByCategory(products: Product[], selectedSeason?: string): ProductGroup[] {
+// Function to group products by category for display (supports multiple season selections)
+export function groupProductsByCategory(products: Product[], selectedSeasons?: string[]): ProductGroup[] {
   const filtered = products
     .filter(product => product.display) // Only include products marked for display
     .filter(product => {
       // Products with no seasons are inactive and shouldn't display
       if (!product.seasons || product.seasons.length === 0) return false;
-      
-      // If "all" is selected, show all products (that have at least one season)
-      if (selectedSeason === 'all') return true;
-      
-      // If no season is selected, show products with "all" season or all products
-      if (!selectedSeason) return product.seasons.includes('all') || true;
-      
-      // Otherwise, show products that include the selected season or have "all" season
-      return product.seasons.includes(selectedSeason) || product.seasons.includes('all');
+
+      // If no seasons selected, default to showing all products
+      if (!selectedSeasons || selectedSeasons.length === 0) return true;
+
+      // If "all" is in the selected seasons, show all products (that have at least one season)
+      if (selectedSeasons.includes('all')) return true;
+
+      // Show products that match ANY of the selected seasons OR have "all" season
+      return selectedSeasons.some(selectedSeason =>
+        product.seasons.includes(selectedSeason)
+      ) || product.seasons.includes('all');
     });
 
   const grouped = filtered.reduce((acc, product) => {
@@ -195,7 +197,6 @@ export function groupProductsByCategory(products: Product[], selectedSeason?: st
 // Server-side function to fetch products from Airtable (for ISR)
 export async function fetchProductsFromAirtableServer(): Promise<Product[]> {
   try {
-    console.log('Fetching products from Airtable at build/revalidate time');
     
     // Server-side only
     if (typeof window === 'undefined') {
@@ -208,20 +209,16 @@ export async function fetchProductsFromAirtableServer(): Promise<Product[]> {
       if (airtableRecords && airtableRecords.length > 0) {
         // Transform Airtable records to our Product interface
         const products = airtableRecords.map(transformAirtableRecord);
-        console.log(`✅ ISR: Loaded ${products.length} products from Airtable`);
         return products;
       }
     }
     
     // Fallback to sample data with proper structure
-    const products = sampleProducts.map(product => ({
+    return sampleProducts.map(product => ({
       ...product,
       created_time: new Date().toISOString(),
       updated_time: new Date().toISOString()
     }));
-    
-    console.log(`📦 ISR: Using ${products.length} sample products`);
-    return products;
   } catch (error) {
     console.error('Server-side Airtable fetch failed:', error);
     return sampleProducts;
@@ -274,9 +271,7 @@ export async function fetchProductsFromAirtable(): Promise<Product[]> {
         is_default_variant: record.fields.is_default_variant || false,
         display: record.fields.display !== false, // Default to true if not set
         selector_label: record.fields.selector_label || 'Color',
-        seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : 
-                Array.isArray(record.fields.season_new) ? record.fields.season_new :
-                record.fields.season ? [record.fields.season] : [],
+        seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : [],
         created_time: record.createdTime,
         updated_time: record.fields.last_modified_time
       };

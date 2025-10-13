@@ -3,33 +3,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSeason } from '@/contexts/SeasonContext';
 
-// Development season hook for backward compatibility with DevSeasonControl
-const useDevSeason = () => {
-  const [season, setSeason] = useState('spring');
-
-  useEffect(() => {
-    // Check for development season override in localStorage or URL params
-    const urlParams = new URLSearchParams(window.location.search);
-    const devSeason = urlParams.get('season') || localStorage.getItem('devSeason');
-    
-    if (devSeason && ['spring', 'summer', 'fall', 'winter'].includes(devSeason)) {
-      setSeason(devSeason);
-      return;
-    }
-    
-    // Default behavior: use actual date
-    const now = new Date();
-    const month = now.getMonth() + 1;
-    
-    if (month >= 3 && month <= 5) setSeason('spring');
-    else if (month >= 6 && month <= 8) setSeason('summer');
-    else if (month >= 9 && month <= 11) setSeason('fall');
-    else setSeason('winter');
-  }, []);
-
-  return season;
-};
-
 // Particle component for snow, leaves, etc.
 interface ParticleProps {
   type: string;
@@ -262,30 +235,38 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   };
 
 
-  // Particle generation
+  // Particle generation with global limits
   const createParticle = useCallback(() => {
     const shouldCreate = Math.random() < 0.95; // Higher chance for more particles
-    
+
     if (!shouldCreate) return;
 
     const newParticle = {
       id: particleIdRef.current++,
-      type: season === 'winter' ? 'snow' : 
-            season === 'fall' ? 'leaf' : 
-            season === 'spring' ? 'seed' : 
+      type: season === 'winter' ? 'snow' :
+            season === 'fall' ? 'leaf' :
+            season === 'spring' ? 'seed' :
             season === 'summer' ? 'bee' : ''
     };
 
     if (newParticle.type) {
       setParticles(prev => {
         const currentParticles = prev;
-        // Limit bees to max 3 on screen at once to prevent disappearing
+
+        // Global particle limits to prevent performance issues
+        const maxParticles = newParticle.type === 'snow' ? 100 : 50;
+        if (currentParticles.length >= maxParticles) {
+          return currentParticles; // Don't add more particles
+        }
+
+        // Specific limits for bees to prevent disappearing
         if (newParticle.type === 'bee') {
           const currentBees = currentParticles.filter(p => p.type === 'bee');
           if (currentBees.length >= 3) {
             return currentParticles; // Don't add more bees
           }
         }
+
         return [...currentParticles, newParticle];
       });
     }

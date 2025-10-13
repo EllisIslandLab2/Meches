@@ -12,11 +12,9 @@ export const revalidate = 300;
 // Server-side data fetching with ISR
 async function getProducts(): Promise<Product[]> {
   try {
-    const products = await fetchProductsFromAirtableServer();
-    console.log(`Fetched ${products.length} products from Airtable at build/revalidate time`);
-    return products;
+    return await fetchProductsFromAirtableServer();
   } catch (error) {
-    console.error('Failed to fetch products during build/revalidate, using sample data:', error);
+    console.error('Failed to fetch products during build/revalidate:', error);
     return sampleProducts;
   }
 }

@@ -91,6 +91,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="w-8 h-8 bg-green-700 text-white rounded-full font-bold hover:bg-green-800 transition-colors border-2 border-amber-700"
+                aria-label="Decrease quantity"
               >
                 -
               </button>
@@ -98,6 +99,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               <button
                 onClick={() => setQuantity(quantity + 1)}
                 className="w-8 h-8 bg-green-700 text-white rounded-full font-bold hover:bg-green-800 transition-colors border-2 border-amber-700"
+                aria-label="Increase quantity"
               >
                 +
               </button>

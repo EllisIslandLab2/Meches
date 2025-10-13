@@ -6,13 +6,20 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "square:import": "node scripts/airtable-to-square.mjs",
+    "square:sandbox": "bash scripts/switch-square-env.sh sandbox",
+    "square:production": "bash scripts/switch-square-env.sh production"
   },
   "dependencies": {
+    "nanoid": "^5.1.6",
     "next": "15.5.0",
+    "papaparse": "^5.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "swr": "^2.3.6"
+    "square": "^43.1.0",
+    "swr": "^2.3.6",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

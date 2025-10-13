@@ -14,6 +14,23 @@ body {
   transition: background-color 0.3s ease;
 }
 
+/* Respect prefers-reduced-motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Hide particles completely for users who prefer reduced motion */
+  .dynamic-bg > div > div {
+    display: none !important;
+  }
+}
+
 /* Variation 1: Gentle Drift Left with randomization */
 @keyframes fall1 {
   0% { transform: translateY(-20px) translateX(0px) rotate(0deg) rotateX(0deg) rotateY(0deg); opacity: 0; }

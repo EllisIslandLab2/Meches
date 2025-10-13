@@ -10,8 +10,12 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const subtotal = getTotalPrice();
-  const shipping = subtotal > 50 ? 0 : 5.99;
-  const tax = subtotal * 0.08; // 8% tax
+  const taxRate = parseFloat(process.env.NEXT_PUBLIC_TAX_RATE || '0.08');
+  const freeShippingThreshold = parseFloat(process.env.NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD || '50');
+  const shippingCost = parseFloat(process.env.NEXT_PUBLIC_SHIPPING_COST || '5.99');
+
+  const shipping = subtotal >= freeShippingThreshold ? 0 : shippingCost;
+  const tax = subtotal * taxRate;
   const total = subtotal + shipping + tax;
 
   const handleProceedToPayment = () => {
@@ -121,7 +125,7 @@ export default function CheckoutPage() {
                 {shipping > 0 && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
                     <p className="text-sm text-blue-800">
-                      Add ${(50 - subtotal).toFixed(2)} more for FREE shipping!
+                      Add ${(freeShippingThreshold - subtotal).toFixed(2)} more for FREE shipping!
                     </p>
                   </div>
                 )}
