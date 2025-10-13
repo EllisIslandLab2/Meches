@@ -5,8 +5,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Columbus' | 'Easter' | 'Independence' | 'all';
 
 interface SeasonContextType {
-  selectedSeasons: SeasonHoliday[];
-  toggleSeason: (season: SeasonHoliday) => void;
+  selectedSeason: SeasonHoliday;
+  setSelectedSeason: (season: SeasonHoliday) => void;
   autoDetectedSeasons: SeasonHoliday[];
 }
 
@@ -59,33 +59,12 @@ interface SeasonProviderProps {
 
 export const SeasonProvider: React.FC<SeasonProviderProps> = ({ children }) => {
   const autoDetectedSeasons = getAutoDetectedSeasons();
-  const [selectedSeasons, setSelectedSeasons] = useState<SeasonHoliday[]>(autoDetectedSeasons);
-
-  const toggleSeason = (season: SeasonHoliday) => {
-    setSelectedSeasons(prev => {
-      if (season === 'all') {
-        // If 'all' is selected, clear all other selections
-        return ['all'];
-      } else {
-        // Remove 'all' if present
-        const withoutAll = prev.filter(s => s !== 'all');
-
-        if (withoutAll.includes(season)) {
-          // Remove the season
-          const filtered = withoutAll.filter(s => s !== season);
-          // If nothing left, default to 'all'
-          return filtered.length > 0 ? filtered : ['all'];
-        } else {
-          // Add the season
-          return [...withoutAll, season];
-        }
-      }
-    });
-  };
+  // Default to first auto-detected season, or 'all' if none detected
+  const [selectedSeason, setSelectedSeason] = useState<SeasonHoliday>(autoDetectedSeasons[0] || 'all');
 
   const value = {
-    selectedSeasons,
-    toggleSeason,
+    selectedSeason,
+    setSelectedSeason,
     autoDetectedSeasons
   };
 

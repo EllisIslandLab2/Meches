@@ -5,7 +5,7 @@ import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
 import Link from 'next/link';
 
 const SeasonDropdown: React.FC = () => {
-  const { selectedSeasons, toggleSeason, autoDetectedSeasons } = useSeason();
+  const { selectedSeason, setSelectedSeason, autoDetectedSeasons } = useSeason();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -23,20 +23,9 @@ const SeasonDropdown: React.FC = () => {
     { value: 'Independence', label: 'Independence Day', emoji: '🎆' }
   ];
 
-  // Generate button text based on selections
-  const getButtonText = () => {
-    if (selectedSeasons.includes('all')) {
-      return 'All Products';
-    }
-    if (selectedSeasons.length === 1) {
-      const selected = options.find(opt => opt.value === selectedSeasons[0]);
-      return selected ? selected.label : 'Select';
-    }
-    if (selectedSeasons.length === 2) {
-      return selectedSeasons.map(s => options.find(opt => opt.value === s)?.label).join(' & ');
-    }
-    return `${selectedSeasons.length} Selected`;
-  };
+  // Get button text based on current selection
+  const selectedOption = options.find(opt => opt.value === selectedSeason);
+  const buttonText = selectedOption ? selectedOption.label : 'Select Season';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -50,9 +39,9 @@ const SeasonDropdown: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleToggle = (seasonValue: SeasonHoliday) => {
-    toggleSeason(seasonValue);
-    // Don't close dropdown on selection to allow multiple selections
+  const handleSelect = (seasonValue: SeasonHoliday) => {
+    setSelectedSeason(seasonValue);
+    setIsOpen(false); // Close dropdown after selection
   };
 
   return (
@@ -61,7 +50,7 @@ const SeasonDropdown: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 flex items-center gap-2"
       >
-        <span>{getButtonText()}</span>
+        <span>{buttonText}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
@@ -76,19 +65,20 @@ const SeasonDropdown: React.FC = () => {
         <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-amber-200 z-50">
           <div className="py-2">
             <div className="px-4 py-2 text-sm text-amber-700 font-medium border-b border-amber-100">
-              Select Holidays/Seasons:
+              Select Season/Holiday:
             </div>
             <div className="max-h-96 overflow-y-auto">
               {options.map((option) => {
-                const isSelected = selectedSeasons.includes(option.value);
+                const isSelected = selectedSeason === option.value;
                 const isAutoDetected = autoDetectedSeasons.includes(option.value);
 
                 return (
-                  <button
+                  <Link
                     key={option.value}
-                    onClick={() => handleToggle(option.value)}
+                    href="/#products"
+                    onClick={() => handleSelect(option.value)}
                     className={`
-                      w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-amber-50 transition-colors
+                      w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-amber-50 transition-colors cursor-pointer
                       ${isSelected ? 'bg-amber-100 text-amber-900 font-medium' : 'text-amber-800'}
                     `}
                   >
@@ -104,12 +94,12 @@ const SeasonDropdown: React.FC = () => {
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
             <div className="px-4 py-2 text-xs text-amber-600 border-t border-amber-100">
-              Click multiple items to filter products
+              Products can appear in multiple seasons
             </div>
           </div>
         </div>

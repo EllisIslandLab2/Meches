@@ -207,10 +207,8 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   children,
   transitionDuration = 3000 
 }) => {
-  const { selectedSeasons } = useSeason();
-  // Pick the first selected season for background display (can only show one at a time)
-  // Filter out 'all' and use the first valid season, or default to the first selection
-  const season = selectedSeasons.filter(s => s !== 'all')[0] || 'all';
+  const { selectedSeason } = useSeason();
+  const season = selectedSeason;
   const [particles, setParticles] = useState<Array<{id: number, type: string}>>([]);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [sunlightEffects, setSunlightEffects] = useState<Array<{

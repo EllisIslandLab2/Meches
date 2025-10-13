@@ -36,7 +36,7 @@ const ProductSkeleton: React.FC = () => (
 );
 
 export default function ProductsClient({ initialProducts }: ProductsClientProps) {
-  const { selectedSeasons } = useSeason();
+  const { selectedSeason } = useSeason();
   const [showUpdateNotification, setShowUpdateNotification] = useState(false);
 
   // SWR with background refresh - uses initialProducts as fallback
@@ -58,13 +58,13 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
     }
   );
 
-  // Client-side season filtering (instant switching) - now supports multiple seasons
-  const productGroups = groupProductsByCategory(products, selectedSeasons);
+  // Client-side season filtering (instant switching)
+  const productGroups = groupProductsByCategory(products, [selectedSeason]);
 
   if (error) {
     console.error('Error fetching products:', error);
     // Fallback to initial products on error
-    const fallbackGroups = groupProductsByCategory(initialProducts, selectedSeasons);
+    const fallbackGroups = groupProductsByCategory(initialProducts, [selectedSeason]);
     return (
       <section id="products" className="py-16">
         <div className="max-w-6xl mx-auto px-5">
@@ -122,11 +122,11 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
           <div className="text-center py-12">
             <GlassCard className="p-8 mx-auto max-w-lg" intensity="light">
               <p className="text-lg text-amber-800 mb-2">
-                No products available for selected {selectedSeasons.includes('all') ? 'filters' : 'holidays/seasons'}
+                No products available for {selectedSeason === 'all' ? 'all seasons' : selectedSeason}
               </p>
               <p className="text-sm text-amber-700">
-                {!selectedSeasons.includes('all')
-                  ? 'Try selecting different holidays/seasons to see more products'
+                {selectedSeason !== 'all'
+                  ? 'Try selecting a different season to see more products'
                   : 'Products will appear here when available'
                 }
               </p>
