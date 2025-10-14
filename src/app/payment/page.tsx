@@ -281,10 +281,9 @@ export default function PaymentPage() {
         console.log('Order saved, clearing cart and redirecting...');
         clearCart();
 
-        // Use setTimeout to ensure state updates complete before redirect
-        setTimeout(() => {
-          router.push('/success');
-        }, 100);
+        // Redirect immediately using window.location to bypass React Router
+        // This prevents Square SDK's async error from being caught by error boundary
+        window.location.href = '/success';
       } else {
         console.error('Card tokenization failed:', result.errors);
         // Show detailed error messages to help debug
