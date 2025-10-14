@@ -210,7 +210,12 @@ export default function PaymentPage() {
         return;
       }
 
-      if (result.status === 'OK') {
+      if (result.status === 'OK' && result.token) {
+        console.log('Payment token received successfully, processing order...');
+
+        // Mark payment as completed IMMEDIATELY to prevent any redirects
+        setPaymentCompleted(true);
+
         // Store order info and redirect to success page
         const orderInfo = {
           customerInfo,
@@ -273,10 +278,13 @@ export default function PaymentPage() {
           // Continue anyway - payment was successful
         }
 
-        // Mark payment as completed before clearing cart to prevent redirect
-        setPaymentCompleted(true);
+        console.log('Order saved, clearing cart and redirecting...');
         clearCart();
-        router.push('/success');
+
+        // Use setTimeout to ensure state updates complete before redirect
+        setTimeout(() => {
+          router.push('/success');
+        }, 100);
       } else {
         console.error('Card tokenization failed:', result.errors);
         // Show detailed error messages to help debug
