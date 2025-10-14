@@ -78,8 +78,10 @@ export default function ContactPage() {
       await submitToAirtable('general-contact-form', {
         Name: formData.name,
         Email: formData.email,
+        Subject: 'General Inquiry',
         Message: formData.message,
-        'Submission Date': new Date().toISOString()
+        Type: 'general',
+        Timestamp: new Date().toISOString()
       });
 
       setFormData({ name: '', email: '', message: '' });
@@ -101,14 +103,16 @@ export default function ContactPage() {
         Name: customOrderData.name,
         Email: customOrderData.email,
         Phone: customOrderData.phone,
-        'Item Description': customOrderData.itemDescription,
-        'Color Preference': customOrderData.colorPreference,
-        'Size Preference': customOrderData.sizePreference,
-        'Quantity Needed': parseInt(customOrderData.quantityNeeded),
-        'Budget Range': customOrderData.budgetRange,
-        'Timeline Needed': customOrderData.timelineNeeded,
-        'Additional Requests': customOrderData.additionalRequests,
-        'Submission Date': new Date().toISOString()
+        'Product Type': customOrderData.itemDescription, // Maps to Product Type field
+        Colors: customOrderData.colorPreference,
+        Size: customOrderData.sizePreference,
+        Quantity: parseInt(customOrderData.quantityNeeded),
+        Budget: customOrderData.budgetRange,
+        Deadline: customOrderData.timelineNeeded,
+        Description: customOrderData.itemDescription,
+        Inspiration: customOrderData.additionalRequests,
+        Type: 'custom-order',
+        Timestamp: new Date().toISOString()
       });
 
       setCustomOrderData({

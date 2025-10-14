@@ -159,8 +159,14 @@ export default function PaymentPage() {
         // For demo purposes, we'll simulate success and store in localStorage
         localStorage.setItem('lastOrder', JSON.stringify(orderInfo));
         
-        // Submit customer info to Airtable
+        // Submit order to Airtable Orders table
         try {
+          // Generate unique order ID
+          const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+          // Format full address
+          const fullAddress = `${customerInfo.address}\n${customerInfo.city}, ${customerInfo.state} ${customerInfo.zipCode}`;
+
           await fetch('/api/airtable', {
             method: 'POST',
             headers: {
@@ -168,22 +174,24 @@ export default function PaymentPage() {
             },
             body: JSON.stringify({
               action: 'create',
-              formType: 'customer-info',
+              formType: 'order',
               data: {
                 fields: {
-                  'First Name': customerInfo.firstName,
-                  'Last Name': customerInfo.lastName,
+                  'Order ID': orderId,
+                  'Customer Name': `${customerInfo.firstName} ${customerInfo.lastName}`,
                   'Email': customerInfo.email,
-                  'Phone': customerInfo.phone,
-                  'Address': customerInfo.address,
-                  'City': customerInfo.city,
-                  'State': customerInfo.state,
-                  'Zip Code': customerInfo.zipCode,
-                  'Order Total': estimatedTotal,
-                  'Order Items': cart.map(item => 
-                    `${item.name} (${item.variant}) x${item.quantity}`
-                  ).join(', '),
-                  'Order Date': new Date().toISOString()
+                  'Phone': customerInfo.phone || '',
+                  'Address': fullAddress,
+                  'Order Items': cart.map(item =>
+                    `${item.name} (${item.variant}) x${item.quantity} @ $${item.price.toFixed(2)}`
+                  ).join('\n'),
+                  'Subtotal': subtotal,
+                  'Shipping': shipping,
+                  'Tax': estimatedTax,
+                  'Total': estimatedTotal,
+                  'Payment Status': 'Completed',
+                  'Order Date': new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+                  'Payment Token': result.token || ''
                 }
               }
             })

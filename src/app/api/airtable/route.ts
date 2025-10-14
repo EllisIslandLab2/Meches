@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
         AIRTABLE_TABLE_NAME = process.env.INQUIRIES_TABLE;
         break;
       case 'customer-info':
+      case 'order':
         AIRTABLE_TABLE_NAME = process.env.ORDERS_TABLE;
         break;
       case 'products':
