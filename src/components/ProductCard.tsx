@@ -7,9 +7,10 @@ import { useCart } from '@/contexts/CartContext';
 
 interface ProductCardProps {
   product: ProductGroup;
+  priority?: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.defaultVariant);
   const [quantity, setQuantity] = useState(1);
@@ -47,6 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={priority}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200">

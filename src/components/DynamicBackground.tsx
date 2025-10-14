@@ -238,7 +238,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   };
 
 
-  // Particle generation with global limits
+  // Particle generation with global limits - reduce on mobile for performance
   const createParticle = useCallback(() => {
     const shouldCreate = Math.random() < 0.95; // Higher chance for more particles
 
@@ -256,22 +256,27 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
     if (newParticle.type) {
       setParticles(prev => {
         const currentParticles = prev;
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
         // Type-specific limits to prevent bees from being affected by other particles
+        // Reduce limits on mobile for better performance
         if (newParticle.type === 'bee') {
           const currentBees = currentParticles.filter(p => p.type === 'bee');
-          if (currentBees.length >= 8) {
-            return currentParticles; // Don't add more bees (increased to 8 for better visibility)
+          const maxBees = isMobile ? 4 : 8;
+          if (currentBees.length >= maxBees) {
+            return currentParticles; // Don't add more bees
           }
         } else if (newParticle.type === 'snow') {
           const currentSnow = currentParticles.filter(p => p.type === 'snow');
-          if (currentSnow.length >= 100) {
+          const maxSnow = isMobile ? 50 : 100;
+          if (currentSnow.length >= maxSnow) {
             return currentParticles; // Don't add more snow
           }
         } else {
           // Other particle types (leaves, seeds, eggs)
           const currentTypeCount = currentParticles.filter(p => p.type === newParticle.type);
-          if (currentTypeCount.length >= 50) {
+          const maxOther = isMobile ? 25 : 50;
+          if (currentTypeCount.length >= maxOther) {
             return currentParticles; // Don't add more of this type
           }
         }
@@ -351,8 +356,9 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
           } as React.CSSProperties
         });
 
-        // Add sparkles around the cross
-        const sparkleCount = 15;
+        // Add sparkles around the cross - reduce on mobile
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const sparkleCount = isMobile ? 8 : 15;
         for (let i = 0; i < sparkleCount; i++) {
           // Position sparkles near the cross intersection
           const xOffset = (Math.random() - 0.5) * 30; // ±15% from center
@@ -390,11 +396,14 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
     }
   }, [season, isTransitioning]);
 
-  // Initial transition
+  // Initial transition - delay more on mobile for better performance
   useEffect(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const delay = isMobile ? transitionDuration + 1000 : transitionDuration; // Extra 1s delay on mobile
+
     const timer = setTimeout(() => {
       setIsTransitioning(false);
-    }, transitionDuration);
+    }, delay);
     return () => clearTimeout(timer);
   }, [transitionDuration]);
 

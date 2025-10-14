@@ -83,9 +83,9 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
           </div>
 
           <div className="flex flex-wrap justify-center gap-8">
-            {fallbackGroups.map((productGroup) => (
+            {fallbackGroups.map((productGroup, index) => (
               <div key={productGroup.category} className="w-full max-w-sm">
-                <ProductCard product={productGroup} />
+                <ProductCard product={productGroup} priority={index < 2} />
               </div>
             ))}
           </div>
@@ -136,9 +136,9 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
           </div>
         ) : (
           <div className="flex flex-wrap justify-center gap-8">
-            {productGroups.map((productGroup) => (
+            {productGroups.map((productGroup, index) => (
               <div key={productGroup.category} className="w-full max-w-sm">
-                <ProductCard product={productGroup} />
+                <ProductCard product={productGroup} priority={index < 2} />
               </div>
             ))}
           </div>

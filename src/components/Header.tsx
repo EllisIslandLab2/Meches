@@ -26,6 +26,7 @@ export default function Header() {
                     width={80}
                     height={80}
                     className="object-cover"
+                    priority
                   />
                 </div>
                 <h1 className="text-2xl font-semibold text-amber-900">
