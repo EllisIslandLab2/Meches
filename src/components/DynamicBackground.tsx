@@ -260,8 +260,8 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         // Type-specific limits to prevent bees from being affected by other particles
         if (newParticle.type === 'bee') {
           const currentBees = currentParticles.filter(p => p.type === 'bee');
-          if (currentBees.length >= 5) {
-            return currentParticles; // Don't add more bees (increased to 5 for better visibility)
+          if (currentBees.length >= 8) {
+            return currentParticles; // Don't add more bees (increased to 8 for better visibility)
           }
         } else if (newParticle.type === 'snow') {
           const currentSnow = currentParticles.filter(p => p.type === 'snow');
@@ -431,7 +431,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         : season === 'spring'
         ? setInterval(createParticle, 1500) // Gentle seeds (~1.5 seconds)
         : season === 'summer'
-        ? setInterval(createParticle, 6000) // Rare bees (~6 seconds)
+        ? setInterval(createParticle, 3000) // Bees every 3 seconds (gives them time to cross)
         : season === 'Easter'
         ? setInterval(createParticle, 500) // Easter eggs (~0.5 seconds)
         : setInterval(createParticle, 1000); // Default

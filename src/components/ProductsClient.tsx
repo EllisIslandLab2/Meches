@@ -20,9 +20,9 @@ const fetcher = async () => {
 };
 
 const ProductSkeleton: React.FC = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  <div className="flex flex-wrap justify-center gap-8">
     {[...Array(6)].map((_, i) => (
-      <div key={i} className="bg-gradient-to-br from-amber-50/95 to-yellow-50/95 rounded-xl shadow-lg overflow-hidden border-2 border-amber-700 animate-pulse">
+      <div key={i} className="w-full max-w-sm bg-gradient-to-br from-amber-50/95 to-yellow-50/95 rounded-xl shadow-lg overflow-hidden border-2 border-amber-700 animate-pulse">
         <div className="h-64 bg-amber-200"></div>
         <div className="p-6">
           <div className="bg-amber-200 h-6 rounded mb-2"></div>
@@ -82,9 +82,11 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {fallbackGroups.map((productGroup) => (
-              <ProductCard key={productGroup.category} product={productGroup} />
+              <div key={productGroup.category} className="w-full max-w-sm">
+                <ProductCard product={productGroup} />
+              </div>
             ))}
           </div>
         </div>
@@ -133,12 +135,12 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
             </GlassCard>
           </div>
         ) : (
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-              {productGroups.map((productGroup) => (
-                <ProductCard key={productGroup.category} product={productGroup} />
-              ))}
-            </div>
+          <div className="flex flex-wrap justify-center gap-8">
+            {productGroups.map((productGroup) => (
+              <div key={productGroup.category} className="w-full max-w-sm">
+                <ProductCard product={productGroup} />
+              </div>
+            ))}
           </div>
         )}
       </div>
