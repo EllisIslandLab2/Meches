@@ -53,6 +53,7 @@ export const useCart = () => {
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, dispatch] = useReducer(cartReducer, []);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   // Load cart from localStorage on client side
   useEffect(() => {
@@ -65,6 +66,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Error loading cart from localStorage:', error);
       }
     }
+    setIsLoaded(true);
   }, []);
 
   // Save cart to localStorage whenever it changes
@@ -103,7 +105,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     updateQuantity,
     clearCart,
     getTotalItems,
-    getTotalPrice
+    getTotalPrice,
+    isLoaded
   };
 
   return (

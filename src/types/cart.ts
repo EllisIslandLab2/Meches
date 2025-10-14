@@ -17,4 +17,5 @@ export interface CartContextType {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  isLoaded: boolean;
 }

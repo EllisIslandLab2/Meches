@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
-  const { cart, updateQuantity, removeFromCart, getTotalPrice } = useCart();
+  const { cart, updateQuantity, removeFromCart, getTotalPrice, isLoaded } = useCart();
   const router = useRouter();
 
   const subtotal = getTotalPrice();
@@ -28,11 +28,23 @@ export default function CheckoutPage() {
     router.push('/payment');
   };
 
+  // Show loading state while cart is being loaded from localStorage
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-5">
         <h1 className="text-3xl font-bold text-amber-800 mb-8">Shopping Cart</h1>
-        
+
         {cart.length === 0 ? (
           <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 text-center border-2 border-amber-700">
             <h2 className="text-xl text-gray-600 mb-4">Your cart is empty</h2>

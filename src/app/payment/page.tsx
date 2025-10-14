@@ -39,7 +39,7 @@ interface CustomerInfo {
 }
 
 export default function PaymentPage() {
-  const { cart, getTotalPrice, clearCart } = useCart();
+  const { cart, getTotalPrice, clearCart, isLoaded } = useCart();
   const router = useRouter();
   const [isSquareLoaded, setIsSquareLoaded] = useState(false);
   const [card, setCard] = useState<SquareCard | null>(null);
@@ -69,10 +69,11 @@ export default function PaymentPage() {
   const estimatedTotal = subtotal + shipping + estimatedTax;
 
   useEffect(() => {
-    if (cart.length === 0) {
+    // Only redirect if cart is loaded and empty
+    if (isLoaded && cart.length === 0) {
       router.push('/checkout');
     }
-  }, [cart, router]);
+  }, [cart, router, isLoaded]);
 
   const initializeSquare = async () => {
     if (!window.Square) {
@@ -205,6 +206,18 @@ export default function PaymentPage() {
       setIsProcessing(false);
     }
   };
+
+  // Show loading state while cart is being loaded from localStorage
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (
