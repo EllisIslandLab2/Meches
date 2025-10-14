@@ -239,31 +239,53 @@ export default function PaymentPage() {
       }
 
       if (result.status === 'OK' && result.token) {
-        console.log('Payment token received successfully, processing order...');
+        console.log('Payment token received successfully, processing payment...');
 
         // Mark payment as completed IMMEDIATELY to prevent any redirects
         setPaymentCompleted(true);
 
-        // Store order info and redirect to success page
-        const orderInfo = {
-          customerInfo,
-          cart,
-          totals: { subtotal, shipping, estimatedTax, estimatedTotal },
-          paymentToken: result.token,
-          timestamp: new Date().toISOString()
-        };
-
-        // In a real implementation, you would:
-        // 1. Send the token to your backend
-        // 2. Process the payment with Square's Payments API
-        // 3. Save the order to your database
-        // 4. Send confirmation emails
-        
-        // For demo purposes, we'll simulate success and store in localStorage
-        localStorage.setItem('lastOrder', JSON.stringify(orderInfo));
-        
-        // Submit order to Airtable Orders table
+        // Step 2: Actually charge the card using Square's Payments API
         try {
+          const paymentResponse = await fetch('/api/square-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              sourceId: result.token,
+              amountMoney: {
+                amount: Math.round(estimatedTotal * 100), // Convert dollars to cents
+                currency: 'USD',
+              },
+              customerInfo: customerInfo,
+            }),
+          });
+
+          const paymentData = await paymentResponse.json();
+
+          if (!paymentResponse.ok || !paymentData.success) {
+            console.error('Payment failed:', paymentData);
+            alert(`Payment failed: ${paymentData.error || 'Unknown error'}\n\nPlease try again or contact support.`);
+            setIsProcessing(false);
+            setPaymentCompleted(false);
+            return;
+          }
+
+          console.log('Payment successful!', paymentData.payment);
+
+          // Store order info for success page
+          const orderInfo = {
+            customerInfo,
+            cart,
+            totals: { subtotal, shipping, estimatedTax, estimatedTotal },
+            paymentId: paymentData.payment?.id,
+            timestamp: new Date().toISOString()
+          };
+
+          localStorage.setItem('lastOrder', JSON.stringify(orderInfo));
+
+          // Submit order to Airtable Orders table
+          try {
           // Generate unique order ID
           const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
@@ -294,26 +316,32 @@ export default function PaymentPage() {
                   'Shipping': shipping,
                   'Tax': estimatedTax,
                   'Total': estimatedTotal,
-                  'Payment Status': 'Completed',
+                  'Payment Status': 'Paid',
                   'Order Date': new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+                  'Payment ID': paymentData.payment?.id || '',
                   'Payment Token': result.token || ''
                 }
               }
             })
           });
-        } catch (airtableError) {
-          console.error('Failed to save to Airtable:', airtableError);
-          // Continue anyway - payment was successful
+          } catch (airtableError) {
+            console.error('Failed to save to Airtable:', airtableError);
+            // Continue anyway - payment was successful
+          }
+
+          console.log('Payment and order processing complete, redirecting to success page...');
+
+          // Redirect immediately using window.location to bypass React Router
+          // This prevents Square SDK's async error from being caught by error boundary
+          window.location.href = '/success';
+
+        } catch (paymentError) {
+          console.error('Payment processing failed:', paymentError);
+          alert('An error occurred while processing your payment. Please try again.');
+          setIsProcessing(false);
+          setPaymentCompleted(false);
+          return;
         }
-
-        console.log('Order saved, redirecting to success page...');
-
-        // DON'T clear cart yet - user needs to see items and total on success page
-        // Cart will be cleared after user completes final Square payment
-
-        // Redirect immediately using window.location to bypass React Router
-        // This prevents Square SDK's async error from being caught by error boundary
-        window.location.href = '/success';
       } else {
         console.error('Card tokenization failed:', result.errors);
         // Show detailed error messages to help debug
