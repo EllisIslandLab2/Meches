@@ -83,14 +83,18 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
       case 'bee':
         // Bees for summer
         return '🐝';
+      case 'egg':
+        // Easter eggs
+        return '🥚';
       default:
         return '•';
     }
   };
 
-  const getLeafColor = () => {
+  // Fix leaf color - use state instead of function to prevent color changes during animation
+  const [leafColorStyle] = useState(() => {
     if (type !== 'leaf') return {};
-    
+
     // Different autumn colors using CSS filters
     const colors = [
       { filter: 'hue-rotate(0deg) saturate(1.2)' }, // Original red
@@ -100,11 +104,9 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
       { filter: 'hue-rotate(35deg) saturate(1.1) brightness(1.3)' }, // Light orange
       { filter: 'hue-rotate(60deg) saturate(1.2) brightness(1.1)' }, // Yellow-orange
     ];
-    
-    return colors[Math.floor(Math.random() * colors.length)];
-  };
 
-  const leafColorStyle = getLeafColor();
+    return colors[Math.floor(Math.random() * colors.length)];
+  });
 
   // Spring seed styling
   const getSeedStyle = () => {
@@ -201,18 +203,19 @@ interface DynamicBackgroundProps {
   transitionDuration?: number;
 }
 
-const DynamicBackground: React.FC<DynamicBackgroundProps> = ({ 
-  footerHeight = 80, 
+const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
+  footerHeight = 80,
   className = '',
   children,
-  transitionDuration = 3000 
+  transitionDuration = 3000
 }) => {
-  const { selectedSeason } = useSeason();
-  const season = selectedSeason;
+  const { selectedSeason, autoDetectedSeasons } = useSeason();
+  // For "all" season, use the first auto-detected season for animations
+  const season = selectedSeason === 'all' ? (autoDetectedSeasons[0] || 'spring') : selectedSeason;
   const [particles, setParticles] = useState<Array<{id: number, type: string}>>([]);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [sunlightEffects, setSunlightEffects] = useState<Array<{
-    id: number, 
+    id: number,
     type: 'ray' | 'sparkle' | 'sweep',
     style: React.CSSProperties
   }>>([]);
@@ -221,14 +224,14 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
 
   // Background color calculation - neutral background with seasonal variations
   const getBackgroundStyle = () => {
-    if (season === 'winter') {
-      // Darker background with blue tint for winter to make snow more visible
+    if (season === 'winter' || season === 'Christmas') {
+      // Darker background with blue tint for winter/Christmas to make snow more visible
       return {
         background: 'linear-gradient(to bottom, #e8eaf0 0%, #d4d8e1 50%, #c0c6d2 100%)'
       };
     }
-    
-    // Default neutral background for all other seasons (spring, summer, fall)
+
+    // Default neutral background for all other seasons (spring, summer, fall, holidays)
     return {
       background: 'linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%)'
     };
@@ -243,27 +246,33 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
 
     const newParticle = {
       id: particleIdRef.current++,
-      type: season === 'winter' ? 'snow' :
-            season === 'fall' ? 'leaf' :
+      type: season === 'winter' || season === 'Christmas' ? 'snow' :
+            season === 'fall' || season === 'Halloween' ? 'leaf' :
             season === 'spring' ? 'seed' :
-            season === 'summer' ? 'bee' : ''
+            season === 'summer' ? 'bee' :
+            season === 'Easter' ? 'egg' : ''
     };
 
     if (newParticle.type) {
       setParticles(prev => {
         const currentParticles = prev;
 
-        // Global particle limits to prevent performance issues
-        const maxParticles = newParticle.type === 'snow' ? 100 : 50;
-        if (currentParticles.length >= maxParticles) {
-          return currentParticles; // Don't add more particles
-        }
-
-        // Specific limits for bees to prevent disappearing
+        // Type-specific limits to prevent bees from being affected by other particles
         if (newParticle.type === 'bee') {
           const currentBees = currentParticles.filter(p => p.type === 'bee');
-          if (currentBees.length >= 3) {
-            return currentParticles; // Don't add more bees
+          if (currentBees.length >= 5) {
+            return currentParticles; // Don't add more bees (increased to 5 for better visibility)
+          }
+        } else if (newParticle.type === 'snow') {
+          const currentSnow = currentParticles.filter(p => p.type === 'snow');
+          if (currentSnow.length >= 100) {
+            return currentParticles; // Don't add more snow
+          }
+        } else {
+          // Other particle types (leaves, seeds, eggs)
+          const currentTypeCount = currentParticles.filter(p => p.type === newParticle.type);
+          if (currentTypeCount.length >= 50) {
+            return currentParticles; // Don't add more of this type
           }
         }
 
@@ -277,114 +286,104 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
     setParticles(prev => prev.filter(p => p.id !== particleId));
   }, []);
 
-  // Generate laser beam effects for summer
+  // Generate cross light for Easter only (removed summer laser beams)
   useEffect(() => {
-    if (season === 'summer' && !isTransitioning) {
-      const generateLaserBeams = () => {
+    if (season === 'Easter' && !isTransitioning) {
+      // Easter cross light effect
+      const generateCrossLight = () => {
         const effects = [];
-        
-        // Define a common origin point just inside top-right corner (hidden by header)
-        const originX = 100; // Shifted 10 units further to the right
-        const originY = -25; // Higher up - 30 units above previous position
-        
-        // Generate mystical sunbeams (3-4 beams) from single off-screen origin
-        const beamCount = Math.floor(Math.random() * 2) + 3;
-        const beamPaths = []; // Store beam paths for sparkle positioning
-        
-        for (let i = 0; i < beamCount; i++) {
-          // Closer to vertical but still slightly angled
-          const angle = 15 + (i * 5); // 15°, 20°, 25°, 30° - close to vertical but still angled
-          
-          // Calculate where this beam travels across screen for sparkle positioning
-          const beamPath = {
-            startX: originX,
-            startY: originY,
-            angle: angle,
-            id: i
-          };
-          beamPaths.push(beamPath);
-          
-          effects.push({
-            id: i,
-            type: 'ray' as const,
-            style: {
-              position: 'absolute',
-              top: `${originY}%`,
-              right: `${100 - originX}%`, // Position inside screen at top-right
-              width: '120px', // Wider for softer appearance
-              height: '250vh', // Extra long to ensure full coverage
-              background: `linear-gradient(to bottom, 
-                transparent 0%,
-                rgba(255, 255, 255, 0.4) 5%,
-                rgba(255, 255, 255, 0.5) 15%,
-                rgba(255, 255, 255, 0.4) 30%,
-                rgba(255, 255, 255, 0.35) 50%,
-                rgba(255, 255, 255, 0.3) 70%,
-                rgba(255, 255, 255, 0.2) 85%,
-                rgba(255, 255, 255, 0.1) 95%,
-                transparent 100%)`,
-              transformOrigin: 'top center',
-              transform: `rotate(${angle}deg) translateX(${i * 25}px)`,
-              // Correct widening: narrow at origin (top), wide at end (bottom)
-              clipPath: `polygon(48% 0%, 52% 0%, 25% 100%, 75% 100%)`,
-              '--beam-rotation': `rotate(${angle}deg)`, // Store rotation for animations
-              '--emerge-duration': `${Math.random() * 4 + 8}s`, // 8-12 second cycles (much faster)
-              '--shift-duration': `${Math.random() * 6 + 12}s`, // Still slow but not crazy slow
-              '--emerge-delay': `${Math.random() * 6}s`, // Shorter delays so you see them sooner
-              '--shift-delay': `${Math.random() * 4}s`,
-              filter: 'blur(1px)', // Slight blur for softer effect
-              boxShadow: `
-                0 0 15px rgba(255, 255, 255, 0.2),
-                0 0 30px rgba(255, 255, 255, 0.12),
-                0 0 45px rgba(255, 255, 255, 0.08)
-              `,
-              zIndex: 2,
-              opacity: 0.7, // Reduced opacity for subtlety
-            } as React.CSSProperties
-          });
-        }
-        
-        // Generate sparkles positioned specifically around beam paths
-        const sparkleCount = Math.floor(Math.random() * 12) + 8;
+
+        // Vertical beam of cross (center of screen)
+        effects.push({
+          id: 1,
+          type: 'ray' as const,
+          style: {
+            position: 'absolute',
+            top: '0',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '150px',
+            height: '100vh',
+            background: `linear-gradient(to bottom,
+              rgba(255, 248, 220, 0.4) 0%,
+              rgba(255, 248, 220, 0.5) 20%,
+              rgba(255, 248, 220, 0.45) 40%,
+              rgba(255, 248, 220, 0.4) 60%,
+              rgba(255, 248, 220, 0.3) 80%,
+              transparent 100%)`,
+            filter: 'blur(2px)',
+            boxShadow: `
+              0 0 20px rgba(255, 248, 220, 0.3),
+              0 0 40px rgba(255, 248, 220, 0.2),
+              0 0 60px rgba(255, 248, 220, 0.1)
+            `,
+            zIndex: 2,
+            opacity: 0.6,
+            animation: 'cross-glow 8s ease-in-out infinite',
+          } as React.CSSProperties
+        });
+
+        // Horizontal beam of cross (center height)
+        effects.push({
+          id: 2,
+          type: 'ray' as const,
+          style: {
+            position: 'absolute',
+            top: '30%',
+            left: '0',
+            width: '100vw',
+            height: '150px',
+            background: `linear-gradient(to right,
+              transparent 0%,
+              rgba(255, 248, 220, 0.3) 20%,
+              rgba(255, 248, 220, 0.5) 50%,
+              rgba(255, 248, 220, 0.3) 80%,
+              transparent 100%)`,
+            filter: 'blur(2px)',
+            boxShadow: `
+              0 0 20px rgba(255, 248, 220, 0.3),
+              0 0 40px rgba(255, 248, 220, 0.2),
+              0 0 60px rgba(255, 248, 220, 0.1)
+            `,
+            zIndex: 2,
+            opacity: 0.6,
+            animation: 'cross-glow 8s ease-in-out infinite',
+          } as React.CSSProperties
+        });
+
+        // Add sparkles around the cross
+        const sparkleCount = 15;
         for (let i = 0; i < sparkleCount; i++) {
-          // Pick a random beam to associate this sparkle with
-          const beamIndex = Math.floor(Math.random() * beamPaths.length);
-          const beam = beamPaths[beamIndex];
-          
-          // Calculate sparkle position along the beam path
-          const distanceAlongBeam = Math.random(); // 0-1 along beam length
-          const sideOffset = (Math.random() - 0.5) * 60; // ±30px from beam center
-          
-          // Convert beam path to screen coordinates (approximate)
-          const beamScreenX = 85 - (distanceAlongBeam * 60); // Approximate beam crossing
-          const beamScreenY = 10 + (distanceAlongBeam * 70); // Approximate beam descent
-          
+          // Position sparkles near the cross intersection
+          const xOffset = (Math.random() - 0.5) * 30; // ±15% from center
+          const yOffset = (Math.random() - 0.5) * 30; // ±15% from center
+
           effects.push({
-            id: i + 1000, // Offset sparkle IDs to avoid conflicts
+            id: i + 100,
             type: 'sparkle' as const,
             style: {
               position: 'absolute',
-              left: `${beamScreenX + (sideOffset * 0.3)}%`,
-              top: `${beamScreenY}%`,
-              width: '3px',
-              height: '3px',
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 30%, transparent 70%)',
+              left: `${50 + xOffset}%`,
+              top: `${30 + yOffset}%`,
+              width: '4px',
+              height: '4px',
+              background: 'radial-gradient(circle, rgba(255, 248, 220, 1) 0%, rgba(255, 248, 220, 0.6) 30%, transparent 70%)',
               borderRadius: '50%',
-              '--sparkle-duration': `${Math.random() * 3 + 2}s`, // 2-5 second sparkles
-              '--sparkle-delay': `${Math.random() * 15}s`, // Long delays for mystical effect
-              filter: 'blur(0.3px)',
-              boxShadow: '0 0 4px rgba(255, 255, 255, 0.6), 0 0 8px rgba(255, 255, 255, 0.3)',
+              '--sparkle-duration': `${Math.random() * 3 + 2}s`,
+              '--sparkle-delay': `${Math.random() * 10}s`,
+              filter: 'blur(0.5px)',
+              boxShadow: '0 0 6px rgba(255, 248, 220, 0.8), 0 0 12px rgba(255, 248, 220, 0.4)',
             } as React.CSSProperties
           });
         }
-        
+
         setSunlightEffects(effects);
       };
-      
-      generateLaserBeams();
-      
-      // Regenerate effects periodically for variation
-      const interval = setInterval(generateLaserBeams, 15000); // Every 15 seconds
+
+      generateCrossLight();
+
+      // Keep the cross light steady
+      const interval = setInterval(generateCrossLight, 20000);
       return () => clearInterval(interval);
     } else {
       setSunlightEffects([]);
@@ -400,17 +399,41 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   }, [transitionDuration]);
 
   // Particle generation interval - different frequencies for different seasons
+  // Only generate particles for seasons with specific animations
   useEffect(() => {
-    if ((season === 'winter' || season === 'fall' || season === 'spring' || season === 'summer') && !isTransitioning) {
+    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'spring', 'summer', 'Easter'];
+
+    // Clear incompatible particles when season changes
+    setParticles(prev => {
+      // Determine the correct particle type for this season
+      const correctType = season === 'winter' || season === 'Christmas' ? 'snow'
+                        : season === 'fall' || season === 'Halloween' ? 'leaf'
+                        : season === 'spring' ? 'seed'
+                        : season === 'summer' ? 'bee'
+                        : season === 'Easter' ? 'egg'
+                        : '';
+
+      // If no animations for this season, clear all particles
+      if (!seasonsWithParticles.includes(season)) {
+        return [];
+      }
+
+      // Filter out particles that don't match the current season
+      return prev.filter(p => p.type === correctType);
+    });
+
+    if (seasonsWithParticles.includes(season) && !isTransitioning) {
       // Different frequencies for each season
-      const interval = season === 'winter' 
+      const interval = season === 'winter' || season === 'Christmas'
         ? setInterval(createParticle, 280) // Fast snow (~0.28 seconds)
-        : season === 'fall' 
+        : season === 'fall' || season === 'Halloween'
         ? setInterval(createParticle, 833) // Medium leaves (~0.83 seconds)
         : season === 'spring'
         ? setInterval(createParticle, 1500) // Gentle seeds (~1.5 seconds)
         : season === 'summer'
         ? setInterval(createParticle, 6000) // Rare bees (~6 seconds)
+        : season === 'Easter'
+        ? setInterval(createParticle, 500) // Easter eggs (~0.5 seconds)
         : setInterval(createParticle, 1000); // Default
       return () => clearInterval(interval);
     }
@@ -424,13 +447,13 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         style={getBackgroundStyle()}
       >
 
-        {/* Summer laser beam effects */}
-        {season === 'summer' && sunlightEffects.length > 0 && (
+        {/* Easter cross light only */}
+        {season === 'Easter' && sunlightEffects.length > 0 && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {sunlightEffects.map((effect) => (
               <div
                 key={effect.id}
-                className={`${effect.type === 'ray' ? 'laser-beam' : 'beam-sparkle'}`}
+                className={`${effect.type === 'ray' ? 'cross-beam' : 'beam-sparkle'}`}
                 style={effect.style}
               />
             ))}

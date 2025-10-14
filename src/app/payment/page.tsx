@@ -90,6 +90,13 @@ export default function PaymentPage() {
     try {
       const payments = window.Square.payments(appId, locationId);
 
+      // Wait for DOM to be ready
+      const container = document.querySelector('#square-card-container');
+      if (!container) {
+        console.error('Square card container not found');
+        return;
+      }
+
       const card = await payments.card();
       await card.attach('#square-card-container');
       setCard(card);
@@ -101,7 +108,10 @@ export default function PaymentPage() {
 
   const handleSquareLoad = () => {
     setIsSquareLoaded(true);
-    initializeSquare();
+    // Give React time to render the container
+    setTimeout(() => {
+      initializeSquare();
+    }, 100);
   };
 
   const handlePayment = async (e: React.FormEvent) => {

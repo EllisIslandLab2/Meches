@@ -105,14 +105,14 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
 
         {/* Update notification */}
         {(isValidating && !showUpdateNotification) && (
-          <div className="fixed top-20 right-5 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-40 flex items-center gap-2">
+          <div className="fixed top-24 right-5 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-40 flex items-center gap-2">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
             <span className="text-sm">Checking for updates...</span>
           </div>
         )}
 
         {showUpdateNotification && (
-          <div className="fixed top-20 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-40 flex items-center gap-2">
+          <div className="fixed top-24 right-5 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-40 flex items-center gap-2">
             <span className="text-sm">✨ Products updated!</span>
           </div>
         )}
