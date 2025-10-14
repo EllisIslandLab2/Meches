@@ -199,12 +199,17 @@ export default function PaymentPage() {
       try {
         result = await card.tokenize();
         console.log('Tokenization result:', result);
+        console.log('Result status:', result.status);
+        console.log('Result token:', result.token);
+        console.log('Result errors:', result.errors);
+        console.log('Full result stringified:', JSON.stringify(result, null, 2));
       } catch (tokenizeError) {
         console.error('Tokenization threw error:', tokenizeError);
         alert(`Tokenization failed: ${tokenizeError instanceof Error ? tokenizeError.message : 'Unknown error'}`);
+        setIsProcessing(false);
         return;
       }
-      
+
       if (result.status === 'OK') {
         // Store order info and redirect to success page
         const orderInfo = {
