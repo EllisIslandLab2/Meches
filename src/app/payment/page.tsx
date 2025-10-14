@@ -45,6 +45,7 @@ export default function PaymentPage() {
   const [card, setCard] = useState<SquareCard | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentForm, setPaymentForm] = useState<SquarePayments | null>(null);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     firstName: '',
@@ -69,11 +70,11 @@ export default function PaymentPage() {
   const estimatedTotal = subtotal + shipping + estimatedTax;
 
   useEffect(() => {
-    // Only redirect if cart is loaded and empty
-    if (isLoaded && cart.length === 0) {
+    // Only redirect if cart is loaded and empty, and payment hasn't been completed
+    if (isLoaded && cart.length === 0 && !paymentCompleted) {
       router.push('/checkout');
     }
-  }, [cart, router, isLoaded]);
+  }, [cart, router, isLoaded, paymentCompleted]);
 
   const initializeSquare = async () => {
     if (!window.Square) {
@@ -201,6 +202,8 @@ export default function PaymentPage() {
           // Continue anyway - payment was successful
         }
 
+        // Mark payment as completed before clearing cart to prevent redirect
+        setPaymentCompleted(true);
         clearCart();
         router.push('/success');
       } else {
