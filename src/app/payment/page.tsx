@@ -18,8 +18,15 @@ interface SquareBillingContact {
   countryCode?: string;
 }
 
+interface SquareVerificationDetails {
+  intent: string;
+  customerInitiated: boolean;
+  sellerKeyedIn: boolean;
+}
+
 interface SquareTokenizeOptions {
   billingContact?: SquareBillingContact;
+  verificationDetails?: SquareVerificationDetails;
 }
 
 interface SquareCard {
@@ -175,7 +182,7 @@ export default function PaymentPage() {
     setIsProcessing(true);
 
     try {
-      // Tokenize the card with billing details
+      // Tokenize the card with billing details and verification info
       const tokenizationOptions = {
         billingContact: {
           familyName: customerInfo.lastName,
@@ -187,6 +194,11 @@ export default function PaymentPage() {
           state: customerInfo.state,
           postalCode: customerInfo.zipCode,
           countryCode: 'US'
+        },
+        verificationDetails: {
+          intent: 'CHARGE',
+          customerInitiated: true,
+          sellerKeyedIn: false
         }
       };
 
