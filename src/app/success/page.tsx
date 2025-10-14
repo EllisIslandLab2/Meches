@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import PaymentErrorBoundary from '@/components/PaymentErrorBoundary';
 
 interface OrderInfo {
   customerInfo: {
@@ -67,6 +68,7 @@ export default function SuccessPage() {
   const orderDate = new Date(orderInfo.timestamp);
 
   return (
+    <PaymentErrorBoundary>
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-5">
         {/* Success Header */}
@@ -233,5 +235,6 @@ export default function SuccessPage() {
         </div>
       </div>
     </div>
+    </PaymentErrorBoundary>
   );
 }
