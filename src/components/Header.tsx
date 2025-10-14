@@ -45,7 +45,7 @@ export default function Header() {
               </Link>
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="bg-green-600 text-white px-4 py-2 rounded-full font-medium hover:bg-green-700 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
+                className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
                 aria-label={`Shopping cart with ${getTotalItems()} items`}
               >
                 <svg
