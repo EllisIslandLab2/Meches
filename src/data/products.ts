@@ -271,7 +271,9 @@ export async function fetchProductsFromAirtable(): Promise<Product[]> {
         is_default_variant: record.fields.is_default_variant || false,
         display: record.fields.display !== false, // Default to true if not set
         selector_label: record.fields.selector_label || 'Color',
-        seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : [],
+        seasons: Array.isArray(record.fields.seasons)
+          ? record.fields.seasons.map((s: string) => s.toLowerCase())
+          : [],
         created_time: record.createdTime,
         updated_time: record.fields.last_modified_time
       };
