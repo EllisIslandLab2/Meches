@@ -12,6 +12,7 @@
     "square:production": "bash scripts/switch-square-env.sh production"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "nanoid": "^5.1.6",
     "next": "15.5.0",
     "papaparse": "^5.5.3",

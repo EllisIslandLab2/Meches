@@ -8,6 +8,7 @@ import StructuredData from "@/components/StructuredData";
 import DynamicBackground from "@/components/DynamicBackground";
 import DevSeasonControl from "@/components/DevSeasonControl";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Meche's Handmade Crafts - Unique Handcrafted Jewelry & Wooden Designs",
@@ -97,6 +98,7 @@ export default function RootLayout({
             </DynamicBackground>
           </SeasonProvider>
         </ErrorBoundary>
+        <Analytics />
       </body>
     </html>
   );
