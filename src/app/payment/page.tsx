@@ -19,7 +19,10 @@ interface SquareBillingContact {
 }
 
 interface SquareVerificationDetails {
-  intent: string;
+  amount: string;
+  billingContact: SquareBillingContact;
+  currencyCode: string;
+  intent: 'CHARGE' | 'STORE' | 'CHARGE_AND_STORE';
   customerInitiated: boolean;
   sellerKeyedIn: boolean;
 }
@@ -31,7 +34,7 @@ interface SquareTokenizeOptions {
 
 interface SquareCard {
   attach(elementId: string): Promise<void>;
-  tokenize(options?: SquareTokenizeOptions): Promise<{
+  tokenize(verificationDetails?: SquareVerificationDetails): Promise<{
     status: string;
     token?: string;
     errors?: Array<{ message: string }>;
@@ -182,28 +185,30 @@ export default function PaymentPage() {
     setIsProcessing(true);
 
     try {
-      // Tokenize the card with billing details and verification info
-      const tokenizationOptions = {
-        billingContact: {
-          familyName: customerInfo.lastName,
-          givenName: customerInfo.firstName,
-          email: customerInfo.email,
-          phone: customerInfo.phone,
-          addressLines: [customerInfo.address],
-          city: customerInfo.city,
-          state: customerInfo.state,
-          postalCode: customerInfo.zipCode,
-          countryCode: 'US'
-        },
-        verificationDetails: {
-          intent: 'CHARGE',
-          customerInitiated: true,
-          sellerKeyedIn: false
-        }
+      // Build verification details with all required fields for Square SCA
+      const billingContactData: SquareBillingContact = {
+        familyName: customerInfo.lastName,
+        givenName: customerInfo.firstName,
+        email: customerInfo.email,
+        phone: customerInfo.phone,
+        addressLines: [customerInfo.address],
+        city: customerInfo.city,
+        state: customerInfo.state,
+        postalCode: customerInfo.zipCode,
+        countryCode: 'US'
       };
 
-      console.log('Tokenizing with options:', tokenizationOptions);
-      const result = await card.tokenize(tokenizationOptions);
+      const verificationDetails: SquareVerificationDetails = {
+        amount: estimatedTotal.toFixed(2),
+        billingContact: billingContactData,
+        currencyCode: 'USD',
+        intent: 'CHARGE',
+        customerInitiated: true,
+        sellerKeyedIn: false
+      };
+
+      console.log('Tokenizing with verification details:', verificationDetails);
+      const result = await card.tokenize(verificationDetails);
       
       if (result.status === 'OK') {
         // Store order info and redirect to success page
