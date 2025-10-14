@@ -23,7 +23,9 @@
       "Bash(curl:*)",
       "Bash(git push:*)",
       "Bash(git commit:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "WebSearch",
+      "WebFetch(domain:developer.squareup.com)"
     ],
     "deny": [],
     "ask": [],

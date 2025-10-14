@@ -110,6 +110,13 @@ export default function PaymentPage() {
 
     const appId = process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID;
     const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
+    const environment = process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT;
+
+    console.log('=== Square Initialization ===');
+    console.log('Environment:', environment);
+    console.log('Application ID:', appId);
+    console.log('Location ID:', locationId);
+    console.log('App ID starts with:', appId?.substring(0, 10));
 
     if (!appId || !locationId) {
       console.error('Square credentials not configured. Please set NEXT_PUBLIC_SQUARE_APPLICATION_ID and NEXT_PUBLIC_SQUARE_LOCATION_ID in your environment variables.');
@@ -185,9 +192,18 @@ export default function PaymentPage() {
     setIsProcessing(true);
 
     try {
-      // Simple tokenization without verification details first
+      // Attempt tokenization with proper error handling
       console.log('Attempting card tokenization...');
-      const result = await card.tokenize();
+
+      let result;
+      try {
+        result = await card.tokenize();
+        console.log('Tokenization result:', result);
+      } catch (tokenizeError) {
+        console.error('Tokenization threw error:', tokenizeError);
+        alert(`Tokenization failed: ${tokenizeError instanceof Error ? tokenizeError.message : 'Unknown error'}`);
+        return;
+      }
       
       if (result.status === 'OK') {
         // Store order info and redirect to success page
