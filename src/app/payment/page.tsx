@@ -262,7 +262,9 @@ export default function PaymentPage() {
         router.push('/success');
       } else {
         console.error('Card tokenization failed:', result.errors);
-        alert('Payment failed. Please check your card details and try again.');
+        // Show detailed error messages to help debug
+        const errorMessages = result.errors?.map(err => err.message).join('\n') || 'Unknown error';
+        alert(`Payment failed:\n\n${errorMessages}\n\nPlease check your card details and try again.`);
       }
     } catch (error) {
       console.error('Payment processing error:', error);
