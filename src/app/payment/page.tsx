@@ -205,9 +205,22 @@ export default function PaymentPage() {
         console.log('Full result stringified:', JSON.stringify(result, null, 2));
       } catch (tokenizeError) {
         console.error('Tokenization threw error:', tokenizeError);
-        alert(`Tokenization failed: ${tokenizeError instanceof Error ? tokenizeError.message : 'Unknown error'}`);
-        setIsProcessing(false);
-        return;
+        // Suppress "toFixed" errors from Square SDK internals
+        if (tokenizeError instanceof Error && tokenizeError.message.includes('toFixed')) {
+          console.warn('Suppressing Square SDK internal toFixed error');
+          // Check if we still got a result before the error
+          if (result && result.status === 'OK') {
+            console.log('Tokenization succeeded despite SDK error');
+          } else {
+            alert('Payment processing encountered an issue. Please try again.');
+            setIsProcessing(false);
+            return;
+          }
+        } else {
+          alert(`Tokenization failed: ${tokenizeError instanceof Error ? tokenizeError.message : 'Unknown error'}`);
+          setIsProcessing(false);
+          return;
+        }
       }
 
       if (result.status === 'OK' && result.token) {
@@ -278,8 +291,10 @@ export default function PaymentPage() {
           // Continue anyway - payment was successful
         }
 
-        console.log('Order saved, clearing cart and redirecting...');
-        clearCart();
+        console.log('Order saved, redirecting to success page...');
+
+        // DON'T clear cart yet - user needs to see items and total on success page
+        // Cart will be cleared after user completes final Square payment
 
         // Redirect immediately using window.location to bypass React Router
         // This prevents Square SDK's async error from being caught by error boundary
