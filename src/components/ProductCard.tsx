@@ -67,8 +67,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Only show selector if there are multiple variants */}
           {product.variants.length > 1 && (
             <div>
-              <label className="block text-sm font-medium mb-2 text-amber-900">{product.selectorLabel}:</label>
+              <label htmlFor={`variant-${product.category}`} className="block text-sm font-medium mb-2 text-amber-900">{product.selectorLabel}:</label>
               <select
+                id={`variant-${product.category}`}
                 value={selectedVariant.id}
                 onChange={(e) => {
                   const variant = product.variants.find(v => v.id === e.target.value);
@@ -109,7 +110,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         <button
           onClick={handleAddToCart}
-          className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-amber-800 shadow-lg"
+          className="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg"
         >
           Add to Cart
         </button>
