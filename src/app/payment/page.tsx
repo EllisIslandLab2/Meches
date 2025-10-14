@@ -34,7 +34,7 @@ interface SquareTokenizeOptions {
 
 interface SquareCard {
   attach(elementId: string): Promise<void>;
-  tokenize(verificationDetails?: SquareVerificationDetails): Promise<{
+  tokenize(): Promise<{
     status: string;
     token?: string;
     errors?: Array<{ message: string }>;
@@ -185,30 +185,9 @@ export default function PaymentPage() {
     setIsProcessing(true);
 
     try {
-      // Build verification details with all required fields for Square SCA
-      const billingContactData: SquareBillingContact = {
-        familyName: customerInfo.lastName,
-        givenName: customerInfo.firstName,
-        email: customerInfo.email,
-        phone: customerInfo.phone,
-        addressLines: [customerInfo.address],
-        city: customerInfo.city,
-        state: customerInfo.state,
-        postalCode: customerInfo.zipCode,
-        countryCode: 'US'
-      };
-
-      const verificationDetails: SquareVerificationDetails = {
-        amount: estimatedTotal.toFixed(2),
-        billingContact: billingContactData,
-        currencyCode: 'USD',
-        intent: 'CHARGE',
-        customerInitiated: true,
-        sellerKeyedIn: false
-      };
-
-      console.log('Tokenizing with verification details:', verificationDetails);
-      const result = await card.tokenize(verificationDetails);
+      // Simple tokenization without verification details first
+      console.log('Attempting card tokenization...');
+      const result = await card.tokenize();
       
       if (result.status === 'OK') {
         // Store order info and redirect to success page
