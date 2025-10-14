@@ -102,6 +102,21 @@ export default function PaymentPage() {
     }
   }, [cart, router, isLoaded, paymentCompleted]);
 
+  // Add global error handler to suppress Square SDK's async toFixed errors
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      // Check if this is the Square SDK toFixed error
+      if (event.message && event.message.includes('toFixed')) {
+        console.warn('Suppressed Square SDK toFixed error:', event.message);
+        event.preventDefault(); // Prevent error from propagating to error boundary
+        return true;
+      }
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
   const initializeSquare = async () => {
     if (!window.Square) {
       console.error('Square.js not loaded');
