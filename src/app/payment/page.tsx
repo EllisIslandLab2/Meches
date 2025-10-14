@@ -71,6 +71,7 @@ export default function PaymentPage() {
   const [isSquareLoaded, setIsSquareLoaded] = useState(false);
   const [card, setCard] = useState<SquareCard | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState('');
   const [paymentForm, setPaymentForm] = useState<SquarePayments | null>(null);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
 
@@ -206,6 +207,7 @@ export default function PaymentPage() {
     }
 
     setIsProcessing(true);
+    setProcessingStep('Tokenizing card...');
 
     try {
       // Attempt tokenization with proper error handling
@@ -241,12 +243,14 @@ export default function PaymentPage() {
 
       if (result.status === 'OK' && result.token) {
         console.log('Payment token received successfully, processing payment...');
+        setProcessingStep('Processing payment...');
 
         // Mark payment as completed IMMEDIATELY to prevent any redirects
         setPaymentCompleted(true);
 
         // Step 2: Actually charge the card using Square's Payments API
         try {
+          console.log('Calling payment API with token:', result.token);
           const paymentResponse = await fetch('/api/square-payment', {
             method: 'POST',
             headers: {
@@ -262,17 +266,21 @@ export default function PaymentPage() {
             }),
           });
 
+          console.log('Payment API response status:', paymentResponse.status);
           const paymentData = await paymentResponse.json();
+          console.log('Payment API response data:', paymentData);
 
           if (!paymentResponse.ok || !paymentData.success) {
             console.error('Payment failed:', paymentData);
             alert(`Payment failed: ${paymentData.error || 'Unknown error'}\n\nPlease try again or contact support.`);
             setIsProcessing(false);
+            setProcessingStep('');
             setPaymentCompleted(false);
             return;
           }
 
           console.log('Payment successful!', paymentData.payment);
+          setProcessingStep('Saving order...');
 
           // Store order info for success page
           const orderInfo = {
@@ -331,15 +339,19 @@ export default function PaymentPage() {
           }
 
           console.log('Payment and order processing complete, redirecting to success page...');
+          setProcessingStep('Redirecting...');
 
-          // Redirect immediately using window.location to bypass React Router
-          // This prevents Square SDK's async error from being caught by error boundary
+          // Wait a moment to ensure all state updates complete and logs are visible
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Redirect using window.location to bypass React Router
           window.location.href = '/success';
 
         } catch (paymentError) {
           console.error('Payment processing failed:', paymentError);
           alert('An error occurred while processing your payment. Please try again.');
           setIsProcessing(false);
+          setProcessingStep('');
           setPaymentCompleted(false);
           return;
         }
@@ -387,6 +399,18 @@ export default function PaymentPage() {
 
   return (
     <PaymentErrorBoundary>
+      {/* Processing Overlay */}
+      {isProcessing && processingStep && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Processing Payment</h2>
+            <p className="text-gray-600 text-lg">{processingStep}</p>
+            <p className="text-sm text-gray-500 mt-4">Please do not close this window</p>
+          </div>
+        </div>
+      )}
+
       <Script
         src={
           process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT === 'production'
