@@ -10,13 +10,15 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const subtotal = getTotalPrice();
-  const taxRate = parseFloat(process.env.NEXT_PUBLIC_TAX_RATE || '0.08');
   const freeShippingThreshold = parseFloat(process.env.NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD || '50');
   const shippingCost = parseFloat(process.env.NEXT_PUBLIC_SHIPPING_COST || '5.99');
 
+  // Ohio sales tax rate (7.25%) as estimate - final tax calculated by Square based on exact address
+  const estimatedTaxRate = 0.0725;
+
   const shipping = subtotal >= freeShippingThreshold ? 0 : shippingCost;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shipping + tax;
+  const estimatedTax = subtotal * estimatedTaxRate;
+  const estimatedTotal = subtotal + shipping + estimatedTax;
 
   const handleProceedToPayment = () => {
     if (cart.length === 0) {
@@ -110,16 +112,25 @@ export default function CheckoutPage() {
                     <span>Shipping:</span>
                     <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Tax:</span>
-                    <span>${tax.toFixed(2)}</span>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div>Est. Tax (OH):</div>
+                      <div className="text-xs text-gray-600">Based on address</div>
+                    </div>
+                    <span>${estimatedTax.toFixed(2)}</span>
                   </div>
                   <div className="border-t-2 border-yellow-500 pt-3">
                     <div className="flex justify-between text-lg font-bold text-amber-800">
-                      <span>Total:</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>Estimated Total:</span>
+                      <span>${estimatedTotal.toFixed(2)}</span>
                     </div>
                   </div>
+                </div>
+
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
+                  <p className="text-xs text-green-800">
+                    <strong>Note:</strong> Final tax will be calculated by Square based on your exact shipping address at checkout.
+                  </p>
                 </div>
 
                 {shipping > 0 && (

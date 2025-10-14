@@ -58,13 +58,15 @@ export default function PaymentPage() {
   });
 
   const subtotal = getTotalPrice();
-  const taxRate = parseFloat(process.env.NEXT_PUBLIC_TAX_RATE || '0.08');
   const freeShippingThreshold = parseFloat(process.env.NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD || '50');
   const shippingCost = parseFloat(process.env.NEXT_PUBLIC_SHIPPING_COST || '5.99');
 
+  // Ohio sales tax rate (7.25%) as estimate - final tax calculated by Square based on exact address
+  const estimatedTaxRate = 0.0725;
+
   const shipping = subtotal >= freeShippingThreshold ? 0 : shippingCost;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shipping + tax;
+  const estimatedTax = subtotal * estimatedTaxRate;
+  const estimatedTotal = subtotal + shipping + estimatedTax;
 
   useEffect(() => {
     if (cart.length === 0) {
@@ -142,7 +144,7 @@ export default function PaymentPage() {
         const orderInfo = {
           customerInfo,
           cart,
-          totals: { subtotal, shipping, tax, total },
+          totals: { subtotal, shipping, estimatedTax, estimatedTotal },
           paymentToken: result.token,
           timestamp: new Date().toISOString()
         };
@@ -176,7 +178,7 @@ export default function PaymentPage() {
                   'City': customerInfo.city,
                   'State': customerInfo.state,
                   'Zip Code': customerInfo.zipCode,
-                  'Order Total': total,
+                  'Order Total': estimatedTotal,
                   'Order Items': cart.map(item => 
                     `${item.name} (${item.variant}) x${item.quantity}`
                   ).join(', '),
@@ -260,14 +262,17 @@ export default function PaymentPage() {
                     <span>Shipping:</span>
                     <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Tax:</span>
-                    <span>${tax.toFixed(2)}</span>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-sm">Est. Tax (OH):</div>
+                      <div className="text-xs text-gray-600">Final tax at checkout</div>
+                    </div>
+                    <span className="text-sm">${estimatedTax.toFixed(2)}</span>
                   </div>
                   <div className="border-t pt-2">
                     <div className="flex justify-between text-lg font-bold text-amber-800">
-                      <span>Total:</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>Estimated Total:</span>
+                      <span>${estimatedTotal.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -276,10 +281,10 @@ export default function PaymentPage() {
                 <div className="bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 mt-6">
                   <h3 className="text-yellow-800 font-semibold mb-3">Amount to Enter in Square</h3>
                   <div className="bg-white border-2 border-blue-500 rounded-lg p-4 flex justify-between items-center">
-                    <span className="text-3xl font-bold text-blue-600">${total.toFixed(2)}</span>
+                    <span className="text-3xl font-bold text-blue-600">${estimatedTotal.toFixed(2)}</span>
                   </div>
                   <p className="text-yellow-800 text-sm mt-3 leading-relaxed">
-                    Please enter this exact amount in the Square payment form below to complete your purchase.
+                    This is an estimate. Square will calculate the final tax based on your exact shipping address.
                   </p>
                 </div>
               </div>
@@ -394,7 +399,7 @@ export default function PaymentPage() {
                   <ol className="text-sm text-blue-800 space-y-1 ml-4 list-decimal">
                     <li>Fill in all customer information above</li>
                     <li>Enter your card details in the Square payment form</li>
-                    <li>Make sure the amount matches: <strong>${total.toFixed(2)}</strong></li>
+                    <li>Estimated amount: <strong>${estimatedTotal.toFixed(2)}</strong> (final tax calculated by Square)</li>
                     <li>Click "Complete Payment" below</li>
                   </ol>
                 </div>
@@ -405,7 +410,7 @@ export default function PaymentPage() {
                     disabled={isProcessing || !isSquareLoaded}
                     className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isProcessing ? 'Processing...' : `Complete Payment - $${total.toFixed(2)}`}
+                    {isProcessing ? 'Processing...' : `Complete Payment - ~$${estimatedTotal.toFixed(2)}`}
                   </button>
                 </div>
               </form>
