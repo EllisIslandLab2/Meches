@@ -6,9 +6,25 @@ import { useState, useEffect } from 'react';
 import Script from 'next/script';
 
 // Square SDK types
+interface SquareBillingContact {
+  familyName?: string;
+  givenName?: string;
+  email?: string;
+  phone?: string;
+  addressLines?: string[];
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  countryCode?: string;
+}
+
+interface SquareTokenizeOptions {
+  billingContact?: SquareBillingContact;
+}
+
 interface SquareCard {
   attach(elementId: string): Promise<void>;
-  tokenize(): Promise<{
+  tokenize(options?: SquareTokenizeOptions): Promise<{
     status: string;
     token?: string;
     errors?: Array<{ message: string }>;
