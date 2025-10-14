@@ -334,12 +334,14 @@ export default function PaymentPage() {
             })
           });
           } catch (airtableError) {
-            console.error('Failed to save to Airtable:', airtableError);
-            // Continue anyway - payment was successful
+            console.error('Failed to save to Airtable (non-critical):', airtableError);
+            // Continue anyway - payment was successful and that's what matters
+            // The payment data is already in Square's system
           }
 
+          console.log('✅ PAYMENT SUCCESSFUL! Order ID:', paymentData.payment?.id);
           console.log('Payment and order processing complete, redirecting to success page...');
-          setProcessingStep('Redirecting...');
+          setProcessingStep('Payment Complete! Redirecting...');
 
           // Wait a moment to ensure all state updates complete and logs are visible
           await new Promise(resolve => setTimeout(resolve, 1000));
