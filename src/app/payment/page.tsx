@@ -183,9 +183,11 @@ export default function PaymentPage() {
                   'Email': customerInfo.email,
                   'Phone': customerInfo.phone || '',
                   'Address': fullAddress,
-                  'Order Items': cart.map(item =>
-                    `${item.name} (${item.variant}) x${item.quantity} @ $${item.price.toFixed(2)}`
-                  ).join('\n'),
+                  'Order Items': cart.map(item => {
+                    const price = typeof item.price === 'number' ? item.price : 0;
+                    const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
+                    return `${item.name} (${item.variant}) x${quantity} @ $${price.toFixed(2)}`;
+                  }).join('\n'),
                   'Subtotal': subtotal,
                   'Shipping': shipping,
                   'Tax': estimatedTax,
@@ -269,12 +271,16 @@ export default function PaymentPage() {
                 <h3 className="text-xl font-semibold mb-6">Order Summary</h3>
                 
                 <div className="space-y-3 mb-6">
-                  {cart.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span>{item.name} ({item.variant}) x{item.quantity}</span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
-                  ))}
+                  {cart.map((item) => {
+                    const itemPrice = typeof item.price === 'number' ? item.price : 0;
+                    const itemQuantity = typeof item.quantity === 'number' ? item.quantity : 0;
+                    return (
+                      <div key={item.id} className="flex justify-between text-sm">
+                        <span>{item.name} ({item.variant}) x{itemQuantity}</span>
+                        <span>${(itemPrice * itemQuantity).toFixed(2)}</span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="border-t pt-4 space-y-2">

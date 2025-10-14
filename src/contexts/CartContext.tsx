@@ -61,9 +61,27 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedCart) {
       try {
         const parsedCart = JSON.parse(savedCart);
-        dispatch({ type: 'LOAD_CART', payload: parsedCart });
+        // Validate cart items have required fields
+        const validItems = parsedCart.filter((item: any) => {
+          const isValid = item &&
+            typeof item.id === 'string' &&
+            typeof item.name === 'string' &&
+            typeof item.price === 'number' &&
+            typeof item.quantity === 'number' &&
+            item.price > 0 &&
+            item.quantity > 0;
+
+          if (!isValid) {
+            console.warn('Invalid cart item removed:', item);
+          }
+          return isValid;
+        });
+
+        dispatch({ type: 'LOAD_CART', payload: validItems });
       } catch (error) {
         console.error('Error loading cart from localStorage:', error);
+        // Clear corrupted cart data
+        localStorage.removeItem('cart');
       }
     }
     setIsLoaded(true);
@@ -95,7 +113,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => {
+      // Defensive check: ensure price and quantity are valid numbers
+      const price = typeof item.price === 'number' && !isNaN(item.price) ? item.price : 0;
+      const quantity = typeof item.quantity === 'number' && !isNaN(item.quantity) ? item.quantity : 0;
+      return total + (price * quantity);
+    }, 0);
   };
 
   const value: CartContextType = {
