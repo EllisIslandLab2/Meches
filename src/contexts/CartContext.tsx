@@ -55,8 +55,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [cart, dispatch] = useReducer(cartReducer, []);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
+  // Cart version for cache busting - increment this to force clear old carts
+  const CART_VERSION = 2;
+
   // Load cart from localStorage on client side
   useEffect(() => {
+    // Check cart version
+    const savedVersion = localStorage.getItem('cartVersion');
+    const currentVersion = savedVersion ? parseInt(savedVersion) : 0;
+
+    // Clear cart if version mismatch
+    if (currentVersion !== CART_VERSION) {
+      console.log('Cart version mismatch - clearing old cart data');
+      localStorage.removeItem('cart');
+      localStorage.setItem('cartVersion', CART_VERSION.toString());
+      setIsLoaded(true);
+      return;
+    }
+
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       try {
@@ -76,6 +92,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
           return isValid;
         });
+
+        if (validItems.length !== parsedCart.length) {
+          console.log(`Removed ${parsedCart.length - validItems.length} invalid items from cart`);
+        }
 
         dispatch({ type: 'LOAD_CART', payload: validItems });
       } catch (error) {
