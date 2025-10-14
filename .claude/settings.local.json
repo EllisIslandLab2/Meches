@@ -22,7 +22,8 @@
       "Bash(curl -s https://connect.squareup.com/v2/locations )",
       "Bash(curl:*)",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "ask": [],

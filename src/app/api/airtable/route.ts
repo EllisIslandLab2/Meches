@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Vercel Edge Config: Enable caching at the edge
+export const runtime = 'nodejs'; // Use Node.js runtime for Airtable API calls
+export const dynamic = 'force-dynamic'; // Since products may change frequently
+
 export async function POST(request: NextRequest) {
   try {
     // Get environment variables
@@ -102,7 +106,13 @@ export async function POST(request: NextRequest) {
       throw new Error(result.error?.message || 'Airtable API error');
     }
 
-    return NextResponse.json(result);
+    // Return with cache headers for Vercel Edge Network
+    // Cache for 5 minutes, allow stale content for 1 hour while revalidating
+    return NextResponse.json(result, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+      }
+    });
 
   } catch (error) {
     console.error('API error:', error);
