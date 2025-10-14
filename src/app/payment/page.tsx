@@ -120,7 +120,7 @@ export default function PaymentPage() {
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!card || !paymentForm) {
       alert('Payment form not ready. Please refresh the page.');
       return;
@@ -135,11 +135,47 @@ export default function PaymentPage() {
       }
     }
 
+    // Validate cart and totals
+    console.log('=== Payment Debug Info ===');
+    console.log('Cart:', cart);
+    console.log('Subtotal:', subtotal, typeof subtotal);
+    console.log('Shipping:', shipping, typeof shipping);
+    console.log('Tax:', estimatedTax, typeof estimatedTax);
+    console.log('Total:', estimatedTotal, typeof estimatedTotal);
+    console.log('Cart valid:', cart.every(item => typeof item.price === 'number' && typeof item.quantity === 'number'));
+
+    if (!subtotal || isNaN(subtotal) || subtotal <= 0) {
+      alert('Cart total is invalid. Please refresh the page and try again.');
+      console.error('Invalid subtotal:', subtotal);
+      return;
+    }
+
+    if (!estimatedTotal || isNaN(estimatedTotal) || estimatedTotal <= 0) {
+      alert('Order total is invalid. Please refresh the page and try again.');
+      console.error('Invalid total:', estimatedTotal);
+      return;
+    }
+
     setIsProcessing(true);
 
     try {
-      // Tokenize the card
-      const result = await card.tokenize();
+      // Tokenize the card with billing details
+      const tokenizationOptions = {
+        billingContact: {
+          familyName: customerInfo.lastName,
+          givenName: customerInfo.firstName,
+          email: customerInfo.email,
+          phone: customerInfo.phone,
+          addressLines: [customerInfo.address],
+          city: customerInfo.city,
+          state: customerInfo.state,
+          postalCode: customerInfo.zipCode,
+          countryCode: 'US'
+        }
+      };
+
+      console.log('Tokenizing with options:', tokenizationOptions);
+      const result = await card.tokenize(tokenizationOptions);
       
       if (result.status === 'OK') {
         // Store order info and redirect to success page
