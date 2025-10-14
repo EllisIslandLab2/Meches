@@ -4,6 +4,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
+import PaymentErrorBoundary from '@/components/PaymentErrorBoundary';
 
 // Square SDK types
 interface SquareBillingContact {
@@ -385,7 +386,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <>
+    <PaymentErrorBoundary>
       <Script
         src={
           process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT === 'production'
@@ -584,6 +585,6 @@ export default function PaymentPage() {
           </div>
         </div>
       </div>
-    </>
+    </PaymentErrorBoundary>
   );
 }
