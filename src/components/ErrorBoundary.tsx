@@ -20,7 +20,10 @@ class ErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     // Ignore Square SDK toFixed errors - they happen after successful payment
-    if (error.message && error.message.includes('toFixed')) {
+    const errorMessage = error.message || error.toString() || '';
+    console.log('ErrorBoundary checking error:', errorMessage);
+
+    if (errorMessage.includes('toFixed') || errorMessage.includes('Cannot read properties of undefined')) {
       console.warn('Ignoring Square SDK toFixed error');
       return { hasError: false };
     }
