@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Columbus' | 'Easter' | 'Independence' | 'all';
+export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Valentine\'s Day' | 'Easter' | 'Independence' | 'all';
 
 interface SeasonContextType {
   selectedSeason: SeasonHoliday;
@@ -40,8 +40,9 @@ const getAutoDetectedSeasons = (): SeasonHoliday[] => {
   // Thanksgiving (4th Thursday of November, ~day 327-333)
   if (month === 11 || (month === 10 && day > 15)) detected.push('Thanksgiving');
 
-  // Columbus Day (2nd Monday of October, ~day 283-289)
-  if (month === 10 && day >= 1 && day <= 20) detected.push('Columbus');
+  // Valentine's Day (Feb 14) - day ~45
+  const valentinesDay = 45;
+  if (Math.abs(dayOfYear - valentinesDay) <= 30) detected.push('Valentine\'s Day');
 
   // Easter (varies, roughly March 22 - April 25, ~day 81-115)
   if ((month === 3 && day >= 22) || (month === 4 && day <= 25)) detected.push('Easter');

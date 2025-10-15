@@ -3,29 +3,40 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSeason } from '@/contexts/SeasonContext';
 
-// Particle component for snow, leaves, etc.
+// Particle component for snow, leaves, hearts, etc.
 interface ParticleProps {
   type: string;
   style?: React.CSSProperties;
   onComplete: () => void;
+  direction?: 'left-to-right' | 'right-to-left'; // For bees and cupid
 }
 
-const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
+const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction }) => {
   const particleRef = useRef<HTMLDivElement>(null);
   const [initialPosition] = useState(() => {
     const isSnow = type === 'snow';
     const isBee = type === 'bee';
+    const isCupid = type === 'cupid';
+    const isHeart = type === 'heart';
     return {
       left: Math.random() * 100,
       // Different durations for different types
-      duration: isBee 
-        ? Math.random() * 3000 + 8000 // Bees: 8-11 seconds (enough time to cross screen)
+      duration: isBee
+        ? Math.random() * 3000 + 10000 // Bees: 10-13 seconds (longer to ensure they cross)
+        : isCupid
+        ? Math.random() * 2000 + 12000 // Cupid: 12-14 seconds (slower, majestic)
+        : isHeart
+        ? Math.random() * 2000 + 6000 // Hearts: 6-8 seconds (float upward)
         : Math.random() * 1500 + 4000, // Others: 4-5.5 seconds
       // Different size ranges for different types
-      size: isSnow 
-        ? Math.random() * 0.8 + 0.3  // Snow: 0.3-1.1rem (smaller, more varied)
+      size: isSnow
+        ? Math.random() * 0.8 + 0.5  // Snow: 0.5-1.3rem (slightly bigger, more varied)
         : isBee
         ? Math.random() * 0.4 + 1.2  // Bees: 1.2-1.6rem (medium size)
+        : isCupid
+        ? Math.random() * 0.3 + 1.8  // Cupid: 1.8-2.1rem (bigger than bees)
+        : isHeart
+        ? Math.random() * 0.5 + 1.0  // Hearts: 1.0-1.5rem (medium)
         : Math.random() * 0.6 + 1.8, // Leaves/Seeds: 1.8-2.4rem (original)
       animationVariation: Math.floor(Math.random() * 6) + 1, // 1, 2, 3, 4, 5, or 6
       // Add more randomization for unique movements
@@ -53,12 +64,16 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
     element.style.setProperty('--zigzag-intensity', initialPosition.zigzagIntensity.toString());
     element.style.setProperty('--drift-variation', `${initialPosition.driftVariation}px`);
     
-    // Use special bee flight animations for bees
-    if (type === 'bee') {
-      // Randomly choose direction and flight pattern
-      const direction = Math.random() < 0.5 ? 'left-to-right' : 'right-to-left';
+    // Use special flight animations for bees and cupid
+    if (type === 'bee' || type === 'cupid') {
+      // Use the direction prop if provided, otherwise random
+      const flyDirection = direction || (Math.random() < 0.5 ? 'left-to-right' : 'right-to-left');
       const flightPattern = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
-      element.style.animation = `bee-${direction}-${flightPattern} ${initialPosition.duration}ms ease-in-out forwards`;
+      const animationPrefix = type === 'bee' ? 'bee' : 'cupid';
+      element.style.animation = `${animationPrefix}-${flyDirection}-${flightPattern} ${initialPosition.duration}ms ease-in-out forwards`;
+    } else if (type === 'heart') {
+      // Hearts float upward
+      element.style.animation = `float-up${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
     } else {
       element.style.animation = `fall${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
     }
@@ -86,6 +101,12 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete }) => {
       case 'egg':
         // Easter eggs
         return '🥚';
+      case 'heart':
+        // Hearts for Valentine's Day
+        return '❤️';
+      case 'cupid':
+        // Cupid for Valentine's Day
+        return '👼';
       default:
         return '•';
     }
@@ -212,7 +233,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   const { selectedSeason, autoDetectedSeasons } = useSeason();
   // For "all" season, use the first auto-detected season for animations
   const season = selectedSeason === 'all' ? (autoDetectedSeasons[0] || 'spring') : selectedSeason;
-  const [particles, setParticles] = useState<Array<{id: number, type: string}>>([]);
+  const [particles, setParticles] = useState<Array<{id: number, type: string, direction?: 'left-to-right' | 'right-to-left'}>>([]);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [sunlightEffects, setSunlightEffects] = useState<Array<{
     id: number,
@@ -244,13 +265,32 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
 
     if (!shouldCreate) return;
 
+    // Determine particle type and direction based on season
+    let particleType = '';
+    let direction: 'left-to-right' | 'right-to-left' | undefined = undefined;
+
+    if (season === 'winter' || season === 'Christmas') {
+      particleType = 'snow';
+    } else if (season === 'fall' || season === 'Halloween' || season === 'Thanksgiving') {
+      particleType = 'leaf';
+    } else if (season === 'spring') {
+      particleType = 'seed';
+    } else if (season === 'summer') {
+      particleType = 'bee';
+    } else if (season === 'Easter') {
+      particleType = 'egg';
+    } else if (season === 'Valentine\'s Day') {
+      // 90% hearts, 10% cupid
+      particleType = Math.random() < 0.9 ? 'heart' : 'cupid';
+      if (particleType === 'cupid') {
+        direction = Math.random() < 0.5 ? 'left-to-right' : 'right-to-left';
+      }
+    }
+
     const newParticle = {
       id: particleIdRef.current++,
-      type: season === 'winter' || season === 'Christmas' ? 'snow' :
-            season === 'fall' || season === 'Halloween' ? 'leaf' :
-            season === 'spring' ? 'seed' :
-            season === 'summer' ? 'bee' :
-            season === 'Easter' ? 'egg' : ''
+      type: particleType,
+      direction
     };
 
     if (newParticle.type) {
@@ -258,26 +298,50 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         const currentParticles = prev;
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
-        // Type-specific limits to prevent bees from being affected by other particles
-        // Reduce limits on mobile for better performance
+        // Type-specific limits
         if (newParticle.type === 'bee') {
-          const currentBees = currentParticles.filter(p => p.type === 'bee');
-          const maxBees = isMobile ? 4 : 8;
-          if (currentBees.length >= maxBees) {
-            return currentParticles; // Don't add more bees
+          // Strict bee control: exactly 1 going left-to-right and 1 going right-to-left at a time
+          const beesLeftToRight = currentParticles.filter(p => p.type === 'bee' && p.direction === 'left-to-right');
+          const beesRightToLeft = currentParticles.filter(p => p.type === 'bee' && p.direction === 'right-to-left');
+
+          // Determine which direction this bee should go
+          if (beesLeftToRight.length === 0 && beesRightToLeft.length === 0) {
+            // No bees active, randomly choose direction
+            newParticle.direction = Math.random() < 0.5 ? 'left-to-right' : 'right-to-left';
+          } else if (beesLeftToRight.length === 0) {
+            // Only add left-to-right bee
+            newParticle.direction = 'left-to-right';
+          } else if (beesRightToLeft.length === 0) {
+            // Only add right-to-left bee
+            newParticle.direction = 'right-to-left';
+          } else {
+            // Both directions occupied, don't add
+            return currentParticles;
+          }
+        } else if (newParticle.type === 'cupid') {
+          // Only 1 cupid at a time
+          const currentCupids = currentParticles.filter(p => p.type === 'cupid');
+          if (currentCupids.length >= 1) {
+            return currentParticles;
           }
         } else if (newParticle.type === 'snow') {
           const currentSnow = currentParticles.filter(p => p.type === 'snow');
-          const maxSnow = isMobile ? 50 : 100;
+          const maxSnow = isMobile ? 100 : 200; // Double the snow!
           if (currentSnow.length >= maxSnow) {
-            return currentParticles; // Don't add more snow
+            return currentParticles;
+          }
+        } else if (newParticle.type === 'heart') {
+          const currentHearts = currentParticles.filter(p => p.type === 'heart');
+          const maxHearts = isMobile ? 30 : 60;
+          if (currentHearts.length >= maxHearts) {
+            return currentParticles;
           }
         } else {
           // Other particle types (leaves, seeds, eggs)
           const currentTypeCount = currentParticles.filter(p => p.type === newParticle.type);
           const maxOther = isMobile ? 25 : 50;
           if (currentTypeCount.length >= maxOther) {
-            return currentParticles; // Don't add more of this type
+            return currentParticles;
           }
         }
 
@@ -410,17 +474,18 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   // Particle generation interval - different frequencies for different seasons
   // Only generate particles for seasons with specific animations
   useEffect(() => {
-    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'spring', 'summer', 'Easter'];
+    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'Thanksgiving', 'spring', 'summer', 'Easter', 'Valentine\'s Day'];
 
     // Clear incompatible particles when season changes
     setParticles(prev => {
-      // Determine the correct particle type for this season
-      const correctType = season === 'winter' || season === 'Christmas' ? 'snow'
-                        : season === 'fall' || season === 'Halloween' ? 'leaf'
-                        : season === 'spring' ? 'seed'
-                        : season === 'summer' ? 'bee'
-                        : season === 'Easter' ? 'egg'
-                        : '';
+      // Determine the correct particle types for this season
+      const correctTypes = season === 'winter' || season === 'Christmas' ? ['snow']
+                        : season === 'fall' || season === 'Halloween' || season === 'Thanksgiving' ? ['leaf']
+                        : season === 'spring' ? ['seed']
+                        : season === 'summer' ? ['bee']
+                        : season === 'Easter' ? ['egg']
+                        : season === 'Valentine\'s Day' ? ['heart', 'cupid']
+                        : [];
 
       // If no animations for this season, clear all particles
       if (!seasonsWithParticles.includes(season)) {
@@ -428,21 +493,23 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
       }
 
       // Filter out particles that don't match the current season
-      return prev.filter(p => p.type === correctType);
+      return prev.filter(p => correctTypes.includes(p.type));
     });
 
     if (seasonsWithParticles.includes(season) && !isTransitioning) {
       // Different frequencies for each season
       const interval = season === 'winter' || season === 'Christmas'
-        ? setInterval(createParticle, 280) // Fast snow (~0.28 seconds)
-        : season === 'fall' || season === 'Halloween'
+        ? setInterval(createParticle, 140) // Faster snow for double output (~0.14 seconds)
+        : season === 'fall' || season === 'Halloween' || season === 'Thanksgiving'
         ? setInterval(createParticle, 833) // Medium leaves (~0.83 seconds)
         : season === 'spring'
         ? setInterval(createParticle, 1500) // Gentle seeds (~1.5 seconds)
         : season === 'summer'
-        ? setInterval(createParticle, 3000) // Bees every 3 seconds (gives them time to cross)
+        ? setInterval(createParticle, 6000) // Bees every 6 seconds (1 left + 1 right at a time, need longer)
         : season === 'Easter'
         ? setInterval(createParticle, 500) // Easter eggs (~0.5 seconds)
+        : season === 'Valentine\'s Day'
+        ? setInterval(createParticle, 400) // Hearts and cupid (~0.4 seconds)
         : setInterval(createParticle, 1000); // Default
       return () => clearInterval(interval);
     }
@@ -474,6 +541,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
           <Particle
             key={particle.id}
             type={particle.type}
+            direction={particle.direction}
             onComplete={() => removeParticle(particle.id)}
           />
         ))}

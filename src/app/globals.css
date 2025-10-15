@@ -300,6 +300,128 @@ body {
   100% { transform: translateX(-150px) translateY(65vh) rotate(0deg); opacity: 0; }
 }
 
+/* Valentine's Day heart animations - float upward */
+@keyframes float-up1 {
+  0% { transform: translateY(calc(100vh + 50px)) translateX(0px) scale(1); opacity: 0; }
+  5% { opacity: 0.9; }
+  25% { transform: translateY(75vh) translateX(calc(-15px * var(--zigzag-intensity))) scale(1.1); opacity: 0.95; }
+  50% { transform: translateY(50vh) translateX(calc(10px * var(--zigzag-intensity))) scale(1); opacity: 1; }
+  75% { transform: translateY(25vh) translateX(calc(-20px * var(--zigzag-intensity))) scale(0.9); opacity: 0.95; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(calc(5px * var(--zigzag-intensity))) scale(0.8); opacity: 0; }
+}
+
+@keyframes float-up2 {
+  0% { transform: translateY(calc(100vh + 50px)) translateX(0px) scale(1); opacity: 0; }
+  5% { opacity: 0.9; }
+  30% { transform: translateY(70vh) translateX(calc(12px * var(--zigzag-intensity))) scale(1.15); opacity: 0.95; }
+  55% { transform: translateY(45vh) translateX(calc(-18px * var(--zigzag-intensity))) scale(0.95); opacity: 1; }
+  80% { transform: translateY(20vh) translateX(calc(8px * var(--zigzag-intensity))) scale(1.05); opacity: 0.95; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(calc(-10px * var(--zigzag-intensity))) scale(0.85); opacity: 0; }
+}
+
+@keyframes float-up3 {
+  0% { transform: translateY(calc(100vh + 50px)) translateX(0px) scale(1); opacity: 0; }
+  5% { opacity: 0.9; }
+  20% { transform: translateY(80vh) translateX(calc(-10px * var(--zigzag-intensity))) scale(1.08); opacity: 0.95; }
+  45% { transform: translateY(55vh) translateX(calc(20px * var(--zigzag-intensity))) scale(0.92); opacity: 1; }
+  70% { transform: translateY(30vh) translateX(calc(-15px * var(--zigzag-intensity))) scale(1.12); opacity: 0.95; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(calc(5px * var(--zigzag-intensity))) scale(0.9); opacity: 0; }
+}
+
+@keyframes float-up4 {
+  0% { transform: translateY(calc(100vh + 50px)) translateX(0px) scale(1); opacity: 0; }
+  5% { opacity: 0.9; }
+  35% { transform: translateY(65vh) translateX(calc(18px * var(--zigzag-intensity))) scale(1.1); opacity: 0.95; }
+  60% { transform: translateY(40vh) translateX(calc(-12px * var(--zigzag-intensity))) scale(0.98); opacity: 1; }
+  85% { transform: translateY(15vh) translateX(calc(15px * var(--zigzag-intensity))) scale(1.05); opacity: 0.95; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(calc(-8px * var(--zigzag-intensity))) scale(0.88); opacity: 0; }
+}
+
+@keyframes float-up5 {
+  0% { transform: translateY(calc(100vh + 50px)) translateX(0px) scale(1); opacity: 0; }
+  5% { opacity: 0.9; }
+  22% { transform: translateY(78vh) translateX(calc(-8px * var(--zigzag-intensity))) scale(1.12); opacity: 0.95; }
+  48% { transform: translateY(52vh) translateX(calc(14px * var(--zigzag-intensity))) scale(0.95); opacity: 1; }
+  72% { transform: translateY(28vh) translateX(calc(-18px * var(--zigzag-intensity))) scale(1.08); opacity: 0.95; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(calc(10px * var(--zigzag-intensity))) scale(0.92); opacity: 0; }
+}
+
+@keyframes float-up6 {
+  0% { transform: translateY(calc(100vh + 50px)) translateX(0px) scale(1); opacity: 0; }
+  5% { opacity: 0.9; }
+  40% { transform: translateY(60vh) translateX(calc(10px * var(--zigzag-intensity))) scale(1.05); opacity: 0.95; }
+  65% { transform: translateY(35vh) translateX(calc(-15px * var(--zigzag-intensity))) scale(0.97); opacity: 1; }
+  88% { transform: translateY(12vh) translateX(calc(12px * var(--zigzag-intensity))) scale(1.1); opacity: 0.95; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(-50px) translateX(calc(-5px * var(--zigzag-intensity))) scale(0.87); opacity: 0; }
+}
+
+/* Cupid flight animations - similar to bees but slower */
+@keyframes cupid-left-to-right-1 {
+  0% { transform: translateX(-150px) translateY(15vh) rotate(0deg) scaleX(-1); opacity: 0; }
+  3% { opacity: 1; }
+  25% { transform: translateX(25vw) translateY(13vh) rotate(2deg) scaleX(-1); opacity: 1; }
+  50% { transform: translateX(50vw) translateY(18vh) rotate(-1deg) scaleX(-1); opacity: 1; }
+  75% { transform: translateX(75vw) translateY(16vh) rotate(3deg) scaleX(-1); opacity: 1; }
+  97% { transform: translateX(calc(100vw + 50px)) translateY(15vh) rotate(1deg) scaleX(-1); opacity: 1; }
+  100% { transform: translateX(calc(100vw + 150px)) translateY(15vh) rotate(0deg) scaleX(-1); opacity: 0; }
+}
+
+@keyframes cupid-left-to-right-2 {
+  0% { transform: translateX(-150px) translateY(35vh) rotate(0deg) scaleX(-1); opacity: 0; }
+  3% { opacity: 1; }
+  20% { transform: translateX(20vw) translateY(32vh) rotate(-2deg) scaleX(-1); opacity: 1; }
+  45% { transform: translateX(45vw) translateY(38vh) rotate(3deg) scaleX(-1); opacity: 1; }
+  70% { transform: translateX(70vw) translateY(35vh) rotate(-1deg) scaleX(-1); opacity: 1; }
+  97% { transform: translateX(calc(100vw + 50px)) translateY(35vh) rotate(2deg) scaleX(-1); opacity: 1; }
+  100% { transform: translateX(calc(100vw + 150px)) translateY(35vh) rotate(0deg) scaleX(-1); opacity: 0; }
+}
+
+@keyframes cupid-left-to-right-3 {
+  0% { transform: translateX(-150px) translateY(55vh) rotate(0deg) scaleX(-1); opacity: 0; }
+  3% { opacity: 1; }
+  30% { transform: translateX(30vw) translateY(52vh) rotate(3deg) scaleX(-1); opacity: 1; }
+  55% { transform: translateX(55vw) translateY(58vh) rotate(-2deg) scaleX(-1); opacity: 1; }
+  80% { transform: translateX(80vw) translateY(54vh) rotate(1deg) scaleX(-1); opacity: 1; }
+  97% { transform: translateX(calc(100vw + 50px)) translateY(55vh) rotate(-1deg) scaleX(-1); opacity: 1; }
+  100% { transform: translateX(calc(100vw + 150px)) translateY(55vh) rotate(0deg) scaleX(-1); opacity: 0; }
+}
+
+@keyframes cupid-right-to-left-1 {
+  0% { transform: translateX(calc(100vw + 100px)) translateY(20vh) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; }
+  25% { transform: translateX(75vw) translateY(18vh) rotate(-2deg); opacity: 1; }
+  50% { transform: translateX(50vw) translateY(23vh) rotate(1deg); opacity: 1; }
+  75% { transform: translateX(25vw) translateY(21vh) rotate(-3deg); opacity: 1; }
+  97% { transform: translateX(-50px) translateY(20vh) rotate(-1deg); opacity: 1; }
+  100% { transform: translateX(-150px) translateY(20vh) rotate(0deg); opacity: 0; }
+}
+
+@keyframes cupid-right-to-left-2 {
+  0% { transform: translateX(calc(100vw + 100px)) translateY(40vh) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; }
+  20% { transform: translateX(80vw) translateY(37vh) rotate(2deg); opacity: 1; }
+  45% { transform: translateX(55vw) translateY(43vh) rotate(-3deg); opacity: 1; }
+  70% { transform: translateX(30vw) translateY(39vh) rotate(1deg); opacity: 1; }
+  97% { transform: translateX(-50px) translateY(40vh) rotate(-2deg); opacity: 1; }
+  100% { transform: translateX(-150px) translateY(40vh) rotate(0deg); opacity: 0; }
+}
+
+@keyframes cupid-right-to-left-3 {
+  0% { transform: translateX(calc(100vw + 100px)) translateY(60vh) rotate(0deg); opacity: 0; }
+  3% { opacity: 1; }
+  30% { transform: translateX(70vw) translateY(57vh) rotate(-3deg); opacity: 1; }
+  55% { transform: translateX(45vw) translateY(63vh) rotate(2deg); opacity: 1; }
+  80% { transform: translateX(20vw) translateY(59vh) rotate(-1deg); opacity: 1; }
+  97% { transform: translateX(-50px) translateY(60vh) rotate(1deg); opacity: 1; }
+  100% { transform: translateX(-150px) translateY(60vh) rotate(0deg); opacity: 0; }
+}
+
 /* Ensure proper z-index stacking */
 .dynamic-bg {
   z-index: -10;

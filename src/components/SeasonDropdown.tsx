@@ -18,7 +18,7 @@ const SeasonDropdown: React.FC = () => {
     { value: 'Christmas', label: 'Christmas', emoji: '🎄' },
     { value: 'Halloween', label: 'Halloween', emoji: '🎃' },
     { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' },
-    { value: 'Columbus', label: 'Columbus Day', emoji: '🗽' },
+    { value: 'Valentine\'s Day', label: 'Valentine\'s Day', emoji: '💝' },
     { value: 'Easter', label: 'Easter', emoji: '🐰' },
     { value: 'Independence', label: 'Independence Day', emoji: '🎆' }
   ];
