@@ -1,8 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Valentine\'s Day' | 'Easter' | 'Independence' | 'all';
+export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Valentines' | 'Easter' | 'Independence' | 'all';
 
 interface SeasonContextType {
   selectedSeason: SeasonHoliday;
@@ -42,7 +42,7 @@ const getAutoDetectedSeasons = (): SeasonHoliday[] => {
 
   // Valentine's Day (Feb 14) - day ~45
   const valentinesDay = 45;
-  if (Math.abs(dayOfYear - valentinesDay) <= 30) detected.push('Valentine\'s Day');
+  if (Math.abs(dayOfYear - valentinesDay) <= 30) detected.push('Valentines');
 
   // Easter (varies, roughly March 22 - April 25, ~day 81-115)
   if ((month === 3 && day >= 22) || (month === 4 && day <= 25)) detected.push('Easter');

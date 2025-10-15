@@ -16,15 +16,12 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
   const [initialPosition] = useState(() => {
     const isSnow = type === 'snow';
     const isBee = type === 'bee';
-    const isCupid = type === 'cupid';
     const isHeart = type === 'heart';
     return {
       left: Math.random() * 100,
       // Different durations for different types
       duration: isBee
         ? Math.random() * 3000 + 10000 // Bees: 10-13 seconds (longer to ensure they cross)
-        : isCupid
-        ? Math.random() * 2000 + 12000 // Cupid: 12-14 seconds (slower, majestic)
         : isHeart
         ? Math.random() * 2000 + 6000 // Hearts: 6-8 seconds (float upward)
         : Math.random() * 1500 + 4000, // Others: 4-5.5 seconds
@@ -33,8 +30,6 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
         ? Math.random() * 0.8 + 0.5  // Snow: 0.5-1.3rem (slightly bigger, more varied)
         : isBee
         ? Math.random() * 0.4 + 1.2  // Bees: 1.2-1.6rem (medium size)
-        : isCupid
-        ? Math.random() * 0.3 + 1.8  // Cupid: 1.8-2.1rem (bigger than bees)
         : isHeart
         ? Math.random() * 0.5 + 1.0  // Hearts: 1.0-1.5rem (medium)
         : Math.random() * 0.6 + 1.8, // Leaves/Seeds: 1.8-2.4rem (original)
@@ -64,13 +59,12 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
     element.style.setProperty('--zigzag-intensity', initialPosition.zigzagIntensity.toString());
     element.style.setProperty('--drift-variation', `${initialPosition.driftVariation}px`);
     
-    // Use special flight animations for bees and cupid
-    if (type === 'bee' || type === 'cupid') {
+    // Use special flight animations for bees
+    if (type === 'bee') {
       // Use the direction prop if provided, otherwise random
       const flyDirection = direction || (Math.random() < 0.5 ? 'left-to-right' : 'right-to-left');
       const flightPattern = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
-      const animationPrefix = type === 'bee' ? 'bee' : 'cupid';
-      element.style.animation = `${animationPrefix}-${flyDirection}-${flightPattern} ${initialPosition.duration}ms ease-in-out forwards`;
+      element.style.animation = `bee-${flyDirection}-${flightPattern} ${initialPosition.duration}ms ease-in-out forwards`;
     } else if (type === 'heart') {
       // Hearts float upward
       element.style.animation = `float-up${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
@@ -104,9 +98,6 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
       case 'heart':
         // Hearts for Valentine's Day
         return '❤️';
-      case 'cupid':
-        // Cupid for Valentine's Day
-        return '👼';
       default:
         return '•';
     }
@@ -279,12 +270,9 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
       particleType = 'bee';
     } else if (season === 'Easter') {
       particleType = 'egg';
-    } else if (season === 'Valentine\'s Day') {
-      // 90% hearts, 10% cupid
-      particleType = Math.random() < 0.9 ? 'heart' : 'cupid';
-      if (particleType === 'cupid') {
-        direction = Math.random() < 0.5 ? 'left-to-right' : 'right-to-left';
-      }
+    } else if (season === 'Valentines') {
+      // Only hearts, no cupid (cupid is creepy!)
+      particleType = 'heart';
     }
 
     const newParticle = {
@@ -316,12 +304,6 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
             newParticle.direction = 'right-to-left';
           } else {
             // Both directions occupied, don't add
-            return currentParticles;
-          }
-        } else if (newParticle.type === 'cupid') {
-          // Only 1 cupid at a time
-          const currentCupids = currentParticles.filter(p => p.type === 'cupid');
-          if (currentCupids.length >= 1) {
             return currentParticles;
           }
         } else if (newParticle.type === 'snow') {
@@ -474,7 +456,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   // Particle generation interval - different frequencies for different seasons
   // Only generate particles for seasons with specific animations
   useEffect(() => {
-    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'Thanksgiving', 'spring', 'summer', 'Easter', 'Valentine\'s Day'];
+    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'Thanksgiving', 'spring', 'summer', 'Easter', 'Valentines'];
 
     // Clear incompatible particles when season changes
     setParticles(prev => {
@@ -484,7 +466,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
                         : season === 'spring' ? ['seed']
                         : season === 'summer' ? ['bee']
                         : season === 'Easter' ? ['egg']
-                        : season === 'Valentine\'s Day' ? ['heart', 'cupid']
+                        : season === 'Valentines' ? ['heart']
                         : [];
 
       // If no animations for this season, clear all particles
@@ -508,8 +490,8 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         ? setInterval(createParticle, 6000) // Bees every 6 seconds (1 left + 1 right at a time, need longer)
         : season === 'Easter'
         ? setInterval(createParticle, 500) // Easter eggs (~0.5 seconds)
-        : season === 'Valentine\'s Day'
-        ? setInterval(createParticle, 400) // Hearts and cupid (~0.4 seconds)
+        : season === 'Valentines'
+        ? setInterval(createParticle, 400) // Hearts (~0.4 seconds)
         : setInterval(createParticle, 1000); // Default
       return () => clearInterval(interval);
     }

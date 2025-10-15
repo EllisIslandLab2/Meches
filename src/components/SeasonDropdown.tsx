@@ -18,7 +18,7 @@ const SeasonDropdown: React.FC = () => {
     { value: 'Christmas', label: 'Christmas', emoji: '🎄' },
     { value: 'Halloween', label: 'Halloween', emoji: '🎃' },
     { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' },
-    { value: 'Valentine\'s Day', label: 'Valentine\'s Day', emoji: '💝' },
+    { value: 'Valentines', label: 'Valentines', emoji: '💝' },
     { value: 'Easter', label: 'Easter', emoji: '🐰' },
     { value: 'Independence', label: 'Independence Day', emoji: '🎆' }
   ];
@@ -46,20 +46,23 @@ const SeasonDropdown: React.FC = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 flex items-center gap-2"
-      >
-        <span>{buttonText}</span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      <div className="border-2 border-amber-800 rounded-lg px-4 py-2 bg-gradient-to-br from-amber-50/80 to-yellow-50/80 shadow-md">
+        <div className="text-xs font-semibold text-amber-800 mb-1">Seasons & Holidays</div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-amber-900 font-medium hover:text-green-700 transition-colors flex items-center gap-2"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          <span>{buttonText}</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-amber-200 z-50">

@@ -7,6 +7,7 @@ import { groupProductsByCategory, fetchProductsFromAirtable } from '@/data/produ
 import { useSeason } from '@/contexts/SeasonContext';
 import TimeBasedText from '@/components/TimeBasedText';
 import GlassCard from '@/components/GlassCard';
+import HolidayCountdown from '@/components/HolidayCountdown';
 import type { Product } from '@/data/products';
 
 interface ProductsClientProps {
@@ -68,6 +69,8 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
     return (
       <section id="products" className="py-16">
         <div className="max-w-6xl mx-auto px-5">
+          <HolidayCountdown />
+
           <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="light">
             <h2 className="text-3xl font-bold text-center">
               <TimeBasedText variant="heading">
@@ -75,7 +78,7 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
               </TimeBasedText>
             </h2>
           </GlassCard>
-          
+
           <div className="mb-4 text-center">
             <div className="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-2 rounded-lg inline-block">
               ⚠️ Using cached products. Check your connection.
@@ -97,6 +100,8 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
   return (
     <section id="products" className="py-16">
       <div className="max-w-6xl mx-auto px-5">
+        <HolidayCountdown />
+
         <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="light">
           <h2 className="text-3xl font-bold text-center">
             <TimeBasedText variant="heading">

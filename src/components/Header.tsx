@@ -14,36 +14,40 @@ export default function Header() {
   return (
     <>
       <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800">
-        <nav className="max-w-6xl mx-auto px-5" aria-label="Main navigation">
+        <nav className="max-w-7xl mx-auto px-5" aria-label="Main navigation">
           <div className="flex justify-between items-center py-3">
-            <div className="flex items-center gap-8">
-              <SeasonDropdown />
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg border-2 border-amber-800 overflow-hidden">
-                  <Image
-                    src="/assets/images/logo.jpg"
-                    alt="Meche's Crafts Logo"
-                    width={80}
-                    height={80}
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                <h1 className="text-2xl font-semibold text-amber-900">
-                  <Link href="/" className="hover:text-green-700 transition-colors">
-                    Meche's Handmade Crafts
-                  </Link>
-                </h1>
+            {/* Left: Logo + Title */}
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg border-2 border-amber-800 overflow-hidden">
+                <Image
+                  src="/assets/images/logo.jpg"
+                  alt="Meche's Crafts Logo"
+                  width={80}
+                  height={80}
+                  className="object-cover"
+                  priority
+                />
               </div>
+              <h1 className="text-2xl font-semibold text-amber-900">
+                <Link href="/" className="hover:text-green-700 transition-colors">
+                  Meche's Creations
+                </Link>
+              </h1>
             </div>
 
-            <div className="flex items-center gap-8">
+            {/* Center: Navigation Links */}
+            <div className="flex items-center gap-6">
               <Link href="/" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
                 Home
               </Link>
               <Link href="/contact" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
                 Contact
               </Link>
+            </div>
+
+            {/* Right: Season Selector + Cart */}
+            <div className="flex items-center gap-6">
+              <SeasonDropdown />
               <button
                 onClick={() => setIsCartOpen(true)}
                 className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
