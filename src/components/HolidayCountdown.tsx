@@ -6,7 +6,7 @@ import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
 // Define holiday dates (day of year)
 const holidayDates: Record<string, { dayOfYear: number; name: string; emoji: string }> = {
   'Valentines': { dayOfYear: 45, name: 'Valentine\'s Day', emoji: '💝' },
-  'Easter': { dayOfYear: 95, name: 'Easter', emoji: '🐰' }, // Approximate
+  'Easter': { dayOfYear: 95, name: 'Easter', emoji: '✟' }, // Approximate
   'Independence': { dayOfYear: 185, name: 'Independence Day', emoji: '🎆' },
   'Halloween': { dayOfYear: 304, name: 'Halloween', emoji: '🎃' },
   'Thanksgiving': { dayOfYear: 330, name: 'Thanksgiving', emoji: '🦃' }, // Approximate
@@ -60,8 +60,15 @@ const HolidayCountdown: React.FC = () => {
   }
 
   return (
-    <div className="text-center mb-8">
-      <div className="inline-block bg-gradient-to-r from-amber-100 to-yellow-100 border-2 border-amber-700 rounded-xl px-6 py-3 shadow-lg">
+    <div className="text-center">
+      <div
+        className="inline-block rounded-xl px-6 py-3"
+        style={{
+          background: 'linear-gradient(to right, rgba(254, 243, 199, 0.6), rgba(254, 249, 195, 0.6))',
+          backdropFilter: 'blur(15px)',
+          WebkitBackdropFilter: 'blur(15px)'
+        }}
+      >
         <div className="flex items-center gap-3">
           <span className="text-3xl">{countdown.emoji}</span>
           <div className="text-left">

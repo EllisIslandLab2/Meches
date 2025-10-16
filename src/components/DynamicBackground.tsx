@@ -258,7 +258,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
 
     // Determine particle type and direction based on season
     let particleType = '';
-    let direction: 'left-to-right' | 'right-to-left' | undefined = undefined;
+    let direction: 'left-to-right' | 'right-to-left' | undefined;
 
     if (season === 'winter' || season === 'Christmas') {
       particleType = 'snow';

@@ -23,7 +23,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
         };
       case 'medium':
         return {
-          background: 'linear-gradient(135deg, rgba(255, 251, 235, 0.5), rgba(254, 252, 191, 0.4))',
+          background: 'linear-gradient(to right, rgba(254, 243, 199, 0.6), rgba(254, 249, 195, 0.6))',
           backdropFilter: 'blur(15px)',
           border: '1px solid rgba(217, 119, 6, 0.3)'
         };

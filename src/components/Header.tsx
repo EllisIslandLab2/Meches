@@ -4,76 +4,109 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
 import CartModal from './CartModal';
 import SeasonDropdown from './SeasonDropdown';
 
 export default function Header() {
   const { getTotalItems } = useCart();
+  const { setSelectedSeason } = useSeason();
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const seasonQuickLinks = [
+    { value: 'spring' as SeasonHoliday, emoji: '🌸', label: 'Spring' },
+    { value: 'summer' as SeasonHoliday, emoji: '☀️', label: 'Summer' },
+    { value: 'fall' as SeasonHoliday, emoji: '🍂', label: 'Fall' },
+    { value: 'winter' as SeasonHoliday, emoji: '❄️', label: 'Winter' }
+  ];
 
   return (
     <>
       <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800">
-        <nav className="max-w-7xl mx-auto px-5" aria-label="Main navigation">
-          <div className="flex justify-between items-center py-3">
-            {/* Left: Logo + Title */}
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg border-2 border-amber-800 overflow-hidden">
+        <nav className="max-w-7xl mx-auto px-3" aria-label="Main navigation">
+          <div className="py-4 relative">
+            {/* Absolutely Centered Logo */}
+            <div className="absolute left-1/2 top-4 transform -translate-x-1/2">
+              <div className="rounded-lg overflow-hidden">
                 <Image
-                  src="/assets/images/logo.jpg"
+                  src="/assets/images/meche-logo.png"
                   alt="Meche's Crafts Logo"
-                  width={80}
-                  height={80}
+                  width={160}
+                  height={160}
                   className="object-cover"
                   priority
                 />
               </div>
-              <h1 className="text-2xl font-semibold text-amber-900">
-                <Link href="/" className="hover:text-green-700 transition-colors">
-                  Meche's Creations
-                </Link>
-              </h1>
             </div>
 
-            {/* Center: Navigation Links */}
-            <div className="flex items-center gap-6">
-              <Link href="/" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
-                Home
-              </Link>
-              <Link href="/contact" className="text-amber-900 font-medium hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600">
-                Contact
-              </Link>
-            </div>
+            {/* Content Row with Season Selector and Cart */}
+            <div className="flex justify-between items-start relative z-10">
+              {/* Left: Season Selector */}
+              <div className="flex items-start pt-2">
+                <SeasonDropdown />
+              </div>
 
-            {/* Right: Season Selector + Cart */}
-            <div className="flex items-center gap-6">
-              <SeasonDropdown />
-              <button
-                onClick={() => setIsCartOpen(true)}
-                className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
-                aria-label={`Shopping cart with ${getTotalItems()} items`}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+              {/* Right: Cart */}
+              <div className="flex flex-col items-end gap-1 pt-2">
+                <button
+                  onClick={() => setIsCartOpen(true)}
+                  className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
+                  aria-label={`Shopping cart with ${getTotalItems()} items`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                  />
-                </svg>
-                Cart ({getTotalItems()})
-              </button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                    />
+                  </svg>
+                  Cart ({getTotalItems()})
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Links and Season Quick Links at Bottom */}
+            <div className="flex items-center justify-between mt-4 pt-2">
+              {/* Season Quick Links */}
+              <div className="flex items-center gap-3">
+                {seasonQuickLinks.map((season) => (
+                  <Link
+                    key={season.value}
+                    href="/#products"
+                    onClick={() => setSelectedSeason(season.value)}
+                    className="text-3xl hover:scale-125 transition-transform cursor-pointer"
+                    title={season.label}
+                    aria-label={`Filter by ${season.label}`}
+                  >
+                    {season.emoji}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Navigation Links */}
+              <div className="flex items-center gap-6">
+                <Link href="/" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-base">
+                  Home
+                </Link>
+                <Link href="/#products" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-base">
+                  Products
+                </Link>
+                <Link href="/contact" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-base">
+                  Contact
+                </Link>
+              </div>
             </div>
           </div>
         </nav>
       </header>
-      
+
       <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );

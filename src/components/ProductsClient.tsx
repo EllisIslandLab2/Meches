@@ -69,14 +69,13 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
     return (
       <section id="products" className="py-16">
         <div className="max-w-6xl mx-auto px-5">
-          <HolidayCountdown />
-
-          <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="light">
-            <h2 className="text-3xl font-bold text-center">
+          <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="medium">
+            <h2 className="text-3xl font-bold text-center mb-4">
               <TimeBasedText variant="heading">
                 Our Products
               </TimeBasedText>
             </h2>
+            <HolidayCountdown />
           </GlassCard>
 
           <div className="mb-4 text-center">
@@ -100,14 +99,13 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
   return (
     <section id="products" className="py-16">
       <div className="max-w-6xl mx-auto px-5">
-        <HolidayCountdown />
-
-        <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="light">
-          <h2 className="text-3xl font-bold text-center">
+        <GlassCard className="p-6 mb-12 mx-auto max-w-md" intensity="medium">
+          <h2 className="text-3xl font-bold text-center mb-4">
             <TimeBasedText variant="heading">
               Our Products
             </TimeBasedText>
           </h2>
+          <HolidayCountdown />
         </GlassCard>
 
         {/* Update notification */}
