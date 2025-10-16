@@ -5,7 +5,7 @@ import { SeasonProvider } from "@/contexts/SeasonContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
-import DynamicBackground from "@/components/DynamicBackground";
+import ClientBackground from "@/components/ClientBackground";
 import DevSeasonControl from "@/components/DevSeasonControl";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Analytics } from "@vercel/analytics/next";
@@ -86,7 +86,7 @@ export default function RootLayout({
       <body className="font-serif min-h-screen flex flex-col">
         <ErrorBoundary>
           <SeasonProvider>
-            <DynamicBackground footerHeight={80} className="dynamic-bg">
+            <ClientBackground footerHeight={80} className="dynamic-bg" transitionDuration={5000}>
               <CartProvider>
                 <Header />
                 <main className="flex-grow">
@@ -95,7 +95,7 @@ export default function RootLayout({
                 <Footer />
               </CartProvider>
               <DevSeasonControl />
-            </DynamicBackground>
+            </ClientBackground>
           </SeasonProvider>
         </ErrorBoundary>
         <Analytics />

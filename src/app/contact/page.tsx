@@ -218,7 +218,7 @@ export default function ContactPage() {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       />
                     </div>
                     <div>
@@ -228,7 +228,7 @@ export default function ContactPage() {
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       />
                     </div>
                   </div>
@@ -239,7 +239,7 @@ export default function ContactPage() {
                       rows={4}
                       value={formData.message}
                       onChange={(e) => setFormData({...formData, message: e.target.value})}
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     ></textarea>
                   </div>
                   <button
@@ -264,7 +264,7 @@ export default function ContactPage() {
                         required
                         value={customOrderData.name}
                         onChange={(e) => setCustomOrderData({...customOrderData, name: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       />
                     </div>
                     <div>
@@ -274,7 +274,7 @@ export default function ContactPage() {
                         required
                         value={customOrderData.email}
                         onChange={(e) => setCustomOrderData({...customOrderData, email: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       />
                     </div>
                   </div>
@@ -285,7 +285,7 @@ export default function ContactPage() {
                       type="tel"
                       value={customOrderData.phone}
                       onChange={(e) => setCustomOrderData({...customOrderData, phone: e.target.value})}
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     />
                   </div>
 
@@ -297,7 +297,7 @@ export default function ContactPage() {
                       placeholder="Describe what you'd like us to create..."
                       value={customOrderData.itemDescription}
                       onChange={(e) => setCustomOrderData({...customOrderData, itemDescription: e.target.value})}
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     ></textarea>
                   </div>
 
@@ -308,7 +308,7 @@ export default function ContactPage() {
                         type="text"
                         value={customOrderData.colorPreference}
                         onChange={(e) => setCustomOrderData({...customOrderData, colorPreference: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       />
                     </div>
                     <div>
@@ -317,7 +317,7 @@ export default function ContactPage() {
                         type="text"
                         value={customOrderData.sizePreference}
                         onChange={(e) => setCustomOrderData({...customOrderData, sizePreference: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       />
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export default function ContactPage() {
                       <select
                         value={customOrderData.quantityNeeded}
                         onChange={(e) => setCustomOrderData({...customOrderData, quantityNeeded: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       >
                         {[1,2,3,4,5,10,15,20,25,30,50].map(num => (
                           <option key={num} value={num}>{num}</option>
@@ -340,7 +340,7 @@ export default function ContactPage() {
                       <select
                         value={customOrderData.budgetRange}
                         onChange={(e) => setCustomOrderData({...customOrderData, budgetRange: e.target.value})}
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                        className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                       >
                         <option value="">Select budget range</option>
                         <option value="Under $25">Under $25</option>
@@ -357,7 +357,7 @@ export default function ContactPage() {
                     <select
                       value={customOrderData.timelineNeeded}
                       onChange={(e) => setCustomOrderData({...customOrderData, timelineNeeded: e.target.value})}
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     >
                       <option value="">Select timeline</option>
                       <option value="ASAP">As soon as possible</option>
@@ -375,7 +375,7 @@ export default function ContactPage() {
                       placeholder="Any additional details or special requests..."
                       value={customOrderData.additionalRequests}
                       onChange={(e) => setCustomOrderData({...customOrderData, additionalRequests: e.target.value})}
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                      className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     ></textarea>
                   </div>
 
