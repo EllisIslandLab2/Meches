@@ -308,20 +308,20 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
           }
         } else if (newParticle.type === 'snow') {
           const currentSnow = currentParticles.filter(p => p.type === 'snow');
-          const maxSnow = isMobile ? 100 : 200; // Double the snow!
+          const maxSnow = isMobile ? 60 : 120; // Reduced for better performance
           if (currentSnow.length >= maxSnow) {
             return currentParticles;
           }
         } else if (newParticle.type === 'heart') {
           const currentHearts = currentParticles.filter(p => p.type === 'heart');
-          const maxHearts = isMobile ? 30 : 60;
+          const maxHearts = isMobile ? 20 : 40; // Reduced for better performance
           if (currentHearts.length >= maxHearts) {
             return currentParticles;
           }
         } else {
           // Other particle types (leaves, seeds, eggs)
           const currentTypeCount = currentParticles.filter(p => p.type === newParticle.type);
-          const maxOther = isMobile ? 25 : 50;
+          const maxOther = isMobile ? 20 : 35; // Reduced for better performance
           if (currentTypeCount.length >= maxOther) {
             return currentParticles;
           }
@@ -402,9 +402,9 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
           } as React.CSSProperties
         });
 
-        // Add sparkles around the cross - reduce on mobile
+        // Add sparkles around the cross - reduce for performance
         const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-        const sparkleCount = isMobile ? 8 : 15;
+        const sparkleCount = isMobile ? 5 : 10;
         for (let i = 0; i < sparkleCount; i++) {
           // Position sparkles near the cross intersection
           const xOffset = (Math.random() - 0.5) * 30; // ±15% from center

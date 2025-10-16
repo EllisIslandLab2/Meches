@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 import Image from 'next/image';
 import { ProductGroup } from '@/data/products';
 import { useCart } from '@/contexts/CartContext';
@@ -10,13 +10,13 @@ interface ProductCardProps {
   priority?: boolean;
 }
 
-export default function ProductCard({ product, priority = false }: ProductCardProps) {
+function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(product.defaultVariant);
   const [quantity, setQuantity] = useState(1);
   const [showMessage, setShowMessage] = useState(false);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     addToCart({
       productId: selectedVariant.id,
       name: product.name,
@@ -30,7 +30,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 3000);
     setQuantity(1);
-  };
+  }, [addToCart, selectedVariant, quantity, product.name, product.price]);
 
   return (
     <div className="bg-gradient-to-br from-amber-50/95 to-yellow-50/95 rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105 hover:shadow-xl border-2 border-amber-700">
@@ -119,3 +119,5 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
     </div>
   );
 }
+
+export default memo(ProductCard);

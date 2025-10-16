@@ -1,30 +1,34 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
 import Link from 'next/link';
+
+// Memoize static options outside component to prevent recreation
+const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji: string }> = [
+  { value: 'all', label: 'All Products', emoji: '🛍️' },
+  { value: 'spring', label: 'Spring', emoji: '🌸' },
+  { value: 'summer', label: 'Summer', emoji: '☀️' },
+  { value: 'fall', label: 'Fall', emoji: '🍂' },
+  { value: 'winter', label: 'Winter', emoji: '❄️' },
+  { value: 'Christmas', label: 'Christmas', emoji: '🎄' },
+  { value: 'Halloween', label: 'Halloween', emoji: '🎃' },
+  { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' },
+  { value: 'Valentines', label: 'Valentines', emoji: '💝' },
+  { value: 'Easter', label: 'Easter', emoji: '✟' },
+  { value: 'Independence', label: 'Independence Day', emoji: '🎆' }
+];
 
 const SeasonDropdown: React.FC = () => {
   const { selectedSeason, setSelectedSeason, autoDetectedSeasons } = useSeason();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const options: Array<{ value: SeasonHoliday; label: string; emoji: string }> = [
-    { value: 'all', label: 'All Products', emoji: '🛍️' },
-    { value: 'spring', label: 'Spring', emoji: '🌸' },
-    { value: 'summer', label: 'Summer', emoji: '☀️' },
-    { value: 'fall', label: 'Fall', emoji: '🍂' },
-    { value: 'winter', label: 'Winter', emoji: '❄️' },
-    { value: 'Christmas', label: 'Christmas', emoji: '🎄' },
-    { value: 'Halloween', label: 'Halloween', emoji: '🎃' },
-    { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' },
-    { value: 'Valentines', label: 'Valentines', emoji: '💝' },
-    { value: 'Easter', label: 'Easter', emoji: '✟' },
-    { value: 'Independence', label: 'Independence Day', emoji: '🎆' }
-  ];
-
-  // Get button text based on current selection
-  const selectedOption = options.find(opt => opt.value === selectedSeason);
+  // Get button text based on current selection - memoized
+  const selectedOption = useMemo(() =>
+    SEASON_OPTIONS.find(opt => opt.value === selectedSeason),
+    [selectedSeason]
+  );
   const buttonText = selectedOption ? selectedOption.label : 'Select Season';
 
   // Close dropdown when clicking outside
@@ -72,7 +76,7 @@ const SeasonDropdown: React.FC = () => {
               Select Season/Holiday:
             </div>
             <div className="max-h-96 overflow-y-auto">
-              {options.map((option) => {
+              {SEASON_OPTIONS.map((option) => {
                 const isSelected = selectedSeason === option.value;
                 const isAutoDetected = autoDetectedSeasons.includes(option.value);
 
@@ -112,4 +116,4 @@ const SeasonDropdown: React.FC = () => {
   );
 };
 
-export default SeasonDropdown;
+export default React.memo(SeasonDropdown);

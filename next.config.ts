@@ -21,8 +21,11 @@ const nextConfig: NextConfig = {
     } : false,
   },
   experimental: {
-    optimizePackageImports: ['@vercel/analytics'],
+    optimizePackageImports: ['@vercel/analytics', 'react', 'react-dom'],
   },
+  // Additional performance optimizations
+  swcMinify: true,
+  poweredByHeader: false,
 };
 
 export default nextConfig;

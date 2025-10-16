@@ -2,23 +2,32 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, memo, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { useCart } from '@/contexts/CartContext';
 import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
-import CartModal from './CartModal';
 import SeasonDropdown from './SeasonDropdown';
 
-export default function Header() {
+// Lazy load CartModal only when needed
+const CartModal = dynamic(() => import('./CartModal'), {
+  ssr: false
+});
+
+// Memoize static season quick links
+const SEASON_QUICK_LINKS = [
+  { value: 'spring' as SeasonHoliday, emoji: '🌸', label: 'Spring' },
+  { value: 'summer' as SeasonHoliday, emoji: '☀️', label: 'Summer' },
+  { value: 'fall' as SeasonHoliday, emoji: '🍂', label: 'Fall' },
+  { value: 'winter' as SeasonHoliday, emoji: '❄️', label: 'Winter' }
+] as const;
+
+function Header() {
   const { getTotalItems } = useCart();
   const { setSelectedSeason } = useSeason();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const seasonQuickLinks = [
-    { value: 'spring' as SeasonHoliday, emoji: '🌸', label: 'Spring' },
-    { value: 'summer' as SeasonHoliday, emoji: '☀️', label: 'Summer' },
-    { value: 'fall' as SeasonHoliday, emoji: '🍂', label: 'Fall' },
-    { value: 'winter' as SeasonHoliday, emoji: '❄️', label: 'Winter' }
-  ];
+  // Memoize cart item count to reduce re-renders
+  const totalItems = useMemo(() => getTotalItems(), [getTotalItems]);
 
   return (
     <>
@@ -51,7 +60,7 @@ export default function Header() {
                 <button
                   onClick={() => setIsCartOpen(true)}
                   className="bg-green-700 text-white px-3 py-1.5 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-sm"
-                  aria-label={`Shopping cart with ${getTotalItems()} items`}
+                  aria-label={`Shopping cart with ${totalItems} items`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +76,7 @@ export default function Header() {
                       d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
                     />
                   </svg>
-                  Cart ({getTotalItems()})
+                  Cart ({totalItems})
                 </button>
               </div>
             </div>
@@ -76,7 +85,7 @@ export default function Header() {
             <div className="flex items-center justify-between mt-2 pt-1">
               {/* Season Quick Links */}
               <div className="flex items-center gap-2">
-                {seasonQuickLinks.map((season) => (
+                {SEASON_QUICK_LINKS.map((season) => (
                   <Link
                     key={season.value}
                     href="/#products"
@@ -111,3 +120,5 @@ export default function Header() {
     </>
   );
 }
+
+export default memo(Header);
