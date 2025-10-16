@@ -44,6 +44,7 @@ function Header() {
                   height={140}
                   className="object-cover"
                   priority
+                  fetchPriority="high"
                 />
               </div>
             </div>

@@ -82,6 +82,11 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <StructuredData />
+        {/* Preconnect to Google Fonts for faster font loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Preload critical logo image */}
+        <link rel="preload" as="image" href="/assets/images/meche-logo.png" />
       </head>
       <body className="font-serif min-h-screen flex flex-col">
         <ErrorBoundary>
