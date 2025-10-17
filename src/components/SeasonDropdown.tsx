@@ -5,7 +5,7 @@ import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
 import Link from 'next/link';
 
 // Memoize static options outside component to prevent recreation
-const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji: string }> = [
+const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji?: string; customElement?: React.ReactNode }> = [
   { value: 'all', label: 'All Products', emoji: '🛍️' },
   { value: 'spring', label: 'Spring', emoji: '🌸' },
   { value: 'summer', label: 'Summer', emoji: '☀️' },
@@ -16,7 +16,17 @@ const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji: string
   { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' },
   { value: 'Valentines', label: 'Valentines', emoji: '💝' },
   { value: 'Easter', label: 'Easter', emoji: '✟' },
-  { value: 'Independence', label: 'Independence Day', emoji: '🎆' }
+  {
+    value: 'Independence',
+    label: 'Independence Day',
+    customElement: (
+      <span className="font-bold text-sm">
+        <span style={{ color: '#DC143C' }}>U</span>
+        <span style={{ color: '#FFFFFF', textShadow: '0 0 1px #000' }}>S</span>
+        <span style={{ color: '#003366' }}>A</span>
+      </span>
+    )
+  }
 ];
 
 const SeasonDropdown: React.FC = () => {
@@ -54,9 +64,11 @@ const SeasonDropdown: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
       >
-        <span className="text-lg">{selectedOption?.emoji}</span>
+        <span className="text-lg">{selectedOption?.customElement || selectedOption?.emoji}</span>
         <div className="flex flex-col items-start">
-          <div className="text-xs font-semibold">Seasons & Holidays</div>
+          {/* Mobile: "Season/" above "Holiday", Desktop: "Seasons & Holidays" */}
+          <div className="text-xs font-semibold hidden md:block">Seasons & Holidays</div>
+          <div className="text-xs font-semibold md:hidden leading-tight">Season/<br/>Holiday</div>
           <div className="text-sm">{buttonText}</div>
         </div>
         <svg
@@ -90,7 +102,7 @@ const SeasonDropdown: React.FC = () => {
                       ${isSelected ? 'bg-amber-100 text-amber-900 font-medium' : 'text-amber-800'}
                     `}
                   >
-                    <span className="text-lg">{option.emoji}</span>
+                    <span className="text-lg">{option.customElement || option.emoji}</span>
                     <span className="flex-1 text-left">{option.label}</span>
                     {isAutoDetected && (
                       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">

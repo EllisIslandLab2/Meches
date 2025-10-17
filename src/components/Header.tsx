@@ -84,8 +84,8 @@ function Header() {
 
             {/* Navigation Links and Season Quick Links at Bottom */}
             <div className="flex items-center justify-between mt-2 pt-1">
-              {/* Season Quick Links */}
-              <div className="flex items-center gap-2">
+              {/* Season Quick Links - Hidden on mobile */}
+              <div className="hidden md:flex items-center gap-2">
                 {SEASON_QUICK_LINKS.map((season) => (
                   <Link
                     key={season.value}

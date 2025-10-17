@@ -3,6 +3,73 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSeason } from '@/contexts/SeasonContext';
 
+// Firework component for Independence Day
+interface FireworkProps {
+  onComplete: () => void;
+  left: number;
+}
+
+const Firework: React.FC<FireworkProps> = ({ onComplete, left }) => {
+  const [explosionHeight] = useState(() => Math.random() * 40 + 20); // 20-60vh
+  const [burstParticles] = useState(() => {
+    // Create 12 burst particles in a circle
+    const particles = [];
+    const colors = ['#DC143C', '#FFFFFF', '#003366']; // Red, White, Blue
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const distance = 80 + Math.random() * 40; // 80-120px
+      particles.push({
+        id: i,
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+        color: colors[i % 3],
+        delay: Math.random() * 0.1
+      });
+    }
+    return particles;
+  });
+
+  useEffect(() => {
+    // Explosion duration: 1 second, then complete
+    const completeTimer = setTimeout(() => {
+      onComplete();
+    }, 1000);
+
+    return () => {
+      clearTimeout(completeTimer);
+    };
+  }, [onComplete]);
+
+  return (
+    <div
+      className="absolute pointer-events-none"
+      style={{
+        left: `${left}%`,
+        top: `${explosionHeight}vh`,
+      }}
+    >
+      {burstParticles.map((particle) => (
+        <div
+          key={particle.id}
+          className="absolute"
+          style={{
+            '--burst-x-1': `${particle.x}px`,
+            '--burst-y-1': `${particle.y}px`,
+            animation: `firework-burst-1 1s ease-out forwards`,
+            animationDelay: `${particle.delay}s`,
+            fontSize: '1rem',
+            color: particle.color,
+            textShadow: `0 0 8px ${particle.color}, 0 0 16px ${particle.color}`,
+            filter: 'brightness(1.5)'
+          } as React.CSSProperties}
+        >
+          ✨
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // Particle component for snow, leaves, hearts, etc.
 interface ParticleProps {
   type: string;
@@ -17,6 +84,7 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
     const isSnow = type === 'snow';
     const isBee = type === 'bee';
     const isHeart = type === 'heart';
+    const isFirework = type === 'firework';
     return {
       left: Math.random() * 100,
       // Different durations for different types
@@ -24,6 +92,8 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
         ? Math.random() * 3000 + 10000 // Bees: 10-13 seconds (longer to ensure they cross)
         : isHeart
         ? Math.random() * 2000 + 6000 // Hearts: 6-8 seconds (float upward)
+        : isFirework
+        ? Math.random() * 1000 + 2000 // Fireworks: 2-3 seconds (quick bursts)
         : Math.random() * 1500 + 4000, // Others: 4-5.5 seconds
       // Different size ranges for different types
       size: isSnow
@@ -32,7 +102,9 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
         ? Math.random() * 0.4 + 1.2  // Bees: 1.2-1.6rem (medium size)
         : isHeart
         ? Math.random() * 0.5 + 1.0  // Hearts: 1.0-1.5rem (medium)
-        : Math.random() * 0.6 + 1.8, // Leaves/Seeds: 1.8-2.4rem (original)
+        : isFirework
+        ? Math.random() * 0.8 + 1.5  // Fireworks: 1.5-2.3rem (bigger, more visible)
+        : Math.random() * 0.5 + 1.0, // Leaves/Seeds: 1.0-1.5rem (smaller)
       animationVariation: Math.floor(Math.random() * 6) + 1, // 1, 2, 3, 4, 5, or 6
       // Add more randomization for unique movements
       rotationSpeed: Math.random() * 2 + 0.5, // 0.5x to 2.5x rotation speed
@@ -68,6 +140,9 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
     } else if (type === 'heart') {
       // Hearts float upward
       element.style.animation = `float-up${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
+    } else if (type === 'firework') {
+      // Fireworks use fall animations but faster
+      element.style.animation = `fall${initialPosition.animationVariation} ${initialPosition.duration}ms ease-out forwards`;
     } else {
       element.style.animation = `fall${initialPosition.animationVariation} ${initialPosition.duration}ms linear forwards`;
     }
@@ -92,12 +167,12 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
       case 'bee':
         // Bees for summer
         return '🐝';
-      case 'egg':
-        // Easter eggs
-        return '🥚';
       case 'heart':
         // Hearts for Valentine's Day
         return '❤️';
+      case 'firework':
+        // Fireworks for July 4th
+        return '✨';
       default:
         return '•';
     }
@@ -120,16 +195,16 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
     return colors[Math.floor(Math.random() * colors.length)];
   });
 
-  // Spring seed styling
+  // Spring seed styling - more pink
   const getSeedStyle = () => {
     if (type !== 'seed') return {};
-    
+
     return {
-      color: '#ffffff',
+      color: '#ffb3d9', // Pink color
       textShadow: `
-        0 0 2px rgba(255, 255, 255, 0.8),
-        0 0 4px rgba(255, 255, 255, 0.6),
-        0 0 6px rgba(240, 248, 255, 0.4)
+        0 0 2px rgba(255, 192, 203, 0.9),
+        0 0 4px rgba(255, 182, 193, 0.7),
+        0 0 6px rgba(255, 105, 180, 0.5)
       `,
       filter: 'blur(0.5px)',
       opacity: Math.random() * 0.3 + 0.7, // 0.7-1.0 opacity
@@ -139,10 +214,36 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
   // Bee styling for summer
   const getBeeStyle = () => {
     if (type !== 'bee') return {};
-    
+
     return {
       opacity: 0.85,
       filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))',
+    } as React.CSSProperties;
+  };
+
+  // Firework styling for Independence Day
+  const getFireworkStyle = () => {
+    if (type !== 'firework') return {};
+
+    // Random vibrant colors for fireworks
+    const colors = [
+      'rgba(255, 0, 0, 1)',      // Red
+      'rgba(255, 255, 255, 1)',  // White
+      'rgba(0, 0, 255, 1)',      // Blue
+      'rgba(255, 215, 0, 1)',    // Gold
+      'rgba(255, 100, 255, 1)',  // Purple
+    ];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    return {
+      color: color,
+      textShadow: `
+        0 0 10px ${color},
+        0 0 20px ${color},
+        0 0 30px ${color}
+      `,
+      filter: 'brightness(1.5)',
+      opacity: Math.random() * 0.3 + 0.7, // 0.7-1.0 opacity
     } as React.CSSProperties;
   };
 
@@ -165,14 +266,16 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
   const snowStyle = getSnowStyle();
   const seedStyle = getSeedStyle();
   const beeStyle = getBeeStyle();
+  const fireworkStyle = getFireworkStyle();
 
   return (
     <div
       ref={particleRef}
       className={`absolute pointer-events-none select-none ${
-        type === 'snow' ? 'opacity-100 snowflake-glint' : 
-        type === 'seed' ? 'opacity-90' : 
-        type === 'bee' ? 'opacity-85' : 'opacity-90'
+        type === 'snow' ? 'opacity-100 snowflake-glint' :
+        type === 'seed' ? 'opacity-90' :
+        type === 'bee' ? 'opacity-85' :
+        type === 'firework' ? 'opacity-100' : 'opacity-90'
       }`}
       style={{
         // Let CSS animations handle bee positioning completely, others start from top
@@ -181,12 +284,14 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
           top: '-20px'
         }),
         fontSize: `${initialPosition.size}rem`, // Use stable size
-        textShadow: type === 'snow' 
-          ? snowStyle.textShadow 
+        textShadow: type === 'snow'
+          ? snowStyle.textShadow
           : type === 'seed'
           ? seedStyle.textShadow
           : type === 'bee'
           ? '1px 1px 2px rgba(0,0,0,0.3)'
+          : type === 'firework'
+          ? fireworkStyle.textShadow
           : '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000',
         // Don't interfere with CSS animations for bees
         transform: type === 'bee' ? 'none' : 'translateZ(0)',
@@ -197,6 +302,7 @@ const Particle: React.FC<ParticleProps> = ({ type, style, onComplete, direction 
         ...snowStyle, // Apply snow styling
         ...seedStyle, // Apply seed styling
         ...beeStyle, // Apply bee styling
+        ...fireworkStyle, // Apply firework styling
         ...style
       }}
     >
@@ -225,6 +331,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   // For "all" season, use the first auto-detected season for animations
   const season = selectedSeason === 'all' ? (autoDetectedSeasons[0] || 'spring') : selectedSeason;
   const [particles, setParticles] = useState<Array<{id: number, type: string, direction?: 'left-to-right' | 'right-to-left'}>>([]);
+  const [fireworks, setFireworks] = useState<Array<{id: number, left: number}>>([]);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [sunlightEffects, setSunlightEffects] = useState<Array<{
     id: number,
@@ -264,15 +371,31 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
       particleType = 'snow';
     } else if (season === 'fall' || season === 'Halloween' || season === 'Thanksgiving') {
       particleType = 'leaf';
-    } else if (season === 'spring') {
+    } else if (season === 'spring' || season === 'Easter') {
       particleType = 'seed';
     } else if (season === 'summer') {
       particleType = 'bee';
-    } else if (season === 'Easter') {
-      particleType = 'egg';
     } else if (season === 'Valentines') {
       // Only hearts, no cupid (cupid is creepy!)
       particleType = 'heart';
+    } else if (season === 'Independence') {
+      // TEMP: Always show fireworks for testing
+      // Create firework rocket instead of regular particle
+      const today = new Date();
+      const isJuly4th = today.getMonth() === 6 && today.getDate() === 4; // Month is 0-indexed
+      if (true) { // TEMP: always true for testing, change to isJuly4th
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const maxFireworks = isMobile ? 3 : 5;
+
+        setFireworks(prev => {
+          if (prev.length >= maxFireworks) return prev;
+          return [...prev, {
+            id: particleIdRef.current++,
+            left: Math.random() * 100
+          }];
+        });
+        return; // Don't create regular particle
+      }
     }
 
     const newParticle = {
@@ -318,8 +441,14 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
           if (currentHearts.length >= maxHearts) {
             return currentParticles;
           }
+        } else if (newParticle.type === 'firework') {
+          const currentFireworks = currentParticles.filter(p => p.type === 'firework');
+          const maxFireworks = isMobile ? 30 : 60; // Lots of fireworks for July 4th!
+          if (currentFireworks.length >= maxFireworks) {
+            return currentParticles;
+          }
         } else {
-          // Other particle types (leaves, seeds, eggs)
+          // Other particle types (leaves, seeds)
           const currentTypeCount = currentParticles.filter(p => p.type === newParticle.type);
           const maxOther = isMobile ? 20 : 35; // Reduced for better performance
           if (currentTypeCount.length >= maxOther) {
@@ -335,6 +464,11 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   // Remove particle - no accumulation
   const removeParticle = useCallback((particleId: number) => {
     setParticles(prev => prev.filter(p => p.id !== particleId));
+  }, []);
+
+  // Remove firework
+  const removeFirework = useCallback((fireworkId: number) => {
+    setFireworks(prev => prev.filter(f => f.id !== fireworkId));
   }, []);
 
   // Generate cross light for Easter only (removed summer laser beams)
@@ -456,17 +590,17 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
   // Particle generation interval - different frequencies for different seasons
   // Only generate particles for seasons with specific animations
   useEffect(() => {
-    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'Thanksgiving', 'spring', 'summer', 'Easter', 'Valentines'];
+    const seasonsWithParticles = ['winter', 'Christmas', 'fall', 'Halloween', 'Thanksgiving', 'spring', 'summer', 'Easter', 'Valentines', 'Independence'];
 
     // Clear incompatible particles when season changes
     setParticles(prev => {
       // Determine the correct particle types for this season
       const correctTypes = season === 'winter' || season === 'Christmas' ? ['snow']
                         : season === 'fall' || season === 'Halloween' || season === 'Thanksgiving' ? ['leaf']
-                        : season === 'spring' ? ['seed']
+                        : season === 'spring' || season === 'Easter' ? ['seed']
                         : season === 'summer' ? ['bee']
-                        : season === 'Easter' ? ['egg']
                         : season === 'Valentines' ? ['heart']
+                        : season === 'Independence' ? ['firework']
                         : [];
 
       // If no animations for this season, clear all particles
@@ -484,14 +618,14 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
         ? setInterval(createParticle, 140) // Faster snow for double output (~0.14 seconds)
         : season === 'fall' || season === 'Halloween' || season === 'Thanksgiving'
         ? setInterval(createParticle, 833) // Medium leaves (~0.83 seconds)
-        : season === 'spring'
+        : season === 'spring' || season === 'Easter'
         ? setInterval(createParticle, 1500) // Gentle seeds (~1.5 seconds)
         : season === 'summer'
         ? setInterval(createParticle, 6000) // Bees every 6 seconds (1 left + 1 right at a time, need longer)
-        : season === 'Easter'
-        ? setInterval(createParticle, 500) // Easter eggs (~0.5 seconds)
         : season === 'Valentines'
         ? setInterval(createParticle, 400) // Hearts (~0.4 seconds)
+        : season === 'Independence'
+        ? setInterval(createParticle, 2000) // Fireworks (~2 seconds between rockets)
         : setInterval(createParticle, 1000); // Default
       return () => clearInterval(interval);
     }
@@ -527,8 +661,17 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({
             onComplete={() => removeParticle(particle.id)}
           />
         ))}
+
+        {/* Fireworks for Independence Day */}
+        {fireworks.map(firework => (
+          <Firework
+            key={firework.id}
+            left={firework.left}
+            onComplete={() => removeFirework(firework.id)}
+          />
+        ))}
       </div>
-      
+
       {/* Content */}
       {children}
     </>
