@@ -23,8 +23,8 @@ interface OrderInfo {
   totals: {
     subtotal: number;
     shipping: number;
-    tax: number;
-    total: number;
+    estimatedTax: number;
+    estimatedTotal: number;
   };
   timestamp: string;
 }
@@ -98,7 +98,7 @@ export default function SuccessPage() {
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   <span className="text-gray-600">Total:</span>
-                  <span className="font-bold text-amber-800">${orderInfo.totals.total.toFixed(2)}</span>
+                  <span className="font-bold text-amber-800">${orderInfo.totals.estimatedTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-gray-600">Status:</span>
@@ -152,11 +152,11 @@ export default function SuccessPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Tax:</span>
-                  <span>${orderInfo.totals.tax.toFixed(2)}</span>
+                  <span>${orderInfo.totals.estimatedTax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold text-amber-800 border-t pt-2">
                   <span>Total:</span>
-                  <span>${orderInfo.totals.total.toFixed(2)}</span>
+                  <span>${orderInfo.totals.estimatedTotal.toFixed(2)}</span>
                 </div>
               </div>
             </div>

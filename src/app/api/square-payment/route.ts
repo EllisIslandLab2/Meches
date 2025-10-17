@@ -20,12 +20,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get Square access token from environment
-    const accessToken = process.env.SQUARE_ACCESS_TOKEN;
+    // Get Square access token from environment based on current environment
+    const environment = process.env.NEXT_PUBLIC_SQUARE_ENVIRONMENT || 'sandbox';
+    const accessToken = environment === 'production'
+      ? process.env.SQUARE_ACCESS_TOKEN
+      : process.env.SQUARE_ACCESS_TOKEN_SANDBOX;
     const locationId = process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
 
     if (!accessToken || !locationId) {
-      console.error('Square credentials not configured');
+      console.error('Square credentials not configured for environment:', environment);
+      console.error('Access token exists:', !!accessToken);
+      console.error('Location ID exists:', !!locationId);
       return NextResponse.json(
         { error: 'Payment system not configured' },
         { status: 500 }
@@ -33,7 +38,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Call Square Payments API to create payment
-    const squareResponse = await fetch('https://connect.squareup.com/v2/payments', {
+    // Use sandbox endpoint for sandbox environment
+    const apiUrl = environment === 'production'
+      ? 'https://connect.squareup.com/v2/payments'
+      : 'https://connect.squareupsandbox.com/v2/payments';
+
+    const squareResponse = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Square-Version': '2024-01-18',
