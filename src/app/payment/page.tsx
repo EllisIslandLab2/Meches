@@ -318,9 +318,13 @@ export default function PaymentPage() {
         }
       } else {
         console.error('Card tokenization failed:', result.errors);
-        // Show detailed error messages to help debug
-        const errorMessages = result.errors?.map(err => err.message).join('\n') || 'Unknown error';
-        alert(`Payment failed:\n\n${errorMessages}\n\nPlease check your card details and try again.`);
+        // Show detailed error messages to help user fix the issue
+        const errorMessages = result.errors?.map(err => err.message).join(', ') || 'Unknown error';
+        alert(`⚠️ Payment validation failed:\n\n${errorMessages}\n\nPlease check your card information and try again.`);
+        setIsProcessing(false);
+        setProcessingStep('');
+        // Don't mark as completed - stay on payment page
+        return;
       }
     } catch (error) {
       console.error('Payment processing error:', error);
