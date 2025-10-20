@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sourceId, amountMoney, customerInfo } = body;
+    const { sourceId, amountMoney, customerInfo, cart, totals } = body;
 
     // Validate required fields
     if (!sourceId) {
@@ -89,6 +89,113 @@ export async function POST(request: NextRequest) {
 
     // Payment successful
     console.log('Payment successful:', squareData.payment?.id);
+
+    // Log order to Airtable (non-blocking - don't fail payment if Airtable fails)
+    try {
+      const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+      const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+      const ORDERS_TABLE = process.env.ORDERS_TABLE;
+
+      if (AIRTABLE_API_KEY && AIRTABLE_BASE_ID && ORDERS_TABLE) {
+        // Generate unique order ID
+        const orderId = squareData.payment?.id || `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
+        // Format shipping address
+        const shippingAddress = customerInfo
+          ? `${customerInfo.address}\n${customerInfo.city}, ${customerInfo.state} ${customerInfo.zipCode}`
+          : '';
+
+        // Format order items
+        let orderItems = '';
+        if (cart && Array.isArray(cart)) {
+          orderItems = cart.map((item: any) => {
+            const price = typeof item.price === 'number' ? item.price : 0;
+            const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
+            return `${item.name} (${item.variant}) x${quantity} @ $${price.toFixed(2)}`;
+          }).join('\n');
+        }
+
+        // Calculate totals (use provided totals or calculate from amountMoney)
+        const subtotal = totals?.subtotal || 0;
+        const shipping = totals?.shipping || 0;
+        const tax = totals?.estimatedTax || 0;
+        const discount = totals?.discount || 0;
+        const total = amountMoney.amount / 100; // Convert cents to dollars
+
+        // Create Airtable record
+        const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${ORDERS_TABLE}`;
+        const airtableResponse = await fetch(airtableUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            fields: {
+              'Order ID': orderId,
+              'Customer Name': customerInfo ? `${customerInfo.firstName} ${customerInfo.lastName}` : '',
+              'Email': customerInfo?.email || '',
+              'Phone': customerInfo?.phone || '',
+              'Address': shippingAddress,
+              'Order Items': orderItems,
+              'Subtotal': subtotal,
+              'Shipping': shipping,
+              'Tax': tax,
+              'Discount': discount,
+              'Total': total,
+              'Payment Status': 'Paid',
+              'Order Date': new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+              'Payment ID': squareData.payment?.id || '',
+              'Payment Token': sourceId || ''
+            }
+          })
+        });
+
+        if (!airtableResponse.ok) {
+          const airtableError = await airtableResponse.json();
+          console.error('Airtable logging failed (non-critical):', airtableError);
+        } else {
+          console.log('Order logged to Airtable successfully');
+        }
+
+        // Send order confirmation email (non-blocking)
+        try {
+          const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mechescreations.com'}/api/send-order-confirmation`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: customerInfo?.email,
+              orderId: orderId,
+              customerName: customerInfo ? `${customerInfo.firstName} ${customerInfo.lastName}` : '',
+              items: cart,
+              totals: {
+                subtotal: subtotal,
+                shipping: shipping,
+                estimatedTax: tax,
+                discount: discount,
+                total: total,
+              }
+            }),
+          });
+
+          if (!emailResponse.ok) {
+            console.error('Failed to send confirmation email (non-critical)');
+          } else {
+            console.log('Order confirmation email sent successfully');
+          }
+        } catch (emailError) {
+          console.error('Email sending error (non-critical):', emailError);
+        }
+
+      } else {
+        console.warn('Airtable not configured - skipping order logging');
+      }
+    } catch (airtableError) {
+      // Log but don't fail the payment
+      console.error('Airtable logging error (non-critical):', airtableError);
+    }
 
     return NextResponse.json({
       success: true,

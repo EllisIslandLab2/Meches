@@ -263,6 +263,8 @@ export default function PaymentPage() {
                 currency: 'USD',
               },
               customerInfo: customerInfo,
+              cart: cart, // Send cart data for Airtable logging
+              totals: { subtotal, shipping, estimatedTax, estimatedTotal }, // Send totals for Airtable logging
             }),
           });
 
@@ -293,51 +295,8 @@ export default function PaymentPage() {
 
           localStorage.setItem('lastOrder', JSON.stringify(orderInfo));
 
-          // Submit order to Airtable Orders table
-          try {
-          // Generate unique order ID
-          const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-
-          // Format full address
-          const fullAddress = `${customerInfo.address}\n${customerInfo.city}, ${customerInfo.state} ${customerInfo.zipCode}`;
-
-          await fetch('/api/airtable', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              action: 'create',
-              formType: 'order',
-              data: {
-                fields: {
-                  'Order ID': orderId,
-                  'Customer Name': `${customerInfo.firstName} ${customerInfo.lastName}`,
-                  'Email': customerInfo.email,
-                  'Phone': customerInfo.phone || '',
-                  'Address': fullAddress,
-                  'Order Items': cart.map(item => {
-                    const price = typeof item.price === 'number' ? item.price : 0;
-                    const quantity = typeof item.quantity === 'number' ? item.quantity : 0;
-                    return `${item.name} (${item.variant}) x${quantity} @ $${price.toFixed(2)}`;
-                  }).join('\n'),
-                  'Subtotal': subtotal,
-                  'Shipping': shipping,
-                  'Tax': estimatedTax,
-                  'Total': estimatedTotal,
-                  'Payment Status': 'Paid',
-                  'Order Date': new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
-                  'Payment ID': paymentData.payment?.id || '',
-                  'Payment Token': result.token || ''
-                }
-              }
-            })
-          });
-          } catch (airtableError) {
-            console.error('Failed to save to Airtable (non-critical):', airtableError);
-            // Continue anyway - payment was successful and that's what matters
-            // The payment data is already in Square's system
-          }
+          // Note: Order is now logged to Airtable automatically by the payment API route
+          // This ensures the order is saved even if the client experiences issues
 
           console.log('✅ PAYMENT SUCCESSFUL! Order ID:', paymentData.payment?.id);
           console.log('Payment and order processing complete, redirecting to success page...');

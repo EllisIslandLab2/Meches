@@ -218,6 +218,28 @@ export default function SuccessPage() {
           </div>
         </div>
 
+        {/* Track Order Section */}
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl shadow-lg p-6 mb-8 border-2 border-amber-200">
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-amber-800 mb-3">Track Your Order</h3>
+            <p className="text-gray-600 mb-4">
+              Keep this order number to track your items as they're crafted and shipped!
+            </p>
+            <div className="bg-white p-4 rounded-lg inline-block mb-4">
+              <span className="text-sm text-gray-500 block mb-1">Your Order Number</span>
+              <span className="text-2xl font-bold text-amber-800 font-mono">{orderId}</span>
+            </div>
+            <div>
+              <Link
+                href={`/track-order/${orderId}`}
+                className="inline-block bg-amber-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-amber-700 transition-colors shadow-md"
+              >
+                Track Order Status →
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Action Buttons */}
         <div className="flex gap-4 justify-center">
           <Link
