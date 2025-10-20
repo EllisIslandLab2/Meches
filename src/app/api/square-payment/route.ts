@@ -145,8 +145,7 @@ export async function POST(request: NextRequest) {
               'Total': total,
               'Payment Status': 'Paid',
               'Status': 'Pending',
-              'Order Date': new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
-              'Payment Token': sourceId || ''
+              'Order Date': new Date().toISOString().split('T')[0] // Format as YYYY-MM-DD
             }
           })
         });

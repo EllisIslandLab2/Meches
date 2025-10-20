@@ -73,8 +73,6 @@ Your Orders table needs these fields (add any missing ones):
 | Total | Currency | Final total |
 | Payment Status | Single line text | "Paid", "Refunded", etc. |
 | Order Date | Date | When order was placed |
-| Payment ID | Single line text | **ADD THIS** - Square payment ID |
-| Payment Token | Single line text | Square payment token |
 | **Status** | **Single select** | **ADD THIS** - Order status |
 | **Tracking Number** | **Single line text** | **ADD THIS** - Shipping tracking # |
 | **Carrier** | **Single select** | **ADD THIS** - Shipping carrier |
@@ -222,7 +220,7 @@ Customers get their order number:
 2. Check that you receive:
    - Order confirmation email
    - Order logged in Airtable
-   - Payment ID populated
+   - Order ID populated
 
 ### Test Shipping Notification Email
 

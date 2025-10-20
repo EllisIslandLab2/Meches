@@ -47,7 +47,6 @@ In your Orders table, add these 3 new fields:
 
 | Field Name | Type | Options |
 |------------|------|---------|
-| Payment ID | Single line text | - |
 | Status | Single select | Pending, Processing, Shipped, Delivered |
 | Tracking Number | Single line text | - |
 | Carrier | Single select | USPS, UPS, FedEx |
