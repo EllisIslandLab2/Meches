@@ -12,14 +12,25 @@ export async function POST(request: NextRequest) {
       email,
       orderId,
       customerName,
-      itemCount: items?.length || 0
+      itemCount: items?.length || 0,
+      resendConfigured: !!process.env.RESEND_API_KEY,
+      emailFrom: process.env.EMAIL_FROM
     });
 
     // Validate required fields
     if (!email || !orderId) {
+      console.error('❌ Missing required fields: email or orderId');
       return NextResponse.json(
         { error: 'Email and order ID are required' },
         { status: 400 }
+      );
+    }
+
+    if (!process.env.RESEND_API_KEY) {
+      console.error('❌ RESEND_API_KEY not configured');
+      return NextResponse.json(
+        { error: 'Email service not configured' },
+        { status: 500 }
       );
     }
 

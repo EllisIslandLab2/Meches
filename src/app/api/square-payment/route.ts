@@ -161,6 +161,7 @@ export async function POST(request: NextRequest) {
 
         // Send order confirmation email (non-blocking)
         try {
+          console.log('📧 Attempting to send confirmation email to:', customerInfo?.email);
           const emailResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mechescreations.com'}/api/send-order-confirmation`, {
             method: 'POST',
             headers: {
@@ -182,12 +183,14 @@ export async function POST(request: NextRequest) {
           });
 
           if (!emailResponse.ok) {
-            console.error('Failed to send confirmation email (non-critical)');
+            const errorData = await emailResponse.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('❌ Failed to send confirmation email:', errorData);
           } else {
-            console.log('Order confirmation email sent successfully');
+            const successData = await emailResponse.json();
+            console.log('✅ Order confirmation email sent successfully:', successData);
           }
         } catch (emailError) {
-          console.error('Email sending error (non-critical):', emailError);
+          console.error('❌ Email sending error (non-critical):', emailError);
         }
 
       } else {
