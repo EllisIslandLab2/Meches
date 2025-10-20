@@ -14,11 +14,26 @@ type CartAction =
 const cartReducer = (state: CartItem[], action: CartAction): CartItem[] => {
   switch (action.type) {
     case 'ADD_TO_CART':
-      const newItem = {
-        ...action.payload,
-        id: nanoid() // Generate unique ID
-      };
-      return [...state, newItem];
+      // Check if item with same name and variant already exists
+      const existingItemIndex = state.findIndex(
+        item => item.name === action.payload.name && item.variant === action.payload.variant
+      );
+
+      if (existingItemIndex !== -1) {
+        // Item exists, update quantity
+        return state.map((item, index) =>
+          index === existingItemIndex
+            ? { ...item, quantity: item.quantity + action.payload.quantity }
+            : item
+        );
+      } else {
+        // Item doesn't exist, add new
+        const newItem = {
+          ...action.payload,
+          id: nanoid() // Generate unique ID
+        };
+        return [...state, newItem];
+      }
     
     case 'REMOVE_FROM_CART':
       return state.filter(item => item.id !== action.payload);

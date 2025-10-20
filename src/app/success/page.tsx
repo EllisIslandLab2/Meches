@@ -26,14 +26,13 @@ interface OrderInfo {
     estimatedTax: number;
     estimatedTotal: number;
   };
+  paymentId?: string;
   timestamp: string;
 }
 
 export default function SuccessPage() {
   const [orderInfo, setOrderInfo] = useState<OrderInfo | null>(null);
-  const [orderId] = useState(() => 
-    'MHC-' + Math.random().toString(36).substr(2, 9).toUpperCase()
-  );
+  const [orderId, setOrderId] = useState<string>('');
 
   useEffect(() => {
     const savedOrder = localStorage.getItem('lastOrder');
@@ -41,6 +40,8 @@ export default function SuccessPage() {
       try {
         const order = JSON.parse(savedOrder);
         setOrderInfo(order);
+        // Use the real payment ID from Square, or generate fallback
+        setOrderId(order.paymentId || 'MHC-' + Math.random().toString(36).substr(2, 9).toUpperCase());
         // Clear the order from localStorage after loading
         localStorage.removeItem('lastOrder');
       } catch (error) {
@@ -78,6 +79,16 @@ export default function SuccessPage() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Thank you for your purchase! Your order has been received and we'll start crafting your beautiful pieces right away.
           </p>
+          {orderInfo.customerInfo.email && (
+            <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+              <p className="text-blue-800 font-medium">
+                📧 A confirmation email has been sent to {orderInfo.customerInfo.email}
+              </p>
+              <p className="text-blue-600 text-sm mt-1">
+                Check your inbox for order details and tracking information
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Order Confirmation Card */}
