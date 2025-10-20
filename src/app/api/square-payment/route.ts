@@ -146,7 +146,6 @@ export async function POST(request: NextRequest) {
               'Payment Status': 'Paid',
               'Status': 'Pending',
               'Order Date': new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
-              'Payment ID': squareData.payment?.id || '',
               'Payment Token': sourceId || ''
             }
           })
