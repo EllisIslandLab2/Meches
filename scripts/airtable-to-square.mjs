@@ -8,7 +8,7 @@
  * Usage: npm run square:import
  */
 
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -138,10 +138,11 @@ function transformToSquareFormat(airtableRecords) {
   });
 }
 
-function createSquareExcel(squareProducts) {
+async function createSquareExcel(squareProducts) {
   console.log('📊 Creating Excel file...\n');
 
-  const wb = XLSX.utils.book_new();
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Items');
 
   // Square requires specific instruction rows at the top
   const instructionRows = [
@@ -165,35 +166,40 @@ function createSquareExcel(squareProducts) {
     `Stock Alert Enabled ${LOCATION_NAME}`, `Stock Alert Count ${LOCATION_NAME}`
   ];
 
-  // Convert product objects to arrays
-  const dataRows = squareProducts.map(product =>
-    headers.map(header => product[header] || '')
-  );
+  // Add instruction rows
+  instructionRows.forEach(row => worksheet.addRow(row));
 
-  // Combine all rows
-  const allRows = [...instructionRows, headers, ...dataRows];
+  // Add header row
+  worksheet.addRow(headers);
 
-  // Create worksheet
-  const ws = XLSX.utils.aoa_to_sheet(allRows);
+  // Add data rows
+  squareProducts.forEach(product => {
+    const row = headers.map(header => product[header] || '');
+    worksheet.addRow(row);
+  });
 
   // Set column widths for readability
-  ws['!cols'] = [
-    { wch: 15 }, // Reference Handle
-    { wch: 10 }, // Token
-    { wch: 35 }, // Item Name
-    { wch: 20 }, // Variation Name
-    { wch: 15 }, // SKU
-    { wch: 50 }, // Description
-    { wch: 20 }, // Categories
-    { wch: 20 }, // Reporting Category
-    { wch: 35 }, // SEO Title
+  worksheet.columns = [
+    { width: 15 }, // Reference Handle
+    { width: 10 }, // Token
+    { width: 35 }, // Item Name
+    { width: 20 }, // Variation Name
+    { width: 15 }, // SKU
+    { width: 50 }, // Description
+    { width: 20 }, // Categories
+    { width: 20 }, // Reporting Category
+    { width: 35 }, // SEO Title
+    { width: 15 }, // SEO Description
+    { width: 15 }, // Permalink
+    { width: 15 }, // GTIN
+    { width: 20 }, // Square Online Item Visibility
+    { width: 15 }, // Item Type
+    { width: 12 }, // Weight (lb)
   ];
-
-  XLSX.utils.book_append_sheet(wb, ws, 'Items');
 
   // Write to file
   const outputPath = path.join(dirname(__dirname), OUTPUT_FILE);
-  XLSX.writeFile(wb, outputPath);
+  await workbook.xlsx.writeFile(outputPath);
 
   return outputPath;
 }
@@ -246,7 +252,7 @@ async function main() {
     const squareProducts = transformToSquareFormat(airtableRecords);
 
     // Step 3: Create Excel file
-    const outputPath = createSquareExcel(squareProducts);
+    const outputPath = await createSquareExcel(squareProducts);
 
     // Step 4: Print summary
     printSummary(squareProducts, outputPath);
