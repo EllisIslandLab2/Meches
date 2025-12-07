@@ -6,7 +6,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
 import ClientBackground from "@/components/ClientBackground";
-import DevSeasonControl from "@/components/DevSeasonControl";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -63,11 +62,24 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
-    apple: '/meche-logo.png',
+    apple: '/apple-touch-icon.png',
     other: [
       {
-        rel: 'apple-touch-icon-precomposed',
-        url: '/meche-logo.png',
+        rel: 'apple-touch-icon',
+        sizes: '180x180',
+        url: '/apple-touch-icon.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '192x192',
+        url: '/favicon-192.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '512x512',
+        url: '/favicon-512.png',
       },
     ],
   },
@@ -99,7 +111,6 @@ export default function RootLayout({
                 </main>
                 <Footer />
               </CartProvider>
-              <DevSeasonControl />
             </ClientBackground>
           </SeasonProvider>
         </ErrorBoundary>

@@ -13,12 +13,14 @@ const CartModal = dynamic(() => import('./CartModal'), {
   ssr: false
 });
 
-// Memoize static season quick links
+// Memoize static holiday quick links
 const SEASON_QUICK_LINKS = [
-  { value: 'spring' as SeasonHoliday, emoji: '🌸', label: 'Spring' },
-  { value: 'summer' as SeasonHoliday, emoji: '☀️', label: 'Summer' },
-  { value: 'fall' as SeasonHoliday, emoji: '🍂', label: 'Fall' },
-  { value: 'winter' as SeasonHoliday, emoji: '❄️', label: 'Winter' }
+  { value: 'Christmas' as SeasonHoliday, emoji: '🎄', label: 'Christmas' },
+  { value: 'Valentines' as SeasonHoliday, emoji: '💝', label: 'Valentines' },
+  { value: 'Easter' as SeasonHoliday, emoji: '✟', label: 'Easter' },
+  { value: 'Independence' as SeasonHoliday, emoji: '🎆', label: 'Independence Day' },
+  { value: 'Halloween' as SeasonHoliday, emoji: '🎃', label: 'Halloween' },
+  { value: 'Thanksgiving' as SeasonHoliday, emoji: '🦃', label: 'Thanksgiving' }
 ] as const;
 
 function Header() {
@@ -82,20 +84,20 @@ function Header() {
               </div>
             </div>
 
-            {/* Navigation Links and Season Quick Links at Bottom */}
+            {/* Navigation Links and Holiday Quick Links at Bottom */}
             <div className="flex items-center justify-between mt-2 pt-1">
-              {/* Season Quick Links - Hidden on mobile */}
+              {/* Holiday Quick Links - Hidden on mobile */}
               <div className="hidden md:flex items-center gap-2">
-                {SEASON_QUICK_LINKS.map((season) => (
+                {SEASON_QUICK_LINKS.map((holiday) => (
                   <Link
-                    key={season.value}
+                    key={holiday.value}
                     href="/#products"
-                    onClick={() => setSelectedSeason(season.value)}
+                    onClick={() => setSelectedSeason(holiday.value)}
                     className="text-2xl hover:scale-125 transition-transform cursor-pointer"
-                    title={season.label}
-                    aria-label={`Filter by ${season.label}`}
+                    title={holiday.label}
+                    aria-label={`Filter by ${holiday.label}`}
                   >
-                    {season.emoji}
+                    {holiday.emoji}
                   </Link>
                 ))}
               </div>

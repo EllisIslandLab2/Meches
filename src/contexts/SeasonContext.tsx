@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type SeasonHoliday = 'spring' | 'summer' | 'fall' | 'winter' | 'Christmas' | 'Halloween' | 'Thanksgiving' | 'Valentines' | 'Easter' | 'Independence' | 'all';
+export type SeasonHoliday = 'Christmas' | 'Valentines' | 'Easter' | 'Independence' | 'Halloween' | 'Thanksgiving' | 'all';
 
 interface SeasonContextType {
   selectedSeason: SeasonHoliday;
@@ -12,7 +12,7 @@ interface SeasonContextType {
 
 const SeasonContext = createContext<SeasonContextType | undefined>(undefined);
 
-// Get the actual season and upcoming holidays based on current date
+// Get upcoming holidays based on current date (only holidays, no base seasons)
 const getAutoDetectedSeasons = (): SeasonHoliday[] => {
   const now = new Date();
   const month = now.getMonth() + 1; // 1-12
@@ -20,25 +20,12 @@ const getAutoDetectedSeasons = (): SeasonHoliday[] => {
 
   const detected: SeasonHoliday[] = [];
 
-  // Add current season
-  if (month >= 3 && month <= 5) detected.push('spring');
-  else if (month >= 6 && month <= 8) detected.push('summer');
-  else if (month >= 9 && month <= 11) detected.push('fall');
-  else detected.push('winter');
-
   // Add holidays that are within 30 days (before or after)
   const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000);
 
   // Christmas (Dec 25) - day ~359
   const christmasDay = 359;
   if (Math.abs(dayOfYear - christmasDay) <= 30 || dayOfYear <= 15) detected.push('Christmas');
-
-  // Halloween (Oct 31) - day ~304
-  const halloweenDay = 304;
-  if (Math.abs(dayOfYear - halloweenDay) <= 30) detected.push('Halloween');
-
-  // Thanksgiving (4th Thursday of November, ~day 327-333)
-  if (month === 11 || (month === 10 && day > 15)) detected.push('Thanksgiving');
 
   // Valentine's Day (Feb 14) - day ~45
   const valentinesDay = 45;
@@ -50,6 +37,13 @@ const getAutoDetectedSeasons = (): SeasonHoliday[] => {
   // Independence Day (July 4) - day ~185
   const independenceDay = 185;
   if (Math.abs(dayOfYear - independenceDay) <= 30) detected.push('Independence');
+
+  // Halloween (Oct 31) - day ~304
+  const halloweenDay = 304;
+  if (Math.abs(dayOfYear - halloweenDay) <= 30) detected.push('Halloween');
+
+  // Thanksgiving (4th Thursday of November, ~day 327-333)
+  if (month === 11 || (month === 10 && day > 15)) detected.push('Thanksgiving');
 
   return detected;
 };

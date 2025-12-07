@@ -26,8 +26,8 @@ const HolidayCountdown: React.FC = () => {
     let smallestDiff = Infinity;
 
     autoDetectedSeasons.forEach((season: SeasonHoliday) => {
-      if (season === 'all' || season === 'spring' || season === 'summer' || season === 'fall' || season === 'winter') {
-        return; // Skip non-holiday seasons
+      if (season === 'all') {
+        return; // Skip 'all' option
       }
 
       const holidayInfo = holidayDates[season];

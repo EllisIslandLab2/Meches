@@ -7,13 +7,7 @@ import Link from 'next/link';
 // Memoize static options outside component to prevent recreation
 const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji?: string; customElement?: React.ReactNode }> = [
   { value: 'all', label: 'All Products', emoji: '🛍️' },
-  { value: 'spring', label: 'Spring', emoji: '🌸' },
-  { value: 'summer', label: 'Summer', emoji: '☀️' },
-  { value: 'fall', label: 'Fall', emoji: '🍂' },
-  { value: 'winter', label: 'Winter', emoji: '❄️' },
   { value: 'Christmas', label: 'Christmas', emoji: '🎄' },
-  { value: 'Halloween', label: 'Halloween', emoji: '🎃' },
-  { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' },
   { value: 'Valentines', label: 'Valentines', emoji: '💝' },
   { value: 'Easter', label: 'Easter', emoji: '✟' },
   {
@@ -26,7 +20,9 @@ const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji?: strin
         <span style={{ color: '#003366' }}>A</span>
       </span>
     )
-  }
+  },
+  { value: 'Halloween', label: 'Halloween', emoji: '🎃' },
+  { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' }
 ];
 
 const SeasonDropdown: React.FC = () => {
@@ -66,9 +62,7 @@ const SeasonDropdown: React.FC = () => {
       >
         <span className="text-lg">{selectedOption?.customElement || selectedOption?.emoji}</span>
         <div className="flex flex-col items-start">
-          {/* Mobile: "Season/" above "Holiday", Desktop: "Seasons & Holidays" */}
-          <div className="text-xs font-semibold hidden md:block">Seasons & Holidays</div>
-          <div className="text-xs font-semibold md:hidden leading-tight">Season/<br/>Holiday</div>
+          <div className="text-xs font-semibold">Holidays</div>
           <div className="text-sm">{buttonText}</div>
         </div>
         <svg
@@ -85,7 +79,7 @@ const SeasonDropdown: React.FC = () => {
         <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-amber-200 z-50">
           <div className="py-2">
             <div className="px-4 py-2 text-sm text-amber-700 font-medium border-b border-amber-100">
-              Select Season/Holiday:
+              Select Holiday:
             </div>
             <div className="max-h-96 overflow-y-auto">
               {SEASON_OPTIONS.map((option) => {
@@ -119,7 +113,7 @@ const SeasonDropdown: React.FC = () => {
               })}
             </div>
             <div className="px-4 py-2 text-xs text-amber-600 border-t border-amber-100">
-              Products can appear in multiple seasons
+              Products can appear in multiple holidays
             </div>
           </div>
         </div>
