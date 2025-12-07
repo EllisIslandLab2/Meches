@@ -58,13 +58,10 @@ const SeasonDropdown: React.FC = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
+        className="bg-green-700 text-white px-3 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2"
+        aria-label={`Holiday selector - Currently: ${buttonText}`}
       >
-        <span className="text-lg">{selectedOption?.customElement || selectedOption?.emoji}</span>
-        <div className="flex flex-col items-start">
-          <div className="text-xs font-semibold">Holidays</div>
-          <div className="text-sm">{buttonText}</div>
-        </div>
+        <span className="text-xl">{selectedOption?.customElement || selectedOption?.emoji}</span>
         <svg
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
