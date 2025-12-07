@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useState, memo, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useCart } from '@/contexts/CartContext';
-import { useSeason, type SeasonHoliday } from '@/contexts/SeasonContext';
 import SeasonDropdown from './SeasonDropdown';
 
 // Lazy load CartModal only when needed
@@ -13,19 +12,8 @@ const CartModal = dynamic(() => import('./CartModal'), {
   ssr: false
 });
 
-// Memoize static holiday quick links
-const SEASON_QUICK_LINKS = [
-  { value: 'Christmas' as SeasonHoliday, emoji: '🎄', label: 'Christmas' },
-  { value: 'Valentines' as SeasonHoliday, emoji: '💝', label: 'Valentines' },
-  { value: 'Easter' as SeasonHoliday, emoji: '✟', label: 'Easter' },
-  { value: 'Independence' as SeasonHoliday, emoji: '🎆', label: 'Independence Day' },
-  { value: 'Halloween' as SeasonHoliday, emoji: '🎃', label: 'Halloween' },
-  { value: 'Thanksgiving' as SeasonHoliday, emoji: '🦃', label: 'Thanksgiving' }
-] as const;
-
 function Header() {
   const { getTotalItems } = useCart();
-  const { setSelectedSeason } = useSeason();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Memoize cart item count to reduce re-renders
@@ -84,24 +72,8 @@ function Header() {
               </div>
             </div>
 
-            {/* Navigation Links and Holiday Quick Links at Bottom */}
+            {/* Navigation Links at Bottom */}
             <div className="flex items-center justify-between mt-2 pt-1">
-              {/* Holiday Quick Links - Hidden on mobile */}
-              <div className="hidden md:flex items-center gap-2">
-                {SEASON_QUICK_LINKS.map((holiday) => (
-                  <Link
-                    key={holiday.value}
-                    href="/#products"
-                    onClick={() => setSelectedSeason(holiday.value)}
-                    className="text-2xl hover:scale-125 transition-transform cursor-pointer"
-                    title={holiday.label}
-                    aria-label={`Filter by ${holiday.label}`}
-                  >
-                    {holiday.emoji}
-                  </Link>
-                ))}
-              </div>
-
               {/* Navigation Links */}
               <div className="flex items-center gap-4">
                 <Link href="/" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-sm">
