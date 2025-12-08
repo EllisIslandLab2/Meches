@@ -23,16 +23,16 @@ function Header() {
     <>
       <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800">
         <nav className="max-w-7xl mx-auto px-3" aria-label="Main navigation">
-          <div className="py-2 relative">
+          <div className="py-1 md:py-2 relative">
             {/* Absolutely Centered Logo */}
-            <div className="absolute left-1/2 top-2 transform -translate-x-1/2">
+            <div className="absolute left-1/2 top-0 md:top-2 transform -translate-x-1/2">
               <div className="rounded-lg overflow-hidden">
                 <Image
                   src="/assets/images/meche-logo.png"
                   alt="Meche's Crafts Logo"
-                  width={140}
-                  height={140}
-                  className="object-cover"
+                  width={100}
+                  height={100}
+                  className="object-cover md:w-[140px] md:h-[140px]"
                   priority
                   fetchPriority="high"
                 />
@@ -42,15 +42,15 @@ function Header() {
             {/* Content Row with Season Selector and Cart */}
             <div className="flex justify-between items-start relative z-10">
               {/* Left: Season Selector */}
-              <div className="flex items-start pt-1">
+              <div className="flex items-start">
                 <SeasonDropdown />
               </div>
 
               {/* Right: Cart */}
-              <div className="flex flex-col items-end gap-1 pt-1">
+              <div className="flex flex-col items-end">
                 <button
                   onClick={() => setIsCartOpen(true)}
-                  className="bg-green-700 text-white px-3 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-sm"
+                  className="bg-green-700 text-white px-3 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-1.5 text-sm"
                   aria-label={`Shopping cart with ${totalItems} items`}
                 >
                   <svg
@@ -73,16 +73,16 @@ function Header() {
             </div>
 
             {/* Navigation Links at Bottom */}
-            <div className="flex items-center justify-between mt-2 pt-1">
+            <div className="flex items-center justify-between mt-1 md:mt-2">
               {/* Navigation Links */}
-              <div className="flex items-center gap-4">
-                <Link href="/" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-sm">
+              <div className="flex items-center gap-3 md:gap-4">
+                <Link href="/" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-xs md:text-sm">
                   Home
                 </Link>
-                <Link href="/#products" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-sm">
+                <Link href="/#products" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-xs md:text-sm">
                   Products
                 </Link>
-                <Link href="/contact" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-sm">
+                <Link href="/contact" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-xs md:text-sm">
                   Contact
                 </Link>
               </div>
