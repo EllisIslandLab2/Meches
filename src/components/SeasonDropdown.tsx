@@ -25,7 +25,12 @@ const SEASON_OPTIONS: Array<{ value: SeasonHoliday; label: string; emoji?: strin
   { value: 'Thanksgiving', label: 'Thanksgiving', emoji: '🦃' }
 ];
 
-const SeasonDropdown: React.FC = () => {
+interface SeasonDropdownProps {
+  showLabel?: boolean;
+  compact?: boolean;
+}
+
+const SeasonDropdown: React.FC<SeasonDropdownProps> = ({ showLabel = false, compact = false }) => {
   const { selectedSeason, setSelectedSeason, autoDetectedSeasons } = useSeason();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -56,21 +61,46 @@ const SeasonDropdown: React.FC = () => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-green-700 text-white px-3 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-1.5"
-        aria-label={`Holiday selector - Currently: ${buttonText}`}
-      >
-        <span className="text-lg">{selectedOption?.customElement || selectedOption?.emoji}</span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+      {showLabel && (
+        <div className="flex items-center gap-3">
+          <span className="text-amber-900 font-semibold text-base whitespace-nowrap">Browse by Holiday:</span>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="bg-green-700 text-white px-4 py-2.5 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-base"
+            aria-label={`Holiday selector - Currently: ${buttonText}`}
+          >
+            <span className="text-xl">{selectedOption?.customElement || selectedOption?.emoji}</span>
+            <span className="font-semibold">{buttonText}</span>
+            <svg
+              className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      )}
+      {!showLabel && (
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`bg-green-700 text-white rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-1.5 ${
+            compact ? 'px-3 py-2 text-sm' : 'px-3 py-2'
+          }`}
+          aria-label={`Holiday selector - Currently: ${buttonText}`}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          <span className="text-lg">{selectedOption?.customElement || selectedOption?.emoji}</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      )}
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-amber-200 z-50">

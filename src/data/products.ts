@@ -246,7 +246,12 @@ export async function fetchProductsFromAirtable(): Promise<Product[]> {
     });
 
     if (!response.ok) {
-      console.error('Failed to fetch products from Airtable');
+      const errorText = await response.text();
+      console.error('Failed to fetch products from Airtable:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
       return sampleProducts; // Fallback to static data
     }
 
