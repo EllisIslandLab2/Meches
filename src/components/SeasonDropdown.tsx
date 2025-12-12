@@ -62,25 +62,22 @@ const SeasonDropdown: React.FC<SeasonDropdownProps> = ({ showLabel = false, comp
   return (
     <div className="relative" ref={dropdownRef}>
       {showLabel && (
-        <div className="flex items-center gap-3">
-          <span className="text-amber-900 font-semibold text-base whitespace-nowrap">Browse by Holiday:</span>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="bg-green-700 text-white px-4 py-2.5 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-base"
-            aria-label={`Holiday selector - Currently: ${buttonText}`}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-green-700 text-white px-4 py-2.5 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-base"
+          aria-label={`Holiday selector - Currently: ${buttonText}`}
+        >
+          <span className="text-xl">{selectedOption?.customElement || selectedOption?.emoji}</span>
+          <span className="font-semibold">{buttonText}</span>
+          <svg
+            className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <span className="text-xl">{selectedOption?.customElement || selectedOption?.emoji}</span>
-            <span className="font-semibold">{buttonText}</span>
-            <svg
-              className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
       )}
       {!showLabel && (
         <button

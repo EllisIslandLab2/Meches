@@ -37,9 +37,9 @@ export async function fetchProductsFromAirtableDirect() {
         'Authorization': `Bearer ${config.apiKey}`,
         'Content-Type': 'application/json'
       },
-      // Add these options to help with potential SSL/network issues in development
-      cache: 'no-store',
-      next: { revalidate: 0 }
+      // Use default caching to allow ISR to work properly
+      // ISR will revalidate at the page level (5 minutes for homepage)
+      cache: 'default'
     });
 
     if (!response.ok) {

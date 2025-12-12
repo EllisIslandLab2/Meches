@@ -15,6 +15,7 @@ const CartModal = dynamic(() => import('./CartModal'), {
 function Header() {
   const { getTotalItems } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Memoize cart item count to reduce re-renders
   const totalItems = useMemo(() => getTotalItems(), [getTotalItems]);
@@ -24,27 +25,25 @@ function Header() {
       <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800">
         <nav className="max-w-7xl mx-auto px-3" aria-label="Main navigation">
           <div className="py-1 md:py-4">
-            {/* Mobile Layout: Logo left, Season + Cart + Nav right */}
+            {/* Mobile Layout: Logo left, Cart + Hamburger right */}
             <div className="md:hidden">
-              <div className="flex items-start justify-between gap-3">
-                {/* Logo - Left aligned on mobile - Smaller size */}
-                <div className="flex-shrink-0">
-                  <div className="rounded-lg overflow-hidden">
-                    <Image
-                      src="/assets/images/meche-logo.png"
-                      alt="Meche's Crafts Logo"
-                      width={65}
-                      height={65}
-                      className="object-cover"
-                      priority
-                      fetchPriority="high"
-                    />
-                  </div>
-                </div>
+              <div className="flex items-center justify-between gap-3 py-2">
+                {/* Left: Logo */}
+                <Link href="/" className="flex-shrink-0 rounded-lg overflow-hidden">
+                  <Image
+                    src="/assets/images/meche-logo.png"
+                    alt="Meche's Crafts Logo"
+                    width={60}
+                    height={60}
+                    className="object-cover"
+                    priority
+                    fetchPriority="high"
+                  />
+                </Link>
 
-                {/* Right side: Season selector, Cart, and Nav links stacked - Everything right-aligned */}
-                <div className="flex flex-col items-end gap-1.5 flex-1">
-                  <SeasonDropdown compact={true} />
+                {/* Right: Cart button and Hamburger menu */}
+                <div className="flex items-center gap-2">
+                  {/* Cart Button */}
                   <button
                     onClick={() => setIsCartOpen(true)}
                     className="bg-green-700 text-white px-3 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-1.5 text-sm"
@@ -64,22 +63,56 @@ function Header() {
                         d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
                       />
                     </svg>
-                    ({totalItems})
+                    <span className="text-xs font-bold">({totalItems})</span>
                   </button>
-                  {/* Nav Links - Right aligned under cart on mobile */}
-                  <div className="flex items-center justify-end gap-2.5">
-                    <Link href="/" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-xs whitespace-nowrap">
-                      Home
-                    </Link>
-                    <Link href="/#products" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-xs whitespace-nowrap">
-                      Products
-                    </Link>
-                    <Link href="/contact" className="text-amber-900 font-semibold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-xs whitespace-nowrap">
-                      Contact
-                    </Link>
-                  </div>
+
+                  {/* Hamburger Menu Button */}
+                  <button
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    className="bg-amber-900 text-white px-3 py-2 rounded-lg hover:bg-amber-800 transition-colors border-2 border-amber-800 shadow-lg flex flex-col gap-1.5"
+                    aria-label="Navigation menu"
+                  >
+                    <span className={`block h-0.5 w-5 bg-white transition-transform ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+                    <span className={`block h-0.5 w-5 bg-white transition-opacity ${isMobileMenuOpen ? 'opacity-0' : ''}`}></span>
+                    <span className={`block h-0.5 w-5 bg-white transition-transform ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+                  </button>
                 </div>
               </div>
+
+              {/* Mobile Menu Dropdown */}
+              {isMobileMenuOpen && (
+                <div className="bg-amber-50 border-t-2 border-amber-800 py-3 px-3 space-y-3">
+                  {/* Season selector */}
+                  <div className="pb-3 border-b border-amber-200">
+                    <SeasonDropdown compact={true} />
+                  </div>
+
+                  {/* Navigation Links */}
+                  <nav className="space-y-2 flex flex-col">
+                    <Link
+                      href="/"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-amber-900 font-semibold hover:text-green-700 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      href="/#products"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-amber-900 font-semibold hover:text-green-700 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
+                    >
+                      Products
+                    </Link>
+                    <Link
+                      href="/contact"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-amber-900 font-semibold hover:text-green-700 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
+                    >
+                      Contact
+                    </Link>
+                  </nav>
+                </div>
+              )}
             </div>
 
             {/* Desktop Layout: Enhanced with larger elements and more spacing */}
@@ -90,16 +123,15 @@ function Header() {
                   <SeasonDropdown showLabel={true} />
                 </div>
 
-                {/* Center: Larger Logo */}
+                {/* Center: Logo */}
                 <div className="flex-shrink-0 mx-6">
                   <div className="rounded-lg overflow-hidden">
                     <Image
                       src="/assets/images/meche-logo.png"
                       alt="Meche's Crafts Logo"
-                      width={160}
-                      height={160}
+                      width={120}
+                      height={120}
                       className="object-cover"
-                      style={{ width: 'auto', height: 'auto' }}
                       priority
                       fetchPriority="high"
                     />

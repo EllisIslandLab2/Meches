@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // Vercel Edge Config: Enable caching at the edge
 export const runtime = 'nodejs'; // Use Node.js runtime for Airtable API calls
 export const dynamic = 'force-dynamic'; // Since products may change frequently
+export const maxDuration = 60; // Increase timeout to 60 seconds for Vercel
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,13 +52,48 @@ export async function POST(request: NextRequest) {
     }
 
     const baseUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`;
+
+    // Helper function to make fetch requests with retry logic
+    async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {
+      let lastError: Error | null = null;
+
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          // Create abort controller with 25 second timeout per attempt
+          const attemptController = new AbortController();
+          const attemptTimeoutId = setTimeout(() => attemptController.abort(), 25000);
+
+          const response = await fetch(url, {
+            ...options,
+            signal: attemptController.signal
+          });
+
+          clearTimeout(attemptTimeoutId);
+          return response;
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error));
+
+          // If this was the last attempt, throw the error
+          if (attempt === maxRetries) {
+            throw lastError;
+          }
+
+          // Otherwise, wait before retrying (exponential backoff)
+          const delayMs = Math.min(1000 * Math.pow(2, attempt), 5000);
+          await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+      }
+
+      throw lastError || new Error('Failed to fetch from Airtable');
+    }
+
     let response;
 
     switch (action) {
       case 'get':
         // Get all records or specific record
         const getUrl = data?.recordId ? `${baseUrl}/${data.recordId}` : baseUrl;
-        response = await fetch(getUrl, {
+        response = await fetchWithRetry(getUrl, {
           headers: {
             'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
             'Content-Type': 'application/json'
@@ -67,7 +103,7 @@ export async function POST(request: NextRequest) {
 
       case 'create':
         // Create new record
-        response = await fetch(baseUrl, {
+        response = await fetchWithRetry(baseUrl, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
@@ -81,7 +117,7 @@ export async function POST(request: NextRequest) {
 
       case 'update':
         // Update existing record
-        response = await fetch(`${baseUrl}/${data.recordId}`, {
+        response = await fetchWithRetry(`${baseUrl}/${data.recordId}`, {
           method: 'PATCH',
           headers: {
             'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
@@ -118,7 +154,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('API error:', error);
     return NextResponse.json(
-      { 
+      {
         error: error instanceof Error ? error.message : 'Internal server error',
         details: error instanceof Error ? error.stack : undefined
       },
