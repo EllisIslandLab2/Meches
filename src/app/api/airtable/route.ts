@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Vercel Edge Config: Enable caching at the edge
 export const runtime = 'nodejs'; // Use Node.js runtime for Airtable API calls
-export const dynamic = 'force-dynamic'; // Since products may change frequently
+// Removed force-dynamic to enable caching and reduce Airtable API calls
+// ISR handles product updates, this route is for forms/orders only
 export const maxDuration = 60; // Increase timeout to 60 seconds for Vercel
 
 export async function POST(request: NextRequest) {

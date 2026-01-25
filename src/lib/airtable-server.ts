@@ -37,9 +37,9 @@ export async function fetchProductsFromAirtableDirect() {
         'Authorization': `Bearer ${config.apiKey}`,
         'Content-Type': 'application/json'
       },
-      // Use default caching to allow ISR to work properly
-      // ISR will revalidate at the page level (5 minutes for homepage)
-      cache: 'default'
+      // Enable caching to work with ISR revalidation (5 minutes)
+      // This prevents redundant Airtable API calls during the cache period
+      next: { revalidate: 300 }
     });
 
     if (!response.ok) {

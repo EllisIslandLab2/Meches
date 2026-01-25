@@ -2,7 +2,11 @@ import { NextResponse } from 'next/server';
 import { fetchProductsFromAirtableServer } from '@/data/products';
 
 export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic'; // SWR endpoint always fetches fresh data
+// NOTE: This endpoint is no longer used by the frontend as of the ISR-only optimization
+// ProductsClient now uses ISR-provided products exclusively to reduce Airtable API calls
+// Keeping this endpoint for potential future use or debugging
+// Cache for 5 minutes to match ISR revalidation if ever re-enabled
+export const revalidate = 300;
 
 export async function GET() {
   try {
@@ -10,7 +14,7 @@ export async function GET() {
 
     return NextResponse.json(products, {
       headers: {
-        'Cache-Control': 'public, max-age=0, must-revalidate',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       }
     });
   } catch (error) {
