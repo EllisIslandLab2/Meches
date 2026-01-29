@@ -35,7 +35,7 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
   return (
     <div className="bg-gradient-to-br from-amber-50/95 to-yellow-50/95 rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105 hover:shadow-xl border-2 border-amber-700">
       {showMessage && (
-        <div className="fixed top-24 right-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-40 animate-slide-in border-2 border-amber-800">
+        <div className="fixed top-24 right-5 bg-stone-700 text-white px-4 py-2 rounded-lg shadow-lg z-40 animate-slide-in border-2 border-amber-800">
           Item added to cart!
         </div>
       )}
@@ -66,12 +66,12 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
 
         {/* Price and Quantity on same row */}
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xl font-bold text-green-700">${product.price.toFixed(2)}</p>
+          <p className="text-xl font-bold text-amber-800">${product.price.toFixed(2)}</p>
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-amber-900">Qty:</span>
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-7 h-7 bg-green-700 text-white rounded-full font-bold hover:bg-green-800 transition-colors border-2 border-amber-700 text-sm"
+              className="w-7 h-7 bg-stone-600 text-white rounded-full font-bold hover:bg-stone-700 transition-colors border-2 border-amber-700 text-sm"
               aria-label="Decrease quantity"
             >
               -
@@ -79,7 +79,7 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
             <span className="w-6 text-center font-bold text-amber-900">{quantity}</span>
             <button
               onClick={() => setQuantity(quantity + 1)}
-              className="w-7 h-7 bg-green-700 text-white rounded-full font-bold hover:bg-green-800 transition-colors border-2 border-amber-700 text-sm"
+              className="w-7 h-7 bg-stone-600 text-white rounded-full font-bold hover:bg-stone-700 transition-colors border-2 border-amber-700 text-sm"
               aria-label="Increase quantity"
             >
               +
@@ -98,7 +98,7 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
                 const variant = product.variants.find(v => v.id === e.target.value);
                 if (variant) setSelectedVariant(variant);
               }}
-              className="flex-1 p-1.5 text-sm border-2 border-amber-700 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white/90"
+              className="flex-1 p-1.5 text-sm border-2 border-amber-700 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white/90"
             >
               {product.variants.map((variant) => (
                 <option key={variant.id} value={variant.id}>
@@ -111,7 +111,12 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
 
         <button
           onClick={handleAddToCart}
-          className="w-full bg-green-700 text-white py-2.5 rounded-lg font-semibold hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg"
+          className="w-full text-white py-2.5 rounded-xl font-semibold hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg"
+          style={{
+            backgroundImage: 'url(/wooden-button-resized.webp)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
           Add to Cart
         </button>

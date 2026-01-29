@@ -54,10 +54,10 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
                     <p className="text-sm text-amber-700">Quantity: {item.quantity}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-700">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-bold text-amber-800">${(item.price * item.quantity).toFixed(2)}</p>
                     <button
                       onClick={() => removeFromCart(item.id)}
-                      className="text-red-600 text-sm hover:text-red-800 border border-red-600 rounded px-2 py-1 mt-1"
+                      className="text-stone-700 text-sm hover:text-stone-700 border border-stone-600 rounded px-2 py-1 mt-1"
                       aria-label={`Remove ${item.name} from cart`}
                     >
                       Remove
@@ -74,7 +74,13 @@ export default function CartModal({ isOpen, onClose }: CartModalProps) {
             <div className="flex gap-4 justify-center">
               <Link
                 href="/checkout"
-                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors border-2 border-amber-800"
+                className="text-white px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity border-2 border-stone-600"
+                style={{
+                  backgroundImage: 'url(/wooden-button-resized.webp)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  display: 'inline-block',
+                }}
                 onClick={onClose}
               >
                 Checkout

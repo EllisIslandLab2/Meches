@@ -368,7 +368,7 @@ export default function PaymentPage() {
       {isProcessing && processingStep && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white rounded-xl p-8 max-w-md mx-4 text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-stone-600 mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Processing Payment</h2>
             <p className="text-gray-600 text-lg">{processingStep}</p>
             <p className="text-sm text-gray-500 mt-4">Please do not close this window</p>
@@ -386,9 +386,34 @@ export default function PaymentPage() {
         strategy="lazyOnload"
       />
       
-      <div className="min-h-screen bg-gray-50 py-8">
+      <div className="min-h-screen">
+        {/* Header Section */}
+        <section
+          className="relative py-16 px-4 min-h-[350px] flex items-center"
+          style={{
+            backgroundImage: 'url(/Meches Wood Shavings on a Ridged Desk.webp)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+          }}
+        >
+          {/* Very soft warm overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-50/35 via-stone-50/40 to-stone-50/25"></div>
+
+          <div className="max-w-6xl mx-auto text-center relative z-10 w-full">
+            <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-8 mx-auto max-w-2xl shadow-2xl border border-stone-200/70">
+              <h1 className="text-4xl md:text-5xl font-serif font-bold text-amber-900 mb-3">Secure Payment</h1>
+              <p className="text-lg text-stone-600">Complete your order securely</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Separator */}
+        <div className="h-8 bg-gradient-to-b from-transparent to-stone-50"></div>
+
+        {/* Payment Form Section */}
+        <section className="py-8 px-4 bg-stone-50">
         <div className="max-w-6xl mx-auto px-5">
-          <h1 className="text-3xl font-bold text-amber-800 mb-8">Payment</h1>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Order Summary */}
@@ -436,8 +461,8 @@ export default function PaymentPage() {
                 {/* Payment Amount Highlight */}
                 <div className="bg-yellow-100 border-2 border-yellow-500 rounded-lg p-4 mt-6">
                   <h3 className="text-yellow-800 font-semibold mb-3">Amount to Enter in Square</h3>
-                  <div className="bg-white border-2 border-blue-500 rounded-lg p-4 flex justify-between items-center">
-                    <span className="text-3xl font-bold text-blue-600">${estimatedTotal.toFixed(2)}</span>
+                  <div className="bg-white border-2 border-stone-700 rounded-lg p-4 flex justify-between items-center">
+                    <span className="text-3xl font-bold text-stone-600">${estimatedTotal.toFixed(2)}</span>
                   </div>
                   <p className="text-yellow-800 text-sm mt-3 leading-relaxed">
                     This is an estimate. Square will calculate the final tax based on your exact shipping address.
@@ -548,11 +573,11 @@ export default function PaymentPage() {
                   )}
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-blue-800 mb-2">
+                <div className="bg-amber-50 border border-stone-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-amber-900 mb-2">
                     <strong>How to complete your payment:</strong>
                   </p>
-                  <ol className="text-sm text-blue-800 space-y-1 ml-4 list-decimal">
+                  <ol className="text-sm text-amber-900 space-y-1 ml-4 list-decimal">
                     <li>Fill in all customer information above</li>
                     <li>Enter your card details in the Square payment form</li>
                     <li>Estimated amount: <strong>${estimatedTotal.toFixed(2)}</strong> (final tax calculated by Square)</li>
@@ -564,7 +589,13 @@ export default function PaymentPage() {
                   <button
                     type="submit"
                     disabled={isProcessing || !isSquareLoaded}
-                    className="bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="text-white px-8 py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed border-2 border-stone-600"
+                    style={{
+                      backgroundImage: isProcessing || !isSquareLoaded ? 'none' : 'url(/wooden-button-resized.webp)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundColor: isProcessing || !isSquareLoaded ? '#57534e' : 'transparent',
+                    }}
                   >
                     {isProcessing ? 'Processing...' : `Complete Payment - ~$${estimatedTotal.toFixed(2)}`}
                   </button>
@@ -572,7 +603,8 @@ export default function PaymentPage() {
               </form>
             </div>
           </div>
-        </div>
+          </div>
+        </section>
       </div>
     </PaymentErrorBoundary>
   );

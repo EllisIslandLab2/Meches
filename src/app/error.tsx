@@ -36,7 +36,12 @@ export default function Error({
         <div className="flex gap-3 justify-center">
           <button
             onClick={reset}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+            className="text-white px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity border-2 border-stone-600"
+            style={{
+              backgroundImage: 'url(/wooden-button-resized.webp)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
           >
             Try Again
           </button>

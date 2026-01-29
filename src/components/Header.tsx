@@ -6,6 +6,7 @@ import { useState, memo, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useCart } from '@/contexts/CartContext';
 import SeasonDropdown from './SeasonDropdown';
+import HeaderSnow from './HeaderSnow';
 
 // Lazy load CartModal only when needed
 const CartModal = dynamic(() => import('./CartModal'), {
@@ -22,8 +23,11 @@ function Header() {
 
   return (
     <>
-      <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800">
-        <nav className="max-w-7xl mx-auto px-3" aria-label="Main navigation">
+      <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800 relative overflow-hidden">
+        {/* Snow effect for Christmas */}
+        <HeaderSnow />
+
+        <nav className="max-w-7xl mx-auto px-3 relative z-10" aria-label="Main navigation">
           <div className="py-1 md:py-4">
             {/* Mobile Layout: Logo left, Cart + Hamburger right */}
             <div className="md:hidden">
@@ -31,7 +35,7 @@ function Header() {
                 {/* Left: Logo */}
                 <Link href="/" className="flex-shrink-0 rounded-lg overflow-hidden">
                   <Image
-                    src="/assets/images/meche-logo.png"
+                    src="/meche-logo.webp"
                     alt="Meche's Crafts Logo"
                     width={60}
                     height={60}
@@ -46,7 +50,12 @@ function Header() {
                   {/* Cart Button */}
                   <button
                     onClick={() => setIsCartOpen(true)}
-                    className="bg-green-700 text-white px-3 py-2 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-1.5 text-sm"
+                    className="text-white px-3 py-2 rounded-xl font-medium hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg flex items-center gap-1.5 text-sm"
+                    style={{
+                      backgroundImage: 'url(/wooden-button-resized.webp)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
                     aria-label={`Shopping cart with ${totalItems} items`}
                   >
                     <svg
@@ -83,7 +92,7 @@ function Header() {
               {isMobileMenuOpen && (
                 <div className="bg-amber-50 border-t-2 border-amber-800 py-3 px-3 space-y-3">
                   {/* Season selector */}
-                  <div className="pb-3 border-b border-amber-200">
+                  <div className="pb-3 border-b border-stone-200">
                     <SeasonDropdown compact={true} />
                   </div>
 
@@ -92,21 +101,21 @@ function Header() {
                     <Link
                       href="/"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-amber-900 font-semibold hover:text-green-700 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
+                      className="text-amber-900 font-semibold hover:text-stone-600 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
                     >
                       Home
                     </Link>
                     <Link
                       href="/#products"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-amber-900 font-semibold hover:text-green-700 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
+                      className="text-amber-900 font-semibold hover:text-stone-600 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
                     >
                       Products
                     </Link>
                     <Link
                       href="/contact"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-amber-900 font-semibold hover:text-green-700 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
+                      className="text-amber-900 font-semibold hover:text-stone-600 transition-colors hover:bg-amber-100 rounded px-3 py-2 block"
                     >
                       Contact
                     </Link>
@@ -127,7 +136,7 @@ function Header() {
                 <div className="flex-shrink-0 mx-6">
                   <div className="rounded-lg overflow-hidden">
                     <Image
-                      src="/assets/images/meche-logo.png"
+                      src="/meche-logo.webp"
                       alt="Meche's Crafts Logo"
                       width={120}
                       height={120}
@@ -142,7 +151,12 @@ function Header() {
                 <div className="flex flex-col items-end flex-1 gap-2">
                   <button
                     onClick={() => setIsCartOpen(true)}
-                    className="bg-green-700 text-white px-5 py-3 rounded-full font-semibold hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-base"
+                    className="text-white px-5 py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg flex items-center gap-2 text-base"
+                    style={{
+                      backgroundImage: 'url(/wooden-button-resized.webp)',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
                     aria-label={`Shopping cart with ${totalItems} items`}
                   >
                     <svg
@@ -160,19 +174,19 @@ function Header() {
                       />
                     </svg>
                     <span className="font-semibold">Cart</span>
-                    <span className="bg-white text-green-700 px-2 py-0.5 rounded-full font-bold text-sm">
+                    <span className="bg-white text-stone-600 px-2 py-0.5 rounded-full font-bold text-sm">
                       {totalItems}
                     </span>
                   </button>
                   {/* Nav Links - Larger and more prominent on desktop */}
                   <div className="flex items-center gap-5 mt-1">
-                    <Link href="/" className="text-amber-900 font-bold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-base py-1">
+                    <Link href="/" className="text-amber-900 font-bold hover:text-stone-600 transition-colors border-b-2 border-transparent hover:border-stone-700 text-base py-1">
                       Home
                     </Link>
-                    <Link href="/#products" className="text-amber-900 font-bold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-base py-1">
+                    <Link href="/#products" className="text-amber-900 font-bold hover:text-stone-600 transition-colors border-b-2 border-transparent hover:border-stone-700 text-base py-1">
                       Products
                     </Link>
-                    <Link href="/contact" className="text-amber-900 font-bold hover:text-green-700 transition-colors border-b-2 border-transparent hover:border-green-600 text-base py-1">
+                    <Link href="/contact" className="text-amber-900 font-bold hover:text-stone-600 transition-colors border-b-2 border-transparent hover:border-stone-700 text-base py-1">
                       Contact
                     </Link>
                   </div>

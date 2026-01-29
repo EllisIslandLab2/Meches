@@ -41,9 +41,34 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-5">
-        <h1 className="text-3xl font-bold text-amber-800 mb-8">Shopping Cart</h1>
+    <div className="min-h-screen">
+      {/* Header Section with Wood Background */}
+      <section
+        className="relative py-16 px-4 min-h-[350px] flex items-center"
+        style={{
+          backgroundImage: 'url(/Meches Curly Large Wood Shaving.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Very soft warm overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-50/35 via-white/40 to-stone-50/30"></div>
+
+        <div className="max-w-6xl mx-auto text-center relative z-10 w-full">
+          <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-8 mx-auto max-w-2xl shadow-2xl border border-amber-100/50">
+            <h1 className="text-4xl md:text-5xl font-serif font-bold text-amber-900 mb-3">Shopping Cart</h1>
+            <p className="text-lg text-stone-600">Review your items and proceed to checkout</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Separator */}
+      <div className="h-8 bg-gradient-to-b from-transparent to-stone-50"></div>
+
+      {/* Cart Content Section */}
+      <section className="py-8 px-4 bg-stone-50">
+        <div className="max-w-6xl mx-auto">
 
         {cart.length === 0 ? (
           <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-8 text-center border-2 border-amber-700">
@@ -94,7 +119,7 @@ export default function CheckoutPage() {
                         </div>
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="text-red-500 text-sm hover:text-red-700"
+                          className="text-stone-700 text-sm hover:text-stone-700"
                         >
                           Remove
                         </button>
@@ -139,15 +164,15 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
-                  <p className="text-xs text-green-800">
+                <div className="bg-amber-50 border border-stone-200 rounded-lg p-3 mb-6">
+                  <p className="text-xs text-amber-900">
                     <strong>Note:</strong> Final tax will be calculated by Square based on your exact shipping address at checkout.
                   </p>
                 </div>
 
                 {shipping > 0 && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-                    <p className="text-sm text-blue-800">
+                  <div className="bg-stone-50 border border-stone-200 rounded-lg p-3 mb-6">
+                    <p className="text-sm text-stone-700">
                       Add ${(freeShippingThreshold - subtotal).toFixed(2)} more for FREE shipping!
                     </p>
                   </div>
@@ -171,7 +196,8 @@ export default function CheckoutPage() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

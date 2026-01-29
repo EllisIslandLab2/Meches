@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Meche's Handmade Crafts",
     images: [
       {
-        url: '/logo.jpg',
+        url: '/logo.webp',
         width: 1200,
         height: 630,
         alt: "Meche's Handmade Crafts Logo",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Meche's Handmade Crafts - Unique Handcrafted Jewelry",
     description: "Discover unique, handcrafted jewelry and laser-cut wooden designs made with love.",
-    images: ['/logo.jpg'],
+    images: ['/logo.webp'],
     creator: '@mechescrafts',
   },
   robots: {
@@ -71,15 +71,9 @@ export const metadata: Metadata = {
       },
       {
         rel: 'icon',
-        type: 'image/png',
-        sizes: '192x192',
-        url: '/favicon-192.png',
-      },
-      {
-        rel: 'icon',
-        type: 'image/png',
+        type: 'image/webp',
         sizes: '512x512',
-        url: '/favicon-512.png',
+        url: '/favicon-512.webp',
       },
     ],
   },
@@ -98,20 +92,18 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Preload critical logo image */}
-        <link rel="preload" as="image" href="/assets/images/meche-logo.png" />
+        <link rel="preload" as="image" href="/meche-logo.webp" />
       </head>
       <body className="font-serif min-h-screen flex flex-col">
         <ErrorBoundary>
           <SeasonProvider>
-            <ClientBackground footerHeight={80} className="dynamic-bg" transitionDuration={5000}>
-              <CartProvider>
-                <Header />
-                <main className="flex-grow">
-                  {children}
-                </main>
-                <Footer />
-              </CartProvider>
-            </ClientBackground>
+            <CartProvider>
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </CartProvider>
           </SeasonProvider>
         </ErrorBoundary>
         <Analytics />

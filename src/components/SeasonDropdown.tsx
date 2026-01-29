@@ -64,7 +64,12 @@ const SeasonDropdown: React.FC<SeasonDropdownProps> = ({ showLabel = false, comp
       {showLabel && (
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-green-700 text-white px-4 py-2.5 rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-2 text-base"
+          className="text-white px-4 py-2.5 rounded-xl font-medium hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg flex items-center gap-2 text-base"
+          style={{
+            backgroundImage: 'url(/wooden-button-resized.webp)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
           aria-label={`Holiday selector - Currently: ${buttonText}`}
         >
           <span className="text-xl">{selectedOption?.customElement || selectedOption?.emoji}</span>
@@ -82,9 +87,14 @@ const SeasonDropdown: React.FC<SeasonDropdownProps> = ({ showLabel = false, comp
       {!showLabel && (
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`bg-green-700 text-white rounded-full font-medium hover:bg-green-800 transition-colors border-2 border-amber-800 shadow-lg flex items-center gap-1.5 ${
+          className={`text-white rounded-xl font-medium hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg flex items-center gap-1.5 ${
             compact ? 'px-3 py-2 text-sm' : 'px-3 py-2'
           }`}
+          style={{
+            backgroundImage: 'url(/wooden-button-resized.webp)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
           aria-label={`Holiday selector - Currently: ${buttonText}`}
         >
           <span className="text-lg">{selectedOption?.customElement || selectedOption?.emoji}</span>
@@ -100,7 +110,7 @@ const SeasonDropdown: React.FC<SeasonDropdownProps> = ({ showLabel = false, comp
       )}
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-amber-200 z-50">
+        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-stone-200 z-50">
           <div className="py-2">
             <div className="px-4 py-2 text-sm text-amber-700 font-medium border-b border-amber-100">
               Select Holiday:
@@ -123,12 +133,12 @@ const SeasonDropdown: React.FC<SeasonDropdownProps> = ({ showLabel = false, comp
                     <span className="text-lg">{option.customElement || option.emoji}</span>
                     <span className="flex-1 text-left">{option.label}</span>
                     {isAutoDetected && (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
                         Current
                       </span>
                     )}
                     {isSelected && (
-                      <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4 text-stone-700" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     )}

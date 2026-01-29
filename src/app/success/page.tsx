@@ -70,26 +70,47 @@ export default function SuccessPage() {
 
   return (
     <PaymentErrorBoundary>
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-5">
-        {/* Success Header */}
-        <div className="text-center mb-8">
-          <div className="text-6xl text-green-500 mb-4">✓</div>
-          <h1 className="text-4xl font-bold text-green-600 mb-4">Order Complete!</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Thank you for your purchase! Your order has been received and we'll start crafting your beautiful pieces right away.
-          </p>
-          {orderInfo.customerInfo.email && (
-            <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
-              <p className="text-blue-800 font-medium">
-                📧 A confirmation email has been sent to {orderInfo.customerInfo.email}
-              </p>
-              <p className="text-blue-600 text-sm mt-1">
-                Check your inbox for order details and tracking information
-              </p>
-            </div>
-          )}
+    <div className="min-h-screen">
+      {/* Success Header with Heart-Shaped Wood Background */}
+      <section
+        className="relative py-20 px-4 min-h-[500px] flex items-center"
+        style={{
+          backgroundImage: 'url(/Meches Wood Heart-Shaped Shavings on a Desk.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Very soft warm overlay for celebration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/30 via-stone-50/25 to-stone-50/30"></div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-12 shadow-2xl border border-stone-200/70">
+            <div className="text-7xl text-stone-700 mb-6">✓</div>
+            <h1 className="text-5xl md:text-6xl font-serif font-bold text-amber-900 mb-6">Order Complete!</h1>
+            <p className="text-lg md:text-xl text-stone-700 max-w-2xl mx-auto leading-relaxed mb-6">
+              Thank you for your purchase! Your order has been received and we&apos;ll start crafting your beautiful pieces right away.
+            </p>
+            {orderInfo.customerInfo.email && (
+              <div className="mt-6 bg-amber-50/80 border-2 border-stone-200 rounded-xl p-5 max-w-2xl mx-auto">
+                <p className="text-amber-900 font-semibold text-lg">
+                  📧 A confirmation email has been sent to {orderInfo.customerInfo.email}
+                </p>
+                <p className="text-amber-800 text-sm mt-2">
+                  Check your inbox for order details and tracking information
+                </p>
+              </div>
+            )}
+          </div>
         </div>
+      </section>
+
+      {/* Separator */}
+      <div className="h-12 bg-gradient-to-b from-transparent via-stone-100 to-stone-50"></div>
+
+      {/* Order Details Section */}
+      <section className="py-12 px-4 bg-stone-50">
+        <div className="max-w-4xl mx-auto">
 
         {/* Order Confirmation Card */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -113,7 +134,7 @@ export default function SuccessPage() {
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-gray-600">Status:</span>
-                  <span className="text-green-600 font-medium">Confirmed</span>
+                  <span className="text-stone-600 font-medium">Confirmed</span>
                 </div>
               </div>
             </div>
@@ -230,7 +251,7 @@ export default function SuccessPage() {
         </div>
 
         {/* Track Order Section */}
-        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl shadow-lg p-6 mb-8 border-2 border-amber-200">
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl shadow-lg p-6 mb-8 border-2 border-stone-200">
           <div className="text-center">
             <h3 className="text-xl font-semibold text-amber-800 mb-3">Track Your Order</h3>
             <p className="text-gray-600 mb-4">
@@ -266,7 +287,8 @@ export default function SuccessPage() {
             Contact Us
           </Link>
         </div>
-      </div>
+        </div>
+      </section>
     </div>
     </PaymentErrorBoundary>
   );

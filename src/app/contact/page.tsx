@@ -138,27 +138,47 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-5">
-        {/* Message Display */}
-        {message && (
-          <div className={`fixed top-24 right-5 px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-in ${
-            message.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-          } text-white`}>
-            {message.text}
-          </div>
-        )}
-
-        <h1 className="text-3xl font-bold text-amber-800 mb-4 text-center">Contact Us</h1>
-        
-        <div className="text-center mb-12">
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            We'd love to hear from you! Whether you have questions about our existing products, 
-            want to place a custom order, or just want to say hello, we're here to help.
-          </p>
+    <div className="min-h-screen">
+      {/* Message Display */}
+      {message && (
+        <div className={`fixed top-24 right-5 px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-in ${
+          message.type === 'success' ? 'bg-stone-700' : 'bg-stone-700'
+        } text-white`}>
+          {message.text}
         </div>
+      )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Header Section with Heart-Shaped Wood Background */}
+      <section
+        className="relative py-20 px-4 min-h-[400px] flex items-center"
+        style={{
+          backgroundImage: 'url(/Meches Wood Heart-Shaped Shavings on a Desk.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Very soft overlay with warm tones */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/30 via-stone-50/25 to-stone-50/35"></div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-10 shadow-2xl border border-stone-200/70">
+            <h1 className="text-5xl md:text-6xl font-serif font-bold text-amber-900 mb-6">Contact Us</h1>
+            <p className="text-lg md:text-xl text-stone-700 max-w-3xl mx-auto leading-relaxed">
+              We&apos;d love to hear from you! Whether you have questions about our existing products,
+              want to place a custom order, or just want to say hello, we&apos;re here to help.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Separator */}
+      <div className="h-12 bg-gradient-to-b from-transparent via-stone-100 to-stone-50"></div>
+
+      {/* Contact Form Section */}
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Information */}
           <div className="lg:col-span-1">
             <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-6 shadow-lg border-2 border-amber-700">
@@ -390,8 +410,9 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
