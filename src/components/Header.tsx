@@ -23,7 +23,7 @@ function Header() {
 
   return (
     <>
-      <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800 relative overflow-hidden">
+      <header className="bg-gradient-to-r from-amber-50 to-yellow-50 shadow-lg sticky top-0 z-50 border-b-2 border-amber-800 relative">
         {/* Snow effect for Christmas */}
         <HeaderSnow />
 
