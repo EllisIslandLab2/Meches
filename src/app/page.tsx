@@ -6,8 +6,8 @@ import GlassCard from '@/components/GlassCard';
 import ProductsClient from '@/components/ProductsClient';
 import type { Product } from '@/data/products';
 
-// ISR: Revalidate every 5 minutes
-export const revalidate = 300;
+// ISR: Revalidate every 1 hour to reduce Airtable API calls
+export const revalidate = 3600;
 
 // Server-side data fetching with ISR
 async function getProducts(): Promise<Product[]> {
