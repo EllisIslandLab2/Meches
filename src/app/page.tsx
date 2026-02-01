@@ -26,20 +26,17 @@ export default async function Home() {
     <div>
       {/* Hero Section - Wood Shavings on Desk */}
       <section
-        className="relative py-24 px-4 min-h-[600px] flex items-center"
+        className="relative py-24 px-4 sm:px-6 md:px-8 min-h-[600px] flex items-center bg-cover bg-center md:bg-fixed"
         style={{
           backgroundImage: 'url("/Meches Wood Shavings on a Desk.webp")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
         }}
       >
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40"></div>
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+        <div className="w-full max-w-4xl mx-auto text-center relative z-10 px-2 sm:px-4">
           {/* Semi-transparent white card for content */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-10 shadow-2xl border border-stone-200/70">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border border-stone-200/70">
             <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 text-amber-900">
               <TimeBasedText variant="heading">
                 Welcome to Meche&apos;s Handmade Crafts
@@ -90,19 +87,16 @@ export default async function Home() {
 
       {/* Call to Action Section - Ridged Wood */}
       <section
-        className="relative py-20 px-4 min-h-[500px] flex items-center"
+        className="relative py-20 px-4 sm:px-6 md:px-8 min-h-[500px] flex items-center bg-cover bg-center md:bg-fixed"
         style={{
           backgroundImage: 'url("/Meches Wood Shavings on a Ridged Desk.webp")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
         }}
       >
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/40"></div>
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-10 shadow-2xl border border-stone-200/70">
+        <div className="w-full max-w-4xl mx-auto text-center relative z-10 px-2 sm:px-4">
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 md:p-10 shadow-2xl border border-stone-200/70">
             <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 text-amber-900">
               Custom Orders Welcome
             </h2>
