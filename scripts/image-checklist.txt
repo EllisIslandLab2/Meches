@@ -1,0 +1,70 @@
+================================================================================
+PRODUCT VARIANTS - IMAGE UPLOAD CHECKLIST
+================================================================================
+
+Instructions:
+1. Open Airtable and navigate to ProductVariants table
+2. For each item below, find the corresponding row
+3. Click the "images" field and upload the image file(s)
+4. Check off items as you complete them
+
+All images are in: /home/ellisisland/maria-crafts-v2/public/assets/images/
+
+================================================================================
+
+COWGIRL EARRINGS
+--------------------------------------------------------------------------------
+[ ] Cowgirl Rainbow          → earrings-cowgirl-rbw.JPG
+[ ] Star USA                 → earrings-star-usa.JPG
+
+DRIP STYLE EARRINGS
+--------------------------------------------------------------------------------
+[ ] Brown                    → earrings-drip-usabrn.JPG
+[ ] Teal                     → earrings-drip-usateal.JPG
+
+FLORAL STYLE EARRINGS
+--------------------------------------------------------------------------------
+[ ] Red                      → earrings-floral-red.JPG
+[ ] Blue                     → earrings-floral-blue.JPG
+[ ] White                    → earrings-floral-white.jpg
+
+DECORATIVE STYLE EARRINGS
+--------------------------------------------------------------------------------
+[ ] Bow White/Pink           → earrings-floral-bow-wp.JPG
+[ ] Flower Blue              → earrings-floral-flower-blue.JPG
+
+HEART ANCHOR EARRINGS
+--------------------------------------------------------------------------------
+[ ] Circle                   → earings-heart-anchors-circle.JPG
+[ ] Needle                   → earings-heart-anchors-needle.JPG
+[ ] Circle & Needle          → earings-heart-anchors-circle-needle.JPG
+
+HEART BOW EARRINGS
+--------------------------------------------------------------------------------
+[ ] White                    → earings-heart-bows-white.jpg
+[ ] Green & White            → earings-heart-bows-green-white.jpg
+
+HEART PEARL EARRINGS
+--------------------------------------------------------------------------------
+[ ] Pink Light               → earings-heart-pearls-pink1.jpg
+[ ] Pink Dark                → earings-heart-pearls-pink2.JPG
+
+STRAWBERRY EARRINGS
+--------------------------------------------------------------------------------
+[ ] Silver                   → earings-strawberry-silver.JPG
+[ ] Silver & Gold            → earings-strawberry-silver-gold1.JPG
+                             → earings-strawberry-silver-gold2.JPG
+
+================================================================================
+TOTAL: 18 VARIANTS, 19 IMAGES
+================================================================================
+
+After uploading all images:
+[ ] Verify all images uploaded correctly in Airtable
+[ ] Run: npm run dev
+[ ] Test website at http://localhost:3000
+[ ] Verify products display with correct images
+[ ] Test variant selectors (dropdowns)
+[ ] Test shopping cart and checkout
+
+================================================================================
