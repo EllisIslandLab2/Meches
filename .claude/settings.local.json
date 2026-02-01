@@ -26,7 +26,8 @@
       "Bash(awk:*)",
       "WebSearch",
       "WebFetch(domain:developer.squareup.com)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": [],

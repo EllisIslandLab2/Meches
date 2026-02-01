@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, memo, useCallback } from 'react';
+import { useState, memo, useCallback, useEffect } from 'react';
 import Image from 'next/image';
+import useEmblaCarousel from 'embla-carousel-react';
 import { ProductGroup } from '@/data/products';
 import { useCart } from '@/contexts/CartContext';
 
@@ -15,6 +16,32 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
   const [selectedVariant, setSelectedVariant] = useState(product.defaultVariant);
   const [quantity, setQuantity] = useState(1);
   const [showMessage, setShowMessage] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Update carousel when variant changes
+  useEffect(() => {
+    setSelectedImageIndex(0);
+    if (emblaApi) {
+      emblaApi.scrollTo(0);
+    }
+  }, [selectedVariant, emblaApi]);
+
+  // Track selected slide
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const onSelect = () => {
+      setSelectedImageIndex(emblaApi.selectedScrollSnap());
+    };
+
+    emblaApi.on('select', onSelect);
+    onSelect();
+
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
 
   const handleAddToCart = useCallback(() => {
     addToCart({
@@ -24,13 +51,13 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
       variant: selectedVariant.variant_name,
       variantType: product.selectorLabel,
       quantity,
-      image: selectedVariant.image
+      image: selectedVariant.images[0]
     });
-    
+
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 3000);
     setQuantity(1);
-  }, [addToCart, selectedVariant, quantity, product.name, product.price]);
+  }, [addToCart, selectedVariant, quantity, product.name, product.price, product.selectorLabel]);
 
   return (
     <div className="bg-gradient-to-br from-amber-50/95 to-yellow-50/95 rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105 hover:shadow-xl border-2 border-amber-700">
@@ -41,15 +68,55 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
       )}
       
       <div className="h-64 bg-amber-50 relative overflow-hidden border-b-2 border-amber-700">
-        {selectedVariant.image && selectedVariant.image.trim() !== '' ? (
-          <Image
-            src={selectedVariant.image}
-            alt={product.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority={priority}
-          />
+        {selectedVariant.images && selectedVariant.images.length > 0 ? (
+          <>
+            {selectedVariant.images.length === 1 ? (
+              // Single image - no carousel needed
+              <Image
+                src={selectedVariant.images[0]}
+                alt={product.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={priority}
+              />
+            ) : (
+              // Multiple images - use carousel
+              <>
+                <div className="overflow-hidden h-full" ref={emblaRef}>
+                  <div className="flex h-full">
+                    {selectedVariant.images.map((image, index) => (
+                      <div key={index} className="flex-[0_0_100%] min-w-0 relative">
+                        <Image
+                          src={image}
+                          alt={`${product.name} - View ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority={priority && index === 0}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Dot indicators */}
+                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10">
+                  {selectedVariant.images.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => emblaApi?.scrollTo(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === selectedImageIndex
+                          ? 'bg-amber-700 w-6'
+                          : 'bg-amber-300/70 hover:bg-amber-400'
+                      }`}
+                      aria-label={`View image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200">
             <div className="text-center text-amber-600">
@@ -64,22 +131,41 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
         <h3 className="text-lg font-semibold text-amber-900 mb-1">{product.name}</h3>
         <p className="text-amber-700 text-sm mb-3">{product.description}</p>
 
-        {/* Price and Quantity on same row */}
+        {/* Price and Stock Badge */}
         <div className="flex items-center justify-between mb-3">
           <p className="text-xl font-bold text-amber-800">${product.price.toFixed(2)}</p>
+          {selectedVariant.stock_quantity > 0 ? (
+            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+              selectedVariant.stock_quantity <= 2
+                ? 'bg-orange-100 text-orange-700 border border-orange-300'
+                : 'bg-green-100 text-green-700 border border-green-300'
+            }`}>
+              {selectedVariant.stock_quantity} in stock
+            </span>
+          ) : (
+            <span className="text-xs px-2 py-1 rounded-full font-medium bg-red-100 text-red-700 border border-red-300">
+              Out of Stock
+            </span>
+          )}
+        </div>
+
+        {/* Quantity Selector */}
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-medium text-amber-900">Quantity:</span>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-amber-900">Qty:</span>
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-7 h-7 bg-stone-600 text-white rounded-full font-bold hover:bg-stone-700 transition-colors border-2 border-amber-700 text-sm"
+              disabled={selectedVariant.stock_quantity === 0}
+              className="w-7 h-7 bg-stone-600 text-white rounded-full font-bold hover:bg-stone-700 transition-colors border-2 border-amber-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Decrease quantity"
             >
               -
             </button>
             <span className="w-6 text-center font-bold text-amber-900">{quantity}</span>
             <button
-              onClick={() => setQuantity(quantity + 1)}
-              className="w-7 h-7 bg-stone-600 text-white rounded-full font-bold hover:bg-stone-700 transition-colors border-2 border-amber-700 text-sm"
+              onClick={() => setQuantity(Math.min(selectedVariant.stock_quantity, quantity + 1))}
+              disabled={selectedVariant.stock_quantity === 0}
+              className="w-7 h-7 bg-stone-600 text-white rounded-full font-bold hover:bg-stone-700 transition-colors border-2 border-amber-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Increase quantity"
             >
               +
@@ -111,14 +197,15 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
 
         <button
           onClick={handleAddToCart}
-          className="w-full text-white py-2.5 rounded-xl font-semibold hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg"
+          disabled={selectedVariant.stock_quantity === 0}
+          className="w-full text-white py-2.5 rounded-xl font-semibold hover:opacity-90 transition-opacity border-2 border-stone-600 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
           style={{
             backgroundImage: 'url(/wooden-button-resized.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          Add to Cart
+          {selectedVariant.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
         </button>
       </div>
     </div>

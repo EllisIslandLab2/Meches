@@ -3,7 +3,7 @@ export interface Product {
   id: string; // Airtable record ID
   name: string;
   price: number;
-  image: string; // Single image per product row
+  images: string[]; // Array of image URLs for carousel support
   category: string; // Groups products into cards (e.g., "Cowgirl Earrings")
   description: string;
   variant_name: string; // Individual variant identifier (e.g., "Cowgirl", "Star")
@@ -11,6 +11,7 @@ export interface Product {
   display: boolean; // Show/hide product
   selector_label: string; // "Color", "Type", etc. (consolidated from selector_type and selector_label)
   seasons: string[]; // Array of seasons/holidays when this product is relevant
+  stock_quantity: number; // Available inventory for this variant
   created_time?: string; // Airtable timestamp
   updated_time?: string; // Airtable timestamp
 }
@@ -33,122 +34,131 @@ export const sampleProducts: Product[] = [
     id: "rec1",
     name: "Handmade Earrings - Cowgirl Style",
     price: 8.99,
-    image: "/assets/images/earrings-cowgirl-rbw.JPG",
+    images: ["/assets/images/earrings-cowgirl-rbw.JPG"],
     category: "Cowgirl Earrings",
     description: "Beautiful handcrafted cowgirl and star earrings",
     variant_name: "Cowgirl",
     is_default_variant: true,
     display: true,
     selector_label: "Type",
-    seasons: ["summer"]
+    seasons: ["summer"],
+    stock_quantity: 3
   },
   {
     id: "rec2",
     name: "Handmade Earrings - Cowgirl Style",
     price: 8.99,
-    image: "/assets/images/earrings-star-usa.JPG",
+    images: ["/assets/images/earrings-star-usa.JPG"],
     category: "Cowgirl Earrings",
     description: "Beautiful handcrafted cowgirl and star earrings",
     variant_name: "Star",
     is_default_variant: false,
     display: true,
     selector_label: "Type",
-    seasons: ["summer"]
+    seasons: ["summer"],
+    stock_quantity: 3
   },
   // Drip Style Earrings Category
   {
     id: "rec3",
     name: "Handmade Earrings - Drip Style",
     price: 13.99,
-    image: "/assets/images/earrings-drip-usabrn.JPG",
+    images: ["/assets/images/earrings-drip-usabrn.JPG"],
     category: "Drip Style Earrings",
     description: "Beautiful drip-style earrings in multiple colors",
     variant_name: "Brown",
     is_default_variant: true,
     display: true,
     selector_label: "Color",
-    seasons: ["fall"]
+    seasons: ["fall"],
+    stock_quantity: 3
   },
   {
     id: "rec4",
     name: "Handmade Earrings - Drip Style",
     price: 13.99,
-    image: "/assets/images/earrings-drip-usateal.JPG",
+    images: ["/assets/images/earrings-drip-usateal.JPG"],
     category: "Drip Style Earrings",
     description: "Beautiful drip-style earrings in multiple colors",
     variant_name: "Teal",
     is_default_variant: false,
     display: true,
     selector_label: "Color",
-    seasons: ["fall"]
+    seasons: ["fall"],
+    stock_quantity: 3
   },
   // Floral Style Earrings Category
   {
     id: "rec5",
     name: "Handmade Earrings - Floral Style",
     price: 13.99,
-    image: "/assets/images/earrings-floral-red.JPG",
+    images: ["/assets/images/earrings-floral-red.JPG"],
     category: "Floral Style Earrings",
     description: "Elegant floral earrings in vibrant colors",
     variant_name: "Red",
     is_default_variant: true,
     display: true,
     selector_label: "Color",
-    seasons: ["spring"]
+    seasons: ["spring"],
+    stock_quantity: 3
   },
   {
     id: "rec6",
     name: "Handmade Earrings - Floral Style",
     price: 13.99,
-    image: "/assets/images/earrings-floral-blue.JPG",
+    images: ["/assets/images/earrings-floral-blue.JPG"],
     category: "Floral Style Earrings",
     description: "Elegant floral earrings in vibrant colors",
     variant_name: "Blue",
     is_default_variant: false,
     display: true,
     selector_label: "Color",
-    seasons: ["spring"]
+    seasons: ["spring"],
+    stock_quantity: 3
   },
   // Decorative Style Earrings Category
   {
     id: "rec7",
     name: "Handmade Earrings - Decorative Style",
     price: 15.99,
-    image: "/assets/images/earrings-floral-bow-wp.JPG",
+    images: ["/assets/images/earrings-floral-bow-wp.JPG"],
     category: "Decorative Style Earrings",
     description: "Beautiful decorative earrings with bow and flower designs",
     variant_name: "Bow",
     is_default_variant: true,
     display: true,
     selector_label: "Type",
-    seasons: ["winter"]
+    seasons: ["winter"],
+    stock_quantity: 3
   },
   {
     id: "rec8",
     name: "Handmade Earrings - Decorative Style",
     price: 15.99,
-    image: "/assets/images/earrings-floral-flower-blue.JPG",
+    images: ["/assets/images/earrings-floral-flower-blue.JPG"],
     category: "Decorative Style Earrings",
     description: "Beautiful decorative earrings with bow and flower designs",
     variant_name: "Flower",
     is_default_variant: false,
     display: true,
     selector_label: "Type",
-    seasons: ["winter"]
+    seasons: ["winter"],
+    stock_quantity: 3
   },
   // Add some "all season" products - using existing image for now
   {
     id: "rec9",
     name: "Handmade Earrings - Classic Style",
     price: 12.99,
-    image: "/assets/images/earrings-cowgirl-rbw.JPG",
+    images: ["/assets/images/earrings-cowgirl-rbw.JPG"],
     category: "Classic Style Earrings",
     description: "Timeless classic earrings suitable for any season",
     variant_name: "Gold",
     is_default_variant: true,
     display: true,
     selector_label: "Color",
-    seasons: ["all"]
+    seasons: ["all"],
+    stock_quantity: 3
   }
 ];
 
@@ -259,17 +269,25 @@ export async function fetchProductsFromAirtable(): Promise<Product[]> {
     
     // Transform Airtable records to our Product interface
     const products: Product[] = result.records.map((record: any) => {
-      // Ensure image paths start with '/' for Next.js Image component
-      let imagePath = record.fields.image || '';
-      if (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) {
-        imagePath = '/' + imagePath;
+      // Handle images array from Airtable attachments or fallback to single image
+      let images: string[] = [];
+      if (Array.isArray(record.fields.images)) {
+        // Airtable attachment field returns array of {url, filename, ...}
+        images = record.fields.images.map((img: any) => img.url || img);
+      } else if (record.fields.image) {
+        // Fallback to single image field for backwards compatibility
+        let imagePath = record.fields.image;
+        if (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+          imagePath = '/' + imagePath;
+        }
+        images = [imagePath];
       }
-      
+
       return {
         id: record.id,
         name: record.fields.name || '',
         price: record.fields.price || 0,
-        image: imagePath,
+        images: images.length > 0 ? images : ['/assets/images/placeholder.jpg'],
         category: record.fields.category || '',
         description: record.fields.description || '',
         variant_name: record.fields.variant_name || '',
@@ -279,6 +297,7 @@ export async function fetchProductsFromAirtable(): Promise<Product[]> {
         seasons: Array.isArray(record.fields.seasons)
           ? record.fields.seasons.map((s: string) => s.toLowerCase())
           : [],
+        stock_quantity: record.fields.stock_quantity || 0,
         created_time: record.createdTime,
         updated_time: record.fields.last_modified_time
       };

@@ -71,17 +71,25 @@ export async function fetchProductsFromAirtableDirect() {
 
 // Transform Airtable record to our Product interface
 export function transformAirtableRecord(record: any) {
-  // Ensure image paths start with '/' for Next.js Image component
-  let imagePath = record.fields.image || '';
-  if (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) {
-    imagePath = '/' + imagePath;
+  // Handle images array from Airtable attachments or fallback to single image
+  let images: string[] = [];
+  if (Array.isArray(record.fields.images)) {
+    // Airtable attachment field returns array of {url, filename, size, type, ...}
+    images = record.fields.images.map((img: any) => img.url || img);
+  } else if (record.fields.image) {
+    // Fallback to single image field for backwards compatibility
+    let imagePath = record.fields.image;
+    if (imagePath && !imagePath.startsWith('/') && !imagePath.startsWith('http')) {
+      imagePath = '/' + imagePath;
+    }
+    images = [imagePath];
   }
-  
+
   return {
     id: record.id,
     name: record.fields.name || '',
     price: record.fields.price || 0,
-    image: imagePath,
+    images: images.length > 0 ? images : ['/assets/images/placeholder.jpg'],
     category: record.fields.category || '',
     description: record.fields.description || '',
     variant_name: record.fields.variant_name || '',
@@ -89,6 +97,7 @@ export function transformAirtableRecord(record: any) {
     display: record.fields.display !== false,
     selector_label: record.fields.selector_label || 'Color',
     seasons: Array.isArray(record.fields.seasons) ? record.fields.seasons : [],
+    stock_quantity: record.fields.stock_quantity || 0,
     created_time: record.createdTime,
     updated_time: record.fields.last_modified_time
   };

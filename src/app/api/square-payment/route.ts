@@ -157,6 +157,56 @@ export async function POST(request: NextRequest) {
           console.log('Order logged to Airtable successfully');
         }
 
+        // Decrement stock quantity for each item in cart (non-blocking)
+        try {
+          if (cart && Array.isArray(cart)) {
+            const PRODUCTS_TABLE = process.env.PRODUCTS_TABLE || 'Products';
+
+            for (const item of cart) {
+              try {
+                // Fetch current product to get stock
+                const productUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(PRODUCTS_TABLE)}/${item.productId}`;
+                const productResponse = await fetch(productUrl, {
+                  headers: {
+                    'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+                    'Content-Type': 'application/json'
+                  }
+                });
+
+                if (productResponse.ok) {
+                  const productData = await productResponse.json();
+                  const currentStock = productData.fields.stock_quantity || 0;
+                  const newStock = Math.max(0, currentStock - item.quantity);
+
+                  // Update stock in Airtable
+                  const updateResponse = await fetch(productUrl, {
+                    method: 'PATCH',
+                    headers: {
+                      'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      fields: {
+                        stock_quantity: newStock
+                      }
+                    })
+                  });
+
+                  if (updateResponse.ok) {
+                    console.log(`Stock updated for ${item.name} (${item.variant}): ${currentStock} → ${newStock}`);
+                  } else {
+                    console.error(`Failed to update stock for ${item.productId}`);
+                  }
+                }
+              } catch (stockError) {
+                console.error(`Error updating stock for item ${item.productId}:`, stockError);
+              }
+            }
+          }
+        } catch (stockUpdateError) {
+          console.error('Stock update error (non-critical):', stockUpdateError);
+        }
+
         // Send order confirmation email (non-blocking)
         try {
           console.log('📧 Attempting to send confirmation email to:', customerInfo?.email);
