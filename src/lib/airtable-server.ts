@@ -92,7 +92,7 @@ export function transformAirtableRecord(record: any) {
     images: images.length > 0 ? images : ['/assets/images/placeholder.jpg'],
     category: record.fields.category || '',
     description: record.fields.description || '',
-    variant_name: record.fields.variant_name || '',
+    variant_name: record.fields.Select || record.fields.variant_name || '',
     is_default_variant: record.fields.is_default_variant || false,
     display: record.fields.display !== false,
     selector_label: record.fields.selector_label || 'Color',
