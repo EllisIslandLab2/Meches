@@ -131,22 +131,9 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
         <h3 className="text-lg font-semibold text-amber-900 mb-1">{product.name}</h3>
         <p className="text-amber-700 text-sm mb-3">{product.description}</p>
 
-        {/* Price and Stock Badge */}
-        <div className="flex items-center justify-between mb-3">
+        {/* Price */}
+        <div className="mb-3">
           <p className="text-xl font-bold text-amber-800">${product.price.toFixed(2)}</p>
-          {selectedVariant.stock_quantity > 0 ? (
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-              selectedVariant.stock_quantity <= 2
-                ? 'bg-orange-100 text-orange-700 border border-orange-300'
-                : 'bg-green-100 text-green-700 border border-green-300'
-            }`}>
-              {selectedVariant.stock_quantity} in stock
-            </span>
-          ) : (
-            <span className="text-xs px-2 py-1 rounded-full font-medium bg-red-100 text-red-700 border border-red-300">
-              Out of Stock
-            </span>
-          )}
         </div>
 
         {/* Quantity Selector */}

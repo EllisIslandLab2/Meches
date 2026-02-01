@@ -166,6 +166,7 @@ export const sampleProducts: Product[] = [
 export function groupProductsByCategory(products: Product[], selectedSeasons?: string[]): ProductGroup[] {
   const filtered = products
     .filter(product => product.display) // Only include products marked for display
+    .filter(product => product.stock_quantity > 0) // Hide products with 0 stock
     .filter(product => {
       // Products with no seasons are inactive and shouldn't display
       if (!product.seasons || product.seasons.length === 0) return false;
