@@ -100,18 +100,20 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
                   </div>
                 </div>
                 {/* Dot indicators */}
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10">
+                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
                   {selectedVariant.images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => emblaApi?.scrollTo(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
+                      className="p-3 touch-manipulation group"
+                      aria-label={`View image ${index + 1}`}
+                    >
+                      <span className={`block w-2 h-2 rounded-full transition-all ${
                         index === selectedImageIndex
                           ? 'bg-amber-700 w-6'
-                          : 'bg-amber-300/70 hover:bg-amber-400'
-                      }`}
-                      aria-label={`View image ${index + 1}`}
-                    />
+                          : 'bg-amber-300/70 group-hover:bg-amber-400'
+                      }`} />
+                    </button>
                   ))}
                 </div>
               </>
