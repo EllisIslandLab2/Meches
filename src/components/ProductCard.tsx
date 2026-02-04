@@ -99,23 +99,41 @@ function ProductCard({ product, priority = false }: ProductCardProps) {
                     ))}
                   </div>
                 </div>
-                {/* Dot indicators */}
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10">
-                  {selectedVariant.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => emblaApi?.scrollTo(index)}
-                      className="p-3 touch-manipulation group"
-                      aria-label={`View image ${index + 1}`}
+                {/* Navigation Arrows */}
+                {selectedImageIndex > 0 && (
+                  <button
+                    onClick={() => emblaApi?.scrollPrev()}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 hover:bg-white rounded-full transition-all z-10 touch-manipulation shadow-md"
+                    aria-label="Previous image"
+                  >
+                    <svg
+                      className="w-4 h-4 text-amber-800"
+                      fill="none"
+                      strokeWidth="2.5"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      <span className={`block w-2 h-2 rounded-full transition-all ${
-                        index === selectedImageIndex
-                          ? 'bg-amber-700 w-6'
-                          : 'bg-amber-300/70 group-hover:bg-amber-400'
-                      }`} />
-                    </button>
-                  ))}
-                </div>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                )}
+                {selectedImageIndex < selectedVariant.images.length - 1 && (
+                  <button
+                    onClick={() => emblaApi?.scrollNext()}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-white/80 hover:bg-white rounded-full transition-all z-10 touch-manipulation shadow-md"
+                    aria-label="Next image"
+                  >
+                    <svg
+                      className="w-4 h-4 text-amber-800"
+                      fill="none"
+                      strokeWidth="2.5"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                )}
               </>
             )}
           </>
