@@ -28,6 +28,12 @@ const nextConfig: NextConfig = {
   // Additional performance optimizations
   swcMinify: true,
   poweredByHeader: false,
+  // Optimize output for modern browsers
+  reactStrictMode: true,
+  // Enable gzip compression
+  compress: true,
+  // Optimize CSS
+  optimizeFonts: true,
 };
 
 export default nextConfig;

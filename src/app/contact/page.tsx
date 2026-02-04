@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface FormData {
   name: string;
@@ -22,6 +23,7 @@ interface CustomOrderFormData {
 }
 
 export default function ContactPage() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -50,6 +52,17 @@ export default function ContactPage() {
   };
 
   const submitToAirtable = async (formType: string, fields: any) => {
+    // Get reCAPTCHA token
+    let recaptchaToken;
+    if (executeRecaptcha) {
+      try {
+        recaptchaToken = await executeRecaptcha('submit_form');
+      } catch (error) {
+        console.error('reCAPTCHA error:', error);
+        throw new Error('Please try again in a moment');
+      }
+    }
+
     const response = await fetch('/api/airtable', {
       method: 'POST',
       headers: {
@@ -58,13 +71,16 @@ export default function ContactPage() {
       body: JSON.stringify({
         action: 'create',
         formType,
-        data: { fields }
+        data: {
+          fields,
+          recaptchaToken
+        }
       })
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to submit form');
+      throw new Error(error.error || error.details || 'Failed to submit form');
     }
 
     return response.json();
@@ -186,21 +202,21 @@ export default function ContactPage() {
               
               <div className="space-y-4 mb-6">
                 <div>
-                  <h4 className="font-semibold text-amber-700 mb-2">Email</h4>
+                  <h3 className="font-semibold text-amber-700 mb-2">Email</h3>
                   <p className="text-gray-600">meche@handmadecrafts.com</p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-amber-700 mb-2">Phone</h4>
+                  <h3 className="font-semibold text-amber-700 mb-2">Phone</h3>
                   <p className="text-gray-600">(555) 123-4567</p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-amber-700 mb-2">Response Time</h4>
+                  <h3 className="font-semibold text-amber-700 mb-2">Response Time</h3>
                   <p className="text-gray-600">Usually within 24 hours</p>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-semibold text-amber-700 mb-3">Custom Order Options</h4>
+                <h3 className="font-semibold text-amber-700 mb-3">Custom Order Options</h3>
                 <ul className="space-y-2">
                   <li className="flex items-start">
                     <span className="text-yellow-600 font-bold mr-2">✓</span>
@@ -232,8 +248,9 @@ export default function ContactPage() {
                 <form onSubmit={handleGeneralContactSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Name *</label>
+                      <label htmlFor="general-name" className="block text-sm font-medium mb-2">Name *</label>
                       <input
+                        id="general-name"
                         type="text"
                         required
                         value={formData.name}
@@ -242,8 +259,9 @@ export default function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Email *</label>
+                      <label htmlFor="general-email" className="block text-sm font-medium mb-2">Email *</label>
                       <input
+                        id="general-email"
                         type="email"
                         required
                         value={formData.email}
@@ -253,8 +271,9 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Message *</label>
+                    <label htmlFor="general-message" className="block text-sm font-medium mb-2">Message *</label>
                     <textarea
+                      id="general-message"
                       required
                       rows={4}
                       value={formData.message}
@@ -265,7 +284,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                    className="bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors disabled:opacity-50"
                   >
                     {isSubmitting ? 'Sending...' : 'Send Message'}
                   </button>
@@ -278,8 +297,9 @@ export default function ContactPage() {
                 <form onSubmit={handleCustomOrderSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Name *</label>
+                      <label htmlFor="custom-name" className="block text-sm font-medium mb-2">Name *</label>
                       <input
+                        id="custom-name"
                         type="text"
                         required
                         value={customOrderData.name}
@@ -288,8 +308,9 @@ export default function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Email *</label>
+                      <label htmlFor="custom-email" className="block text-sm font-medium mb-2">Email *</label>
                       <input
+                        id="custom-email"
                         type="email"
                         required
                         value={customOrderData.email}
@@ -298,10 +319,11 @@ export default function ContactPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-2">Phone</label>
+                    <label htmlFor="custom-phone" className="block text-sm font-medium mb-2">Phone</label>
                     <input
+                      id="custom-phone"
                       type="tel"
                       value={customOrderData.phone}
                       onChange={(e) => setCustomOrderData({...customOrderData, phone: e.target.value})}
@@ -310,8 +332,9 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">Item Description *</label>
+                    <label htmlFor="custom-description" className="block text-sm font-medium mb-2">Item Description *</label>
                     <textarea
+                      id="custom-description"
                       required
                       rows={3}
                       placeholder="Describe what you'd like us to create..."
@@ -323,8 +346,9 @@ export default function ContactPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Color Preference</label>
+                      <label htmlFor="custom-color" className="block text-sm font-medium mb-2">Color Preference</label>
                       <input
+                        id="custom-color"
                         type="text"
                         value={customOrderData.colorPreference}
                         onChange={(e) => setCustomOrderData({...customOrderData, colorPreference: e.target.value})}
@@ -332,8 +356,9 @@ export default function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Size Preference</label>
+                      <label htmlFor="custom-size" className="block text-sm font-medium mb-2">Size Preference</label>
                       <input
+                        id="custom-size"
                         type="text"
                         value={customOrderData.sizePreference}
                         onChange={(e) => setCustomOrderData({...customOrderData, sizePreference: e.target.value})}
@@ -344,8 +369,9 @@ export default function ContactPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Quantity Needed</label>
+                      <label htmlFor="custom-quantity" className="block text-sm font-medium mb-2">Quantity Needed</label>
                       <select
+                        id="custom-quantity"
                         value={customOrderData.quantityNeeded}
                         onChange={(e) => setCustomOrderData({...customOrderData, quantityNeeded: e.target.value})}
                         className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
@@ -356,8 +382,9 @@ export default function ContactPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Budget Range</label>
+                      <label htmlFor="custom-budget" className="block text-sm font-medium mb-2">Budget Range</label>
                       <select
+                        id="custom-budget"
                         value={customOrderData.budgetRange}
                         onChange={(e) => setCustomOrderData({...customOrderData, budgetRange: e.target.value})}
                         className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
@@ -373,8 +400,9 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">Timeline Needed</label>
+                    <label htmlFor="custom-timeline" className="block text-sm font-medium mb-2">Timeline Needed</label>
                     <select
+                      id="custom-timeline"
                       value={customOrderData.timelineNeeded}
                       onChange={(e) => setCustomOrderData({...customOrderData, timelineNeeded: e.target.value})}
                       className="w-full p-3 border rounded-lg bg-white focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
@@ -389,8 +417,9 @@ export default function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">Additional Requests</label>
+                    <label htmlFor="custom-additional" className="block text-sm font-medium mb-2">Additional Requests</label>
                     <textarea
+                      id="custom-additional"
                       rows={3}
                       placeholder="Any additional details or special requests..."
                       value={customOrderData.additionalRequests}

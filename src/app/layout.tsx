@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
+import { Crimson_Text } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
 import { SeasonProvider } from "@/contexts/SeasonContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StructuredData from "@/components/StructuredData";
-import ClientBackground from "@/components/ClientBackground";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import ReCaptchaProvider from "@/components/ReCaptchaProvider";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+
+const crimsonText = Crimson_Text({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif',
+});
 
 export const metadata: Metadata = {
   title: "Meche's Handmade Crafts - Unique Handcrafted Jewelry & Wooden Designs",
@@ -88,25 +97,25 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <StructuredData />
-        {/* Preconnect to Google Fonts for faster font loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Preload critical logo image */}
         <link rel="preload" as="image" href="/meche-logo.webp" />
       </head>
-      <body className="font-serif min-h-screen flex flex-col">
+      <body className={`${crimsonText.variable} font-serif min-h-screen flex flex-col`}>
         <ErrorBoundary>
-          <SeasonProvider>
-            <CartProvider>
-              <Header />
-              <main className="flex-grow">
-                {children}
-              </main>
-              <Footer />
-            </CartProvider>
-          </SeasonProvider>
+          <ReCaptchaProvider>
+            <SeasonProvider>
+              <CartProvider>
+                <Header />
+                <main className="flex-grow">
+                  {children}
+                </main>
+                <Footer />
+              </CartProvider>
+            </SeasonProvider>
+          </ReCaptchaProvider>
         </ErrorBoundary>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

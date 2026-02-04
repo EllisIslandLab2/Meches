@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkForSpam } from '@/lib/spamProtection';
 
 // Vercel Edge Config: Enable caching at the edge
 export const runtime = 'nodejs'; // Use Node.js runtime for Airtable API calls
@@ -103,6 +104,40 @@ export async function POST(request: NextRequest) {
         break;
 
       case 'create':
+        // Spam protection for form submissions
+        if (formType === 'general-contact-form' || formType === 'custom-order-form') {
+          // Get client IP
+          const ip = request.headers.get('x-forwarded-for') ||
+                     request.headers.get('x-real-ip') ||
+                     'unknown';
+
+          // Run spam checks
+          const spamCheck = await checkForSpam({
+            email: data.fields.Email,
+            message: data.fields.Message || data.fields.Description,
+            name: data.fields.Name,
+            recaptchaToken: data.recaptchaToken,
+            ip: ip.split(',')[0].trim(), // Use first IP if multiple
+          });
+
+          if (spamCheck.isSpam) {
+            console.warn('Spam submission blocked:', {
+              reason: spamCheck.reason,
+              details: spamCheck.details,
+              email: data.fields.Email,
+              ip
+            });
+
+            return NextResponse.json(
+              {
+                error: 'Your submission could not be processed',
+                details: spamCheck.details
+              },
+              { status: 400 }
+            );
+          }
+        }
+
         // Create new record
         response = await fetchWithRetry(baseUrl, {
           method: 'POST',
